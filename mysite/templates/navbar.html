@@ -8,6 +8,10 @@
   <span style="float:right">
     {% if user.is_authenticated %}
       <span>Hi {{user.username}}!</span>
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+      </form>
     {% else %}
       <span><a href="{% url 'login' %}">Login</a></span>
     {% endif %}
