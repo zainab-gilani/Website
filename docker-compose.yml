@@ -1,0 +1,45 @@
+version: "3.13"
+
+x-service-volumes: &service-volumes
+  - ./:/app/:rw,cached
+
+x-database-variables: &database-variables
+  POSTGRES_DB: postgres
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+
+x-app-variables: &app-variables
+  <<: *database-variables
+  POSTGRES_HOST: postgres
+
+services:
+  website:
+    build: .
+    image: unimatch:latest
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes: *service-volumes
+    environment: *app-variables
+    depends_on:
+      - db_migrate
+    ports:
+      - "8000:8000"
+
+  db_migrate:
+    build: .
+    image: unimatch:latest
+    command: python manage.py migrate
+    volumes: *service-volumes
+    environment: *app-variables
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:17
+    ports:
+      - "5432:5432"
+    environment: *database-variables
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:

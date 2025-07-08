@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.http import request
 
-interests = request.user.profile.interests.all()
+# interests = request.user.profile.interests.all()
 
 class UserInterest(models.Model):
     name = models.CharField(max_length=64, unique=True)
