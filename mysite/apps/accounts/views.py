@@ -3,6 +3,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 
+from .forms import CustomUserCreationForm
+
 
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = "accounts/profile.html"
@@ -10,11 +12,11 @@ class ProfileView(LoginRequiredMixin, TemplateView):
 
 def register_view(request):
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect("accounts:login")
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     return render(request, "accounts/signup.html", { "form": form })
 #enddef
