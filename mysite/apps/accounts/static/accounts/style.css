@@ -1,0 +1,152 @@
+body {
+    background: linear-gradient(0deg, rgb(242, 246, 255) 0%, rgb(245, 247, 255) 50%, rgb(249, 251, 255) 100%);
+    font-family: "Tahoma", serif;
+    text-align: center;
+    padding-top: 60px;
+}
+
+h1 {
+    position: absolute;
+    top: 55px;
+    left: 43%;
+    text-align: center;
+    font-family: 'Abril Fatface', serif;
+    font-size: 2.9rem;
+    color: #2D5289;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+.centered-container {
+    margin-top: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+form {
+    display: inline-block;
+    text-align: left;
+    width: 600px;
+    padding: 40px;
+    margin-bottom: 0px;
+}
+
+label {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #2D5289;
+    margin-left: 8px;
+}
+
+.form-group {
+    width: 100%;
+    padding: 18px;
+    font-size: 1rem;
+    border: none;
+    background-color: #d8e2f0;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    margin-top: 100px;
+    box-sizing: border-box;
+}
+
+.form-input {
+    width: 100%;
+    padding: 18px 16px;
+    margin-top: 2px;
+    margin-bottom: 24px;
+    font-size: 1rem;
+    border: none;
+    background-color: #d8e2f0;
+    border-radius: 8px;
+    box-sizing: border-box;
+    align-content: center;
+}
+
+.errorlist {
+    margin: -20px 0 0 0;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+}
+
+.errorlist li {
+    color: #cb4e5b;
+    font-size: 0.85rem;
+    font-weight: 400;
+    margin: 0px 0px 10px 2px;
+    background: none;
+    border: none;
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+}
+
+
+button.button {
+    text-decoration: none;
+    display: block;
+    width: 150px;
+    margin: 0px auto 10px auto;
+    padding: 16px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-align: center;
+    background-color: #d8e2f0;
+    color: #2D5289;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+button.button:hover {
+    background-color: #b6ccea;
+}
+
+.password-note {
+    display: inline-block;
+    font-size: 0.85rem;
+    color: #787f87;
+    background: linear-gradient(to bottom, transparent 65%, #ececf4 65%);
+    padding: 2px 4px;
+    font-style: italic;
+    margin-top: 8px;
+    margin-bottom: 40px;
+}
+
+.extra-options {
+    text-align: center;
+    font-size: 0.95rem;
+    margin-top: 10px;
+    position: relative;
+    top: -40px;
+    color: #333;
+}
+
+.extra-options a {
+    color: #2D5289;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.extra-options em {
+    display: block;
+    margin: 10px 0;
+    font-style: normal;
+}
+
+.logo {
+    position: absolute;
+    top: 5px;
+    left: 20px;
+    width: 90px;
+    height: auto;
+    z-index: 1000;
+}
+
+/* fonts */
+.abril-fatface-regular {
+    font-family: "Abril Fatface", serif;
+    font-weight: 400;
+    font-style: normal;
+}
