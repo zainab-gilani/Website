@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div style="text-align:center; margin-top:120px;">
+    <h2 style="color: #2D5289;">Account Activated!</h2>
+    <p>You can now <a href="{% url 'accounts:login' %}">log in</a>.</p>
+  </div>
+{% endblock %}

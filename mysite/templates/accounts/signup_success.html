@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign Up - Success{% endblock %}
+
+{% block content %}
+    <div style="max-width: 450px; margin: 100px auto; background: #f8fafd; border-radius: 12px; box-shadow: 0 4px 16px 0 #e5eefd; padding: 40px 30px; text-align: center;">
+        <h2 style="color: #2D5289;">Account Created!</h2>
+        <p style="font-size: 1.1rem; color: #474b52; margin: 20px 0 30px 0;">
+            Please check your email for an activation link to finish setting up your account.
+        </p>
+        <p style="color: #888;">Didn’t get the email? Check your spam folder, or <a href="{% url 'accounts:signup' %}" style="color:#2D5289;">sign up again</a>.</p>
+    </div>
+{% endblock %}

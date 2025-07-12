@@ -72,15 +72,22 @@ TEMPLATES = [
 WSGI_APPLICATION = "mysite.wsgi.application"
 
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.example.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'your_email@gmail.com'
+EMAIL_HOST_PASSWORD = 'your_gmail_app_password'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-POSTGRES_DB = os.environ.get('POSTGRES_DB', default="")
-POSTGRES_USER = os.environ.get('POSTGRES_USER', default="")
-POSTGRES_PASSWORD = os.environ.get('POSTGRES_PASSWORD', default="")
-POSTGRES_HOST = os.environ.get('POSTGRES_HOST', default="")
-
-
+POSTGRES_DB = os.environ.get('POSTGRES_DB', 'postgres')
+POSTGRES_USER = os.environ.get('POSTGRES_USER', 'postgres')
+POSTGRES_PASSWORD = os.environ.get('POSTGRES_PASSWORD', 'postgres')
+POSTGRES_HOST = os.environ.get('POSTGRES_HOST', 'localhost')
 
 DATABASES = {
     "default": {
