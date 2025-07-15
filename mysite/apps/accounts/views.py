@@ -1,10 +1,11 @@
+from django.utils.html import strip_tags
 from django.views.generic.base import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 
 from .forms import CustomUserCreationForm
 
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -12,6 +13,8 @@ from .tokens import account_activation_token
 from django.contrib.auth import get_user_model
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
+
+from django.contrib import messages
 
 
 User = get_user_model()
@@ -36,12 +39,20 @@ def register_view(request):
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': account_activation_token.make_token(user),
             })
+            message_text = strip_tags(message)
+
+            mail_subject = 'Activate your account'
             to_email = form.cleaned_data.get('email')
-            email = EmailMessage(mail_subject, message, to=[to_email])
+
+            email = EmailMultiAlternatives(
+                mail_subject,
+                message_text,
+                'unimatch.nea@gmail.com',
+                [to_email]
+            )
+            email.attach_alternative(message, "text/html")
             email.send()
             return render(request, 'accounts/signup_success.html')
-
-            return redirect("accounts:login")
     else:
         form = CustomUserCreationForm()
     return render(request, "accounts/signup.html", { "form": form })
