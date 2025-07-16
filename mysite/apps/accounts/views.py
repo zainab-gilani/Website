@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.utils.html import strip_tags
 from django.views.generic.base import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -41,7 +43,7 @@ def register_view(request):
             })
             message_text = strip_tags(message)
 
-            mail_subject = 'Activate your account'
+            mail_subject = f"Activate your account (requested {datetime.now().strftime('%d/%m/%Y %H:%M:%S')})"
             to_email = form.cleaned_data.get('email')
 
             email = EmailMultiAlternatives(
@@ -85,7 +87,7 @@ def resend_activation_view(request):
 
         if user and not user.is_active:
             current_site = request.get_host()
-            mail_subject = 'Activate your account'
+            mail_subject = f"Activate your account (requested {datetime.now().strftime('%d/%m/%Y %H:%M:%S')})"
             message = render_to_string('accounts/acc_active_email.html', {
                 'user': user,
                 'domain': current_site,
