@@ -52,7 +52,10 @@ def register_view(request):
             )
             email.attach_alternative(message, "text/html")
             email.send()
-            return render(request, 'accounts/signup_success.html')
+            return render(request, 'accounts/signup_success.html', {
+                'user_email': user.email
+            })
+
     else:
         form = CustomUserCreationForm()
     return render(request, "accounts/signup.html", { "form": form })
@@ -73,4 +76,36 @@ def activate(request, uidb64, token):
     else:
         return render(request, 'accounts/activation_invalid.html')
     #endif
+#enddef
+
+def resend_activation_view(request):
+    if request.method == "POST":
+        email = request.POST.get('email')
+        user = User.objects.filter(email=email).first()
+
+        if user and not user.is_active:
+            current_site = request.get_host()
+            mail_subject = 'Activate your account'
+            message = render_to_string('accounts/acc_active_email.html', {
+                'user': user,
+                'domain': current_site,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': account_activation_token.make_token(user),
+            })
+            message_text = strip_tags(message)
+            email_msg = EmailMultiAlternatives(
+                mail_subject,
+                message_text,
+                'unimatch.nea@gmail.com',
+                [email]
+            )
+            email_msg.attach_alternative(message, "text/html")
+            email_msg.send()
+            messages.success(request, 'Activation link resent! Check your inbox.')
+        else:
+            messages.error(request, 'No inactive account found with that email.')
+        #endif
+        return redirect('accounts:resend_activation')
+    #endif
+    return render(request, 'accounts/resend_activation.html')
 #enddef

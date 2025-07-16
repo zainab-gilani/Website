@@ -8,6 +8,19 @@
         <p style="font-size: 1.1rem; color: #474b52; margin: 20px 0 30px 0;">
             Please check your email for an activation link to finish setting up your account.
         </p>
-        <p style="color: #888;">Didn’t get the email? Check your spam folder, or <a href="{% url 'accounts:signup' %}" style="color:#2D5289;">sign up again</a>.</p>
+        <p style="color: #888;">
+            Didn’t get the email? Check your spam folder,
+            or
+            <form action="{% url 'accounts:resend_activation' %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="email" value="{{ user_email }}">
+                <button type="submit" style="background:none;border:none;color:#2D5289;text-decoration:underline;cursor:pointer;padding:0;">
+                    resend activation link
+                </button>
+            </form>.
+        </p>
+        {% if message %}
+            <p style="color:#2D5289;margin-top:12px;">{{ message }}</p>
+        {% endif %}
     </div>
 {% endblock %}
