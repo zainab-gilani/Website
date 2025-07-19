@@ -1,4 +1,13 @@
+html, body {
+    height: 100%;
+    min-height: 100vh;
+    background: linear-gradient(0deg, rgb(242, 246, 255) 0%, rgb(245, 247, 255) 50%, rgb(249, 251, 255) 100%);
+}
+
 body {
+    min-height: 100vh;
+    height: 100%;
+    margin: 0;
     background: linear-gradient(0deg, rgb(242, 246, 255) 0%, rgb(245, 247, 255) 50%, rgb(249, 251, 255) 100%);
     font-family: "Tahoma", serif;
     text-align: center;
@@ -17,11 +26,41 @@ h1 {
     margin-top: 10px;
 }
 
+.login-title {
+    position: absolute;
+    top: -173px;
+    left: 43%;
+    text-align: center;
+    font-family: 'Abril Fatface', serif;
+    font-size: 2.9rem;
+    color: #2D5289;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
 .centered-container {
     margin-top: 60px;
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.login-container {
+    margin-top: 168px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    align-items: center;
+}
+
+.login-blurb {
+    position: absolute;
+    color: #4c6e96;
+    font-weight: bold;
+    font-size: 1.07rem;
+    margin-bottom: 28px;
+    margin-top: -57px;
+    letter-spacing: 0.01em;
 }
 
 form {
@@ -82,7 +121,6 @@ label {
     letter-spacing: 0.01em;
 }
 
-
 button.button {
     text-decoration: none;
     display: block;
@@ -100,6 +138,26 @@ button.button {
 }
 
 button.button:hover {
+    background-color: #b6ccea;
+}
+
+button.login-button {
+    text-decoration: none;
+    display: block;
+    width: 150px;
+    margin: 50px auto 30px auto;
+    padding: 16px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-align: center;
+    background-color: #d8e2f0;
+    color: #2D5289;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+button.login-button:hover {
     background-color: #b6ccea;
 }
 

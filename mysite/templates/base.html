@@ -1,13 +1,16 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>{% block title %}Title{% endblock %}</title>
+    <meta charset="UTF-8">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'accounts/style.css' %}">
+    <link href='https://fonts.googleapis.com/css?family=Abril Fatface' rel='stylesheet'>
 </head>
 <body>
-{% include 'navbar.html' %}
-  <main>
-    {% block content %}
-    {% endblock %}
-  </main>
+    <img src="{% static 'images/logo.svg' %}" alt="UniMatch Logo" class="logo">
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
 </body>
 </html>
