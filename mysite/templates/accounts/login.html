@@ -7,7 +7,7 @@
     <title>{% block title %}Login{% endblock %}</title>
 
     <div class="login-container">
-        <h1 class="login-title">Unimatch</h1>
+        <h1 class="login-title">UniMatch</h1>
         <p class="login-blurb">Welcome back! Log in to continue.</p>
         <form method="post" class="form">
             {% csrf_token %}
@@ -34,6 +34,6 @@
         <div class="extra-options">
             <p>ALREADY HAVE AN ACCOUNT? <a href="{% url 'accounts:signup' %}">SIGN UP</a></p>
             <em>OR</em>
-            <p><a href="#">CONTINUE AS GUEST</a></p>
+            <p><a href="{% url 'coursefinder:guest_coursefinder' %}">CONTINUE AS GUEST</a></p>
         </div>
 {% endblock %}
