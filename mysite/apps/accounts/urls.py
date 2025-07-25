@@ -5,6 +5,8 @@ from . import views
 from .views import resend_activation_view
 from .forms import CustomLoginForm
 
+from django.contrib.auth.views import LogoutView
+
 app_name = "accounts"
 
 urlpatterns = [
@@ -19,7 +21,7 @@ urlpatterns = [
         ),
         name="login",
     ),
-    path("logout", auth_views.LogoutView.as_view(), name="logout"),
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('activate/<uidb64>/<token>/', views.activate, name='activate'),
     path('resend-activation/', resend_activation_view, name='resend_activation'),
 ]

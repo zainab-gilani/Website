@@ -69,12 +69,12 @@ def activate(request, uidb64, token):
         user = User.objects.get(pk=uid)
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
-    #entry
+    #endtry
 
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
-        return render(request, 'accounts/activation_success.html')
+        return redirect('coursefinder:coursefinder')
     else:
         return render(request, 'accounts/activation_invalid.html')
     #endif
