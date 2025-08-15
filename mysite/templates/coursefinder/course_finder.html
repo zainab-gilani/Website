@@ -6,8 +6,9 @@
 
 <h1>UniMatch</h1>
 
-<form>
-    <input type="text" id="search" placeholder="Say Something...">
+<form method="POST" action="{% url 'coursefinder:course_search' %}">
+    {% csrf_token %}
+    <input type="text" name="query" id="search" placeholder="Say Something...">
 </form>
 
 {% if user.is_authenticated %}
@@ -82,4 +83,36 @@
     setInterval(showHighlight, 1000);
     setInterval(rotateText, 4000);
 </script>
+
+{% if parsed_input %}
+    <p style="text-align:center; margin-top:30px;">
+        <strong>{{ parsed_input }}</strong>
+    </p>
+{% endif %}
+
+{% if results %}
+    <div style="display: flex; justify-content: center; margin-top: 30px;">
+        <table border="1" style="border-collapse: collapse; min-width: 700px; background: #fff;">
+            <thead>
+                <tr style="background: #f4e7ec;">
+                    <th style="padding: 10px 20px;">University</th>
+                    <th style="padding: 10px 20px;">Course</th>
+                    <th style="padding: 10px 20px;">Requirements</th>
+                    <th style="padding: 10px 20px;">Link</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for match in results %}
+                <tr>
+                    <td style="padding: 10px 20px;">{{ match.university }}</td>
+                    <td style="padding: 10px 20px;">{{ match.course }}</td>
+                    <td style="padding: 10px 20px;">{{ match.requirements }}</td>
+                    <td style="padding: 10px 20px;"><a href="{{ match.link }}" target="_blank">View</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+
 {% endblock %}
