@@ -30,7 +30,7 @@ def course_search_view(request):
         query = request.POST.get('query', '')
 
         if query:
-            parsed_input = "Parsed grades: A in Maths, B in Physics"
+            parsed_input = "The following universities accept: A in Maths, B in Physics"
             matches = get_dummy_matches()
         else:
             parsed_input = ""
