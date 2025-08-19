@@ -288,3 +288,76 @@ a.button:hover { background-color: #b6ccea; }
         padding: 10px 6px;
     }
 }
+
+
+/* FORM & SEARCH BAR POSITIONING */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    width: 500px;   /* Make thinner */
+    margin: 0 auto;
+    margin-top: 150px;  /* Move it down */
+    padding: 0;
+}
+
+.search-bar-wrapper {
+    width:550px;    /* Also thinner to match form */
+    max-width: 95vw;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+#search {
+    width: 100%;
+    margin-bottom: 0;
+    padding: 8px 15px 8px 38px;
+    background-image: url("/static/images/magnifying_glass.svg");
+    background-repeat: no-repeat;
+    background-size: 20px;
+    background-position: 11px center;
+    font-size: 0.97rem;
+    border-radius: 10px;
+    border: 2px solid #b7c7e0;
+    box-sizing: border-box;
+}
+
+#search:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #96aee8;
+}
+
+
+.search-tips {
+    position: absolute;
+    top: 49px;
+    left: 1px;
+    width: 509px;
+    background: #e6eeff;
+    color: #2d5283;
+    border-radius: 13px;
+    border: 2px solid #c3d2ec;
+    font-size: 1.03rem;
+    font-family: 'Tahoma', serif;
+    text-align: left;
+    z-index: 10;
+    opacity: 1;
+    padding: 14px 19px 9px 19px;
+    margin: 0;
+    transition: opacity 0.15s;
+}
+
+@media (max-width: 600px) {
+    form, .search-bar-wrapper {
+        width: 96vw;
+        min-width: 0;
+        margin-top: 30px;
+    }
+    #search {
+        font-size: .97rem;
+        padding-left: 35px;
+    }
+}

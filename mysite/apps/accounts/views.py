@@ -18,12 +18,24 @@ from django.utils.http import urlsafe_base64_decode
 
 from django.contrib import messages
 
+from django.contrib.auth.decorators import login_required
+
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+
 
 User = get_user_model()
 
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = "accounts/profile.html"
 #endclass
+
+@login_required
+def profile_view(request):
+    return render(request, 'accounts/profile.html', {'user': request.user})
+#endif
 
 def register_view(request):
     if request.method == "POST":
@@ -110,4 +122,55 @@ def resend_activation_view(request):
         return redirect('accounts:resend_activation')
     #endif
     return render(request, 'accounts/resend_activation.html')
+#enddef
+
+@login_required
+def profile_view(request):
+    user = request.user
+
+    if request.method == 'POST':
+        # Save profile changes
+        if 'save_changes' in request.POST:
+            username = request.POST.get('username', '')
+            email = request.POST.get('email', '')
+
+            if username and username != user.username:
+                user.username = username
+            #endif
+
+            if email and email != user.email:
+                user.email = email
+            #endif
+
+            user.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect('profile')
+
+        # Change password
+        elif 'change_password' in request.POST:
+            password_form = PasswordChangeForm(user, request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, "Password changed successfully!")
+                return redirect('profile')
+            #endif
+        else:
+            password_form = PasswordChangeForm(user)
+        #endif
+
+        # Delete account
+        if 'delete_account' in request.POST:
+            user.delete()
+            return redirect('coursefinder:guest_coursefinder')
+        #endif
+    else:
+        password_form = PasswordChangeForm(user)
+    #endif
+
+    context = {
+        "user": user,
+        "password_form": password_form,
+    }
+    return render(request, 'accounts/profile.html', context)
 #enddef

@@ -202,6 +202,152 @@ button.login-button:hover {
     z-index: 1000;
 }
 
+
+.profile-bg {
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    flex-direction: row; /* <--- IMPORTANT */
+    gap: 64px;
+}
+
+.profile-side-menu {
+    background: #d5e2f5;
+    border-radius: 18px 18px 0 0px;
+    min-width: 400px;
+    height: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 120px 0 0 0;
+    margin-top: -150px;
+}
+
+.profile-pfp-big {
+    width: 110px;
+    height: 110px;
+    margin-bottom: 2.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.profile-pfp-big img {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    border: none;
+    background: #e3eaf7;
+    object-fit: cover;
+    position: absolute;
+    top: 250px;
+}
+
+.profile-menu {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    margin-top: 10px;
+    gap: 0;
+}
+.profile-menu-item {
+    width: 100%;
+    padding: 19px 0;
+    text-align: center;
+    font-size: 1.13rem;
+    font-weight: 700;
+    border: none;
+    border-bottom: 1.5px solid #e6eaf2;
+    background: none;
+    color: #34568b;
+    cursor: pointer;
+    transition: background 0.18s, color 0.16s;
+    outline: none;
+    font-family: inherit;
+    border-radius: 0;
+    margin-top: 200px;
+    /*position: absolute;*/
+    /*top: 350px;*/
+}
+.profile-menu-item:last-child {
+    border-bottom: none;
+}
+.profile-menu-item.active,
+.profile-menu-item:active,
+.profile-menu-item:focus {
+    background: #b5c9e7;
+    color: #27436b;
+}
+
+.delete-account-btn {
+    color: #c83e3e;
+    background: #d5e2f5;
+    font-weight: 700;
+    border: none;
+    border-radius: 0 0 18px 18px;
+    width: 100%;
+    max-width: 500px;
+    align-self: center;
+    padding: 1.3rem 0;
+    font-size: 1.17rem;
+    letter-spacing: 0.01em;
+    /*margin-bottom: -10px;*/
+    margin-top: -40px;   /* space from bottom */
+    display: block;
+    transition: background 0.16s, color 0.16s;
+}
+
+.delete-account-btn:hover,
+.delete-account-btn:focus {
+    background: #ffb4b4;
+    color: #9d2323;
+}
+
+.save-btn {
+    margin-top: 15px;
+    background: #d8e2f0;
+    color: #2d5289;
+    border: none;
+    border-radius: 7px;
+    padding: 0.95rem 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    cursor: pointer;
+    width: 200px;
+    transition: background 0.19s;
+    position: relative;
+    left: 200px;
+
+}
+.save-btn:hover {
+    background: #b6ccea;
+}
+
+@media (max-width: 900px) {
+    .profile-box {
+        flex-direction: column;
+        width: 97vw;
+        min-width: 0;
+    }
+    .profile-side-menu {
+        border-radius: 18px 18px 0 0;
+        border-right: none;
+        border-bottom: 2px solid #e6eaf2;
+        width: 100%;
+        max-width: none;
+        min-width: 0;
+        padding: 30px 0 0 0;
+    }
+    .profile-form {
+        padding: 34px 20px 28px 20px;
+    }
+}
+
+
+
+
 /* fonts */
 .abril-fatface-regular {
     font-family: "Abril Fatface", serif;

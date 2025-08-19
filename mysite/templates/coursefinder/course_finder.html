@@ -6,16 +6,58 @@
 
 <h1>UniMatch</h1>
 
-<form method="POST" action="{% url 'coursefinder:course_search' %}">
-    {% csrf_token %}
-    <input type="text" name="query" id="search" placeholder="Say Something...">
+<form method="POST" action="{% url 'coursefinder:course_search' %}" id="search-form" autocomplete="off" class="search-form">
+{% csrf_token %}
+    <div class="search-bar-wrapper">
+        <input type="text" name="query" id="search" placeholder="Say Something..." autocomplete="off">
+        <div id="search-tips" class="search-tips">
+            <div class="tips-title">Tips:</div>
+            <ul>
+                <li>"I have AAA in Maths, Physics, Chemistry"</li>
+                <li>"ABB in Biology, Chemistry, Maths"</li>
+                <li>"A in Maths, B in Physics, dropped Chemistry"</li>
+                <li>"Maths: A, Physics: B, Chemistry: C"</li>
+                <li>"I want to study Medicine"</li>
+                <li>"Looking to apply for Psychology"</li>
+            </ul>
+        </div>
+    </div>
 </form>
+
+<script>
+    const searchInput = document.getElementById('search');
+    const tipsBox = document.getElementById('search-tips');
+
+    window.addEventListener('DOMContentLoaded', function() {
+        if (document.activeElement === searchInput) {
+            searchInput.blur();
+        }
+        tipsBox.style.opacity = '0';
+        tipsBox.style.pointerEvents = 'none';
+    });
+
+    searchInput.addEventListener('focus', function() {
+        tipsBox.style.opacity = '1';
+        tipsBox.style.pointerEvents = 'auto';
+    });
+    searchInput.addEventListener('blur', function() {
+        setTimeout(() => {
+            tipsBox.style.opacity = '0';
+            tipsBox.style.pointerEvents = 'none';
+        }, 120);
+    });
+    document.getElementById('search-form').addEventListener('submit', function() {
+        tipsBox.style.opacity = '0';
+        tipsBox.style.pointerEvents = 'none';
+    });
+</script>
+
 
 {% if user.is_authenticated %}
 <div class="profile-dropdown">
     <img src="{% static 'images/pfp.svg' %}" alt="pfp" class="pfp">
     <div class="dropdown-content">
-        <a href="#" class="dropdown-link">
+        <a href="{% url 'accounts:profile' %}" class="dropdown-link">
             <img src="{% static 'images/profile.svg' %}" alt="" class="icon">
             <span>Profile</span>
         </a>
@@ -93,6 +135,8 @@
             <tr>
                 <th>University</th>
                 <th>Course</th>
+                <th>Type</th>
+                <th>Duration</th>
                 <th>Requirements</th>
                 <th>Link</th>
             </tr>
@@ -102,13 +146,18 @@
             <tr>
                 <td>{{ match.university }}</td>
                 <td>{{ match.course }}</td>
+                <td>{{ match.type }}</td>
+                <td>{{ match.duration }}</td>
                 <td>{{ match.requirements }}</td>
-                <td><a href="{{ match.link }}" target="_blank">View</a></td>
+                <td>
+                    <a href="{{ match.course_link }}" target="_blank">View</a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
 {% endif %}
+
 
 {% endblock %}
