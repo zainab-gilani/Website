@@ -11,7 +11,6 @@ app_name = "accounts"
 
 urlpatterns = [
     path("signup/", views.register_view, name="signup"),
-    path("profile", views.ProfileView.as_view(), name="profile"),
     # Django Auth
     path(
         "login/",
@@ -24,5 +23,5 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
     path('activate/<uidb64>/<token>/', views.activate, name='activate'),
     path('resend-activation/', resend_activation_view, name='resend_activation'),
-    path('profile/', views.profile_view, name='profile'),
+    path("profile/", views.profile_view, name="profile"),
 ]

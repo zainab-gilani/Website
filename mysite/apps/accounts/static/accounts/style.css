@@ -202,6 +202,144 @@ button.login-button:hover {
     z-index: 1000;
 }
 
+.pfp-small {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: none;
+    cursor: pointer;
+}
+
+.profile-dropdown {
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    display: flex;
+    align-items: center;
+    z-index: 2000;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 80px;
+    right: 0;
+    min-width: 190px;
+    max-width: 240px;
+    width: 220px;
+    background: #fff;
+    border-radius: 14px;
+    padding: 0;
+    z-index: 3000;
+    flex-direction: column;
+    align-items: stretch;
+    overflow: hidden;
+    border: 1.5px solid #e6eaf2;
+}
+
+.profile-dropdown:hover .dropdown-content,
+.profile-dropdown:focus-within .dropdown-content {
+    display: flex;
+}
+
+.dropdown-link {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 24px;
+    width: 100%;
+    min-height: 50px;
+    background: none;
+    border: none;
+    color: #2D5289;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.09rem;
+    gap: 12px;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: background 0.17s;
+}
+
+
+.dropdown-link:hover,
+.dropdown-link:focus,
+.dropdown-content .dropdown-link:hover,
+.dropdown-content .dropdown-link:focus,
+.dropdown-content button.dropdown-link:hover,
+.dropdown-content button.dropdown-link:focus {
+    background: #e3eaf7 !important;
+    color: #2D5289 !important;
+}
+
+
+.dropdown-content button.dropdown-link {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    width: 100%;
+    min-height: 50px;
+    padding: 0 24px;
+    background: none !important;
+    border: none !important;
+    color: #2D5289;
+    font-weight: 700;
+    font-size: 1.09rem;
+    text-align: left;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+
+
+.icon {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.dropdown-content hr {
+    border: none;
+    border-top: 1px solid #e0e6ef;
+    margin: 0;
+}
+
+.dropdown-link,
+.dropdown-content button.dropdown-link,
+.dropdown-content a.dropdown-link,
+.dropdown-content .dropdown-link {
+    font-family: 'Tahoma', serif !important;
+    font-size: 1.09rem !important;
+    font-weight: 700 !important;
+    color: #2D5289 !important;
+    background: none !important;
+    border: none !important;
+    line-height: 1.2 !important;
+    text-align: left !important;
+    text-decoration: none !important;
+    outline: none !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    min-height: 50px !important;
+    padding: 0 24px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    cursor: pointer !important;
+}
+
+.dropdown-link span {
+    font-family: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    color: inherit !important;
+    line-height: 1.2 !important;
+}
 
 .profile-bg {
     min-height: 90vh;
@@ -209,7 +347,7 @@ button.login-button:hover {
     align-items: center;
     justify-content: center;
     background: none;
-    flex-direction: row; /* <--- IMPORTANT */
+    flex-direction: row;
     gap: 64px;
 }
 
@@ -232,7 +370,9 @@ button.login-button:hover {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
+
 .profile-pfp-big img {
     width: 250px;
     height: 250px;
@@ -240,8 +380,8 @@ button.login-button:hover {
     border: none;
     background: #e3eaf7;
     object-fit: cover;
-    position: absolute;
-    top: 250px;
+    position: relative;
+    top: 20px;
 }
 
 .profile-menu {
@@ -249,7 +389,7 @@ button.login-button:hover {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    margin-top: 10px;
+    margin-top: -100px;
     gap: 0;
 }
 .profile-menu-item {
@@ -268,8 +408,6 @@ button.login-button:hover {
     font-family: inherit;
     border-radius: 0;
     margin-top: 200px;
-    /*position: absolute;*/
-    /*top: 350px;*/
 }
 .profile-menu-item:last-child {
     border-bottom: none;
@@ -293,8 +431,7 @@ button.login-button:hover {
     padding: 1.3rem 0;
     font-size: 1.17rem;
     letter-spacing: 0.01em;
-    /*margin-bottom: -10px;*/
-    margin-top: -40px;   /* space from bottom */
+    margin-top: -40px;
     display: block;
     transition: background 0.16s, color 0.16s;
 }
@@ -304,6 +441,7 @@ button.login-button:hover {
     background: #ffb4b4;
     color: #9d2323;
 }
+
 
 .save-btn {
     margin-top: 15px;
@@ -345,8 +483,64 @@ button.login-button:hover {
     }
 }
 
+#profile-toast-messages {
+  position: fixed;
+  top: 36px;
+  left: 0;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  z-index: 9999;
+  pointer-events: none;
+}
 
+.profile-toast {
+  background: #e9f6e9;
+  color: #227441;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  box-shadow: 0 3px 18px 0 rgba(60,40,110,0.07);
+  margin: 0 8px;
+  border: 1.5px solid #c9e7c9;
+  transition: opacity 0.2s;
+  pointer-events: all;
+}
 
+.profile-toast.error,
+.profile-toast.danger,
+.profile-toast.errorlist {
+  background: #ffeaea;
+  color: #be2929;
+  border-color: #fdc3c3;
+}
+
+/*Saved Matches Button*/
+.saved-btn {
+    position: absolute;
+    top: 29px;
+    right: 130px;
+    left: auto;
+    display: inline-block;
+    width: 110px;
+    padding: 12px 0;
+    font-size: 1.1rem;
+    font-weight: bold;
+    background-color: #d8e2f0 !important;
+    color: #2D5289 !important;
+    border: none !important;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none !important;
+    z-index: 1001;
+    text-align: center;
+    line-height: 1.12;
+    box-sizing: border-box;
+    appearance: none;
+    transition: background 0.18s;
+}
+.saved-btn:hover { background-color: #b6ccea !important; }
 
 /* fonts */
 .abril-fatface-regular {

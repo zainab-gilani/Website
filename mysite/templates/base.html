@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
     {% load static %}
     <link rel="stylesheet" href="{% static 'accounts/style.css' %}">
-    <link href='https://fonts.googleapis.com/css?family=Abril Fatface' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css?family=Abril+Fatface" rel="stylesheet">
+    <title>UniMatch</title>
 </head>
 <body>
-    <img src="{% static 'images/logo.svg' %}" alt="UniMatch Logo" class="logo">
+    <a href="{% url 'coursefinder:coursefinder' %}">
+        <img src="{% static 'images/logo.svg' %}" alt="UniMatch Logo" class="logo">
+    </a>
+    {% block header_actions %}{% endblock %}
     <main>
-        {% block content %}
-        {% endblock %}
+        {% block content %}{% endblock %}
     </main>
 </body>
 </html>

@@ -12,6 +12,126 @@ h1 {
     margin-bottom: 40px;
 }
 
+/* --- Profile Dropdown for All Pages --- */
+.pfp-small {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: none;
+    cursor: pointer;
+}
+
+.profile-dropdown {
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    display: flex;
+    align-items: center;
+    z-index: 2000;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 80px;
+    right: 0;
+    min-width: 190px;
+    max-width: 240px;
+    width: 220px;
+    background: #fff;
+    border-radius: 14px;
+    padding: 0;
+    z-index: 3000;
+    flex-direction: column;
+    align-items: stretch;
+    overflow: hidden;
+    border: 1.5px solid #e6eaf2;
+}
+
+.profile-dropdown:hover .dropdown-content,
+.profile-dropdown:focus-within .dropdown-content {
+    display: flex;
+}
+
+.dropdown-link {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 24px;
+    width: 100%;
+    min-height: 50px;
+    background: none;
+    border: none;
+    color: #2D5289;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.09rem;
+    gap: 12px;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: background 0.17s;
+}
+
+.dropdown-link:hover,
+.dropdown-link:focus,
+.dropdown-content .dropdown-link:hover,
+.dropdown-content .dropdown-link:focus,
+.dropdown-content button.dropdown-link:hover,
+.dropdown-content button.dropdown-link:focus {
+    background: #e3eaf7 !important;
+    color: #2D5289 !important;
+}
+
+.dropdown-content button.dropdown-link {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    width: 100%;
+    min-height: 50px;
+    padding: 0 24px;
+    background: none !important;
+    border: none !important;
+    color: #2D5289;
+    font-weight: 700;
+    font-size: 1.09rem;
+    text-align: left;
+    cursor: pointer;
+    box-sizing: border-box;
+    margin: 0 !important;
+    outline: none !important;
+    height: 50px;
+}
+
+.dropdown-content button.dropdown-link span {
+    display: inline-block;
+}
+
+.dropdown-link,
+.dropdown-content button.dropdown-link {
+    min-height: 50px;
+    height: 50px;
+}
+
+.icon {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.dropdown-content hr {
+    border: none;
+    border-top: 1px solid #e0e6ef;
+    margin: 0;
+}
+
+/* --- end dropdown section --- */
+
+
 form {
     display: inline-block;
     text-align: left;
@@ -52,105 +172,6 @@ input[type="text"],
     width: 90px;
     height: auto;
     z-index: 1000;
-}
-
-.profile-dropdown {
-    position: absolute;
-    top: 20px;
-    right: 30px;
-    display: inline-block;
-    z-index: 100;
-    min-width: 80px;
-}
-
-.pfp {
-    width: 80px;
-    height: auto;
-    cursor: pointer;
-    display: block;
-    margin: 0 auto;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    right: -17px;
-    top: 100%;
-    background: #fff;
-    border: 2px solid #dbe5f3;
-    border-radius: 20px;
-    min-width: 260px;
-    padding: 0;
-    z-index: 101;
-    overflow: hidden;
-}
-
-.profile-dropdown:hover .dropdown-content,
-.profile-dropdown:focus-within .dropdown-content {
-    display: block;
-}
-
-/* Dropdown item styles */
-.dropdown-link {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 24px 32px;
-    color: #2D5289;
-    background: none;
-    border: none;
-    width: 100%;
-    font-size: 1.2rem;
-    font-family: 'Tahoma', serif;
-    font-weight: 700;
-    cursor: pointer;
-    text-align: left;
-    text-decoration: none !important;
-    box-sizing: border-box;
-    transition: background 0.15s;
-    line-height: 1.2;
-}
-
-.dropdown-link:hover,
-.dropdown-link:focus {
-    background-color: #f2f6ff;
-    color: #153464;
-    outline: none;
-}
-
-.icon {
-    width: 28px;
-    height: 28px;
-    display: block;
-    flex-shrink: 0;
-}
-
-.dropdown-link span {
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: inherit;
-    color: inherit;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-form .dropdown-link {
-    font-family: 'Tahoma', serif;
-    font-weight: 700;
-    font-size: 1.2rem;
-}
-
-.dropdown-content hr {
-    margin: 0;
-    border: none;
-    border-top: 1px solid #E3EAFB;
-    opacity: 1;
-}
-
-.dropdown-content form {
-    margin: 0;
-    padding: 0;
-    width: 100%;
 }
 
 a.button, .guest-options .button {
@@ -290,20 +311,20 @@ a.button:hover { background-color: #b6ccea; }
 }
 
 
-/* FORM & SEARCH BAR POSITIONING */
+/* Form and Search Bar */
 form {
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
-    width: 500px;   /* Make thinner */
+    width: 500px;
     margin: 0 auto;
-    margin-top: 150px;  /* Move it down */
+    margin-top: 150px;
     padding: 0;
 }
 
 .search-bar-wrapper {
-    width:550px;    /* Also thinner to match form */
+    width:550px;
     max-width: 95vw;
     position: relative;
     display: flex;

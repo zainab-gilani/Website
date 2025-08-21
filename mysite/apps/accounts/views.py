@@ -22,20 +22,12 @@ from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 
 
 User = get_user_model()
-
-class ProfileView(LoginRequiredMixin, TemplateView):
-    template_name = "accounts/profile.html"
-#endclass
-
-@login_required
-def profile_view(request):
-    return render(request, 'accounts/profile.html', {'user': request.user})
-#endif
 
 def register_view(request):
     if request.method == "POST":
@@ -124,53 +116,76 @@ def resend_activation_view(request):
     return render(request, 'accounts/resend_activation.html')
 #enddef
 
+
 @login_required
 def profile_view(request):
     user = request.user
+    error = None
 
     if request.method == 'POST':
-        # Save profile changes
-        if 'save_changes' in request.POST:
-            username = request.POST.get('username', '')
-            email = request.POST.get('email', '')
-
-            if username and username != user.username:
-                user.username = username
-            #endif
-
-            if email and email != user.email:
-                user.email = email
-            #endif
-
-            user.save()
-            messages.success(request, "Profile updated successfully!")
-            return redirect('profile')
-
-        # Change password
-        elif 'change_password' in request.POST:
-            password_form = PasswordChangeForm(user, request.POST)
-            if password_form.is_valid():
-                user = password_form.save()
-                update_session_auth_hash(request, user)
-                messages.success(request, "Password changed successfully!")
-                return redirect('profile')
-            #endif
-        else:
-            password_form = PasswordChangeForm(user)
-        #endif
-
-        # Delete account
+        # DELETE ACCOUNT
         if 'delete_account' in request.POST:
             user.delete()
             return redirect('coursefinder:guest_coursefinder')
         #endif
-    else:
-        password_form = PasswordChangeForm(user)
+
+        # SAVE PROFILE CHANGES
+        if 'save_changes' in request.POST:
+            username = request.POST.get('username', '').strip()
+            email = request.POST.get('email', '').strip()
+            new_password = request.POST.get('password', '')
+            confirm_password = request.POST.get('confirm_password', '')
+
+            something_changed = False
+
+            # Username update
+            if username and username != user.username:
+                if User.objects.filter(username=username).exclude(pk=user.pk).exists():
+                    error = "Username already taken."
+                else:
+                    user.username = username
+                    something_changed = True
+                #endif
+            #endif
+
+            # Email update
+            if not error and email and email != user.email:
+                if User.objects.filter(email=email).exclude(pk=user.pk).exists():
+                    error = "Email already used."
+                else:
+                    user.email = email
+                    something_changed = True
+                #endif
+            #endif
+
+            # Password update
+            if not error and new_password:
+                if new_password != confirm_password:
+                    error = "Passwords do not match."
+                elif len(new_password) < 8:
+                    error = "Password must be at least 8 characters."
+                else:
+                    user.set_password(new_password)
+                    something_changed = True
+                #endif
+
+            # Save changes if no error
+            if not error and something_changed:
+                user.save()
+                messages.success(request, "Profile updated successfully!")
+                # If password changed, keep user logged in
+                if new_password:
+                    update_session_auth_hash(request, user)
+                #endif
+                return redirect('accounts:profile')
+            else:
+                messages.error(request, error)
+            #endif
+        #endif
     #endif
 
     context = {
         "user": user,
-        "password_form": password_form,
     }
     return render(request, 'accounts/profile.html', context)
 #enddef

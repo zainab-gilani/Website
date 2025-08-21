@@ -2,162 +2,169 @@
 {% load static %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'coursefinder/style.css' %}">
+    <link rel="stylesheet" href="{% static 'coursefinder/style.css' %}">
 
-<h1>UniMatch</h1>
+    <h1>UniMatch</h1>
 
-<form method="POST" action="{% url 'coursefinder:course_search' %}" id="search-form" autocomplete="off" class="search-form">
-{% csrf_token %}
-    <div class="search-bar-wrapper">
-        <input type="text" name="query" id="search" placeholder="Say Something..." autocomplete="off">
-        <div id="search-tips" class="search-tips">
-            <div class="tips-title">Tips:</div>
-            <ul>
-                <li>"I have AAA in Maths, Physics, Chemistry"</li>
-                <li>"ABB in Biology, Chemistry, Maths"</li>
-                <li>"A in Maths, B in Physics, dropped Chemistry"</li>
-                <li>"Maths: A, Physics: B, Chemistry: C"</li>
-                <li>"I want to study Medicine"</li>
-                <li>"Looking to apply for Psychology"</li>
-            </ul>
+    <form method="POST" action="{% url 'coursefinder:course_search' %}" id="search-form" autocomplete="off"
+          class="search-form">
+        {% csrf_token %}
+        <div class="search-bar-wrapper">
+            <input type="text" name="query" id="search" placeholder="Say Something..." autocomplete="off">
+            <div id="search-tips" class="search-tips">
+                <div class="tips-title">Tips:</div>
+                <ul>
+                    <li>"I have AAA in Maths, Physics, Chemistry"</li>
+                    <li>"ABB in Biology, Chemistry, Maths"</li>
+                    <li>"A in Maths, B in Physics, dropped Chemistry"</li>
+                    <li>"Maths: A, Physics: B, Chemistry: C"</li>
+                    <li>"I want to study Medicine"</li>
+                    <li>"Looking to apply for Psychology"</li>
+                </ul>
+            </div>
         </div>
-    </div>
-</form>
+    </form>
 
-<script>
-    const searchInput = document.getElementById('search');
-    const tipsBox = document.getElementById('search-tips');
+    <script>
+        const searchInput = document.getElementById('search');
+        const tipsBox = document.getElementById('search-tips');
 
-    window.addEventListener('DOMContentLoaded', function() {
-        if (document.activeElement === searchInput) {
-            searchInput.blur();
-        }
-        tipsBox.style.opacity = '0';
-        tipsBox.style.pointerEvents = 'none';
-    });
-
-    searchInput.addEventListener('focus', function() {
-        tipsBox.style.opacity = '1';
-        tipsBox.style.pointerEvents = 'auto';
-    });
-    searchInput.addEventListener('blur', function() {
-        setTimeout(() => {
+        window.addEventListener('DOMContentLoaded', function () {
+            if (document.activeElement === searchInput) {
+                searchInput.blur();
+            }
             tipsBox.style.opacity = '0';
             tipsBox.style.pointerEvents = 'none';
-        }, 120);
-    });
-    document.getElementById('search-form').addEventListener('submit', function() {
-        tipsBox.style.opacity = '0';
-        tipsBox.style.pointerEvents = 'none';
-    });
-</script>
+        });
+
+        searchInput.addEventListener('focus', function () {
+            tipsBox.style.opacity = '1';
+            tipsBox.style.pointerEvents = 'auto';
+        });
+        searchInput.addEventListener('blur', function () {
+            setTimeout(() => {
+                tipsBox.style.opacity = '0';
+                tipsBox.style.pointerEvents = 'none';
+            }, 120);
+        });
+        document.getElementById('search-form').addEventListener('submit', function () {
+            tipsBox.style.opacity = '0';
+            tipsBox.style.pointerEvents = 'none';
+        });
+    </script>
 
 
-{% if user.is_authenticated %}
-<div class="profile-dropdown">
-    <img src="{% static 'images/pfp.svg' %}" alt="pfp" class="pfp">
-    <div class="dropdown-content">
-        <a href="{% url 'accounts:profile' %}" class="dropdown-link">
-            <img src="{% static 'images/profile.svg' %}" alt="" class="icon">
-            <span>Profile</span>
-        </a>
-        <hr>
-        <form action="{% url 'accounts:logout' %}?next={% url 'coursefinder:guest_coursefinder' %}" method="post" style="margin:0;padding:0;">
-            {% csrf_token %}
-            <button type="submit" class="dropdown-link" style="background:none;border:none;">
-                <img src="{% static 'images/logout.svg' %}" alt="" class="icon">
-                <span>Logout</span>
-            </button>
-        </form>
+    {% if user.is_authenticated %}
+        <div class="profile-dropdown">
+            <img src="{% static 'images/pfp.svg' %}" alt="pfp" class="pfp-small">
+            <div class="dropdown-content">
+                <a href="{% url 'accounts:profile' %}" class="dropdown-link">
+                    <img src="{% static 'images/profile.svg' %}" alt="" class="icon">
+                    <span>Profile</span>
+                </a>
+                <hr>
+                <form action="{% url 'accounts:logout' %}?next={% url 'coursefinder:guest_coursefinder' %}"
+                      method="post" style="margin:0;padding:0;">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-link" style="background:none;border:none;">
+                        <img src="{% static 'images/logout.svg' %}" alt="" class="icon">
+                        <span>Logout</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+        <a href="#" class="saved-btn">Saved<br>Matches</a>
+    {% else %}
+        <div class="guest-options">
+            <a href="{% url 'accounts:login' %}" class="button">SIGN IN</a>
+        </div>
+    {% endif %}
+
+
+    <div class="rotating-text">
+        <span id="text"></span>
+        <span id="highlight"></span>
     </div>
-</div>
-<a href="#" class="saved-btn">Saved<br>Matches</a>
-{% else %}
-<div class="guest-options">
-    <a href="{% url 'accounts:login' %}" class="button">SIGN IN</a>
-</div>
-{% endif %}
 
-<div class="rotating-text">
-    <span id="text"></span>
-    <span id="highlight"></span>
-</div>
+    <script>
+        const phrases = [
+            "Find your perfect university course in seconds.",
+            "Compare degrees from top UK universities.",
+            "Personalised matches—no stress, no hassle.",
+            "Struggling to choose? Let UniMatch help you decide.",
+            "Discover courses tailored to your interests.",
+            "No ads, no nonsense. Just pure course search.",
+            "Track your favourites and save your shortlist.",
+            "Access exclusive tips for your university application.",
+            "Wanna go Russell Group? We’ll show you the way.",
+            "Browse entry requirements, deadlines, and more.",
+            "Your degree. Your future. Sorted.",
+            "UniMatch: Your shortcut to the perfect uni.",
+            "Curious about grades? See what you need—instantly.",
+            "Courses for every vibe, every dream.",
+            "Start your journey. Find your match today.",
+        ];
 
-<script>
-    const phrases = [
-        "Find your perfect university course in seconds.",
-        "Compare degrees from top UK universities.",
-        "Personalised matches—no stress, no hassle.",
-        "Struggling to choose? Let UniMatch help you decide.",
-        "Discover courses tailored to your interests.",
-        "No ads, no nonsense. Just pure course search.",
-        "Track your favourites and save your shortlist.",
-        "Access exclusive tips for your university application.",
-        "Wanna go Russell Group? We’ll show you the way.",
-        "Browse entry requirements, deadlines, and more.",
-        "Your degree. Your future. Sorted.",
-        "UniMatch: Your shortcut to the perfect uni.",
-        "Curious about grades? See what you need—instantly.",
-        "Courses for every vibe, every dream.",
-        "Start your journey. Find your match today.",
-    ];
+        let index = 1;
+        const textElement = document.getElementById("text");
+        const highlightElement = document.getElementById("highlight");
+        highlightElement.style.backgroundColor = "#878787";
 
-    let index = 1;
-    const textElement = document.getElementById("text");
-    const highlightElement = document.getElementById("highlight");
-    highlightElement.style.backgroundColor = "#878787";
+        function showHighlight() {
+            highlightElement.style.width = 200;
+        }
 
-    function showHighlight() { highlightElement.style.width = 200; }
-    function rotateText() {
-        textElement.style.opacity = 0;
-        setTimeout(() => {
-            textElement.textContent = phrases[index];
-            textElement.style.opacity = 1;
-            index = (index + 1) % phrases.length;
-        }, 500);
-    }
-    textElement.textContent = phrases[0];
-    setInterval(showHighlight, 1000);
-    setInterval(rotateText, 4000);
-</script>
+        function rotateText() {
+            textElement.style.opacity = 0;
+            setTimeout(() => {
+                textElement.textContent = phrases[index];
+                textElement.style.opacity = 1;
+                index = (index + 1) % phrases.length;
+            }, 500);
+        }
 
-{% if parsed_input %}
-    <p style="text-align:center; margin-top:30px; font-size:1.3rem; font-weight:700; color:#2D5289FF;">
-        {{ parsed_input }}
-    </p>
-{% endif %}
+        textElement.textContent = phrases[0];
+        setInterval(showHighlight, 1000);
+        setInterval(rotateText, 4000);
+    </script>
+
+    {% if parsed_input %}
+        <p style="text-align:center; margin-top:30px; font-size:1.3rem; font-weight:700; color:#2D5289FF;">
+            {{ parsed_input }}
+        </p>
+    {% endif %}
 
 
-{% if results %}
-<div class="table-container">
-    <table class="pretty-table">
-        <thead>
-            <tr>
-                <th>University</th>
-                <th>Course</th>
-                <th>Type</th>
-                <th>Duration</th>
-                <th>Requirements</th>
-                <th>Link</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for match in results %}
-            <tr>
-                <td>{{ match.university }}</td>
-                <td>{{ match.course }}</td>
-                <td>{{ match.type }}</td>
-                <td>{{ match.duration }}</td>
-                <td>{{ match.requirements }}</td>
-                <td>
-                    <a href="{{ match.course_link }}" target="_blank">View</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-{% endif %}
+    {% if results %}
+        <div class="table-container">
+            <table class="pretty-table">
+                <thead>
+                <tr>
+                    <th>University</th>
+                    <th>Course</th>
+                    <th>Type</th>
+                    <th>Duration</th>
+                    <th>Requirements</th>
+                    <th>Link</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for match in results %}
+                    <tr>
+                        <td>{{ match.university }}</td>
+                        <td>{{ match.course }}</td>
+                        <td>{{ match.type }}</td>
+                        <td>{{ match.duration }}</td>
+                        <td>{{ match.requirements }}</td>
+                        <td>
+                            <a href="{{ match.course_link }}" target="_blank">View</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
 
 
 {% endblock %}
