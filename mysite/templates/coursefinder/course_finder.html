@@ -6,6 +6,16 @@
 
     <h1>UniMatch</h1>
 
+    <div class="tab-switcher">
+        <div class="tab-btns">
+            <a href="{% url 'coursefinder:coursefinder' %}" class="tab-btn{% if mode == 'user' %} active{% endif %}">Matches</a>
+            <a href="{% url 'coursefinder:uni_search' %}" class="tab-btn{% if mode == 'search' %} active{% endif %}">Uni
+                Search</a>
+            <div class="slider-bg" id="sliderBg"
+                 style="left: {% if mode == 'user' %}8px{% else %}164px{% endif %};"></div>
+        </div>
+    </div>
+
     <form method="POST" action="{% url 'coursefinder:course_search' %}" id="search-form" autocomplete="off"
           class="search-form">
         {% csrf_token %}
@@ -73,7 +83,7 @@
                 </form>
             </div>
         </div>
-        <a href="#" class="saved-btn">Saved<br>Matches</a>
+        <a href="{% url 'accounts:saved_matches' %}" class="saved-btn">Saved<br>Matches</a>
     {% else %}
         <div class="guest-options">
             <a href="{% url 'accounts:login' %}" class="button">SIGN IN</a>
@@ -140,6 +150,7 @@
             <table class="pretty-table">
                 <thead>
                 <tr>
+                    <th></th>
                     <th>University</th>
                     <th>Course</th>
                     <th>Type</th>
@@ -151,6 +162,26 @@
                 <tbody>
                 {% for match in results %}
                     <tr>
+                        <td>
+                            <form action="{% url 'accounts:save_match' %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="university" value="{{ match.university }}">
+                                <input type="hidden" name="course" value="{{ match.course }}">
+                                <input type="hidden" name="type" value="{{ match.type }}">
+                                <input type="hidden" name="duration" value="{{ match.duration }}">
+                                <input type="hidden" name="requirements" value="{{ match.requirements }}">
+                                <input type="hidden" name="course_link" value="{{ match.course_link }}">
+                                <button type="submit" class="heart-btn" title="Save Match"
+                                        style="background:none; border:none;">
+                                    {% if match.is_saved %}
+                                        <img src="{% static 'images/heart_filled.svg' %}" class="heart-icon"
+                                             alt="Saved">
+                                    {% else %}
+                                        <img src="{% static 'images/heart.svg' %}" class="heart-icon" alt="Save">
+                                    {% endif %}
+                                </button>
+                            </form>
+                        </td>
                         <td>{{ match.university }}</td>
                         <td>{{ match.course }}</td>
                         <td>{{ match.type }}</td>
@@ -162,6 +193,7 @@
                     </tr>
                 {% endfor %}
                 </tbody>
+
             </table>
         </div>
     {% endif %}

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'accounts/style.css' %}">
+
+    <span class="saved-matches-title">
+    Your Saved Matches
+    <span class="saved-matches-heart">♥</span>
+</span>
+    <span class="saved-matches-sub">
+    Easily revisit your favourite courses any time!
+</span>
+
+    {% if results %}
+        <div class="table-container">
+            <table class="pretty-table">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>University</th>
+                    <th>Course</th>
+                    <th>Type</th>
+                    <th>Duration</th>
+                    <th>Requirements</th>
+                    <th>Link</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for match in results %}
+                    <tr>
+                        <td>
+                            <form action="{% url 'accounts:save_match' %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="university" value="{{ match.university }}">
+                                <input type="hidden" name="course" value="{{ match.course }}">
+                                <input type="hidden" name="type" value="{{ match.type }}">
+                                <input type="hidden" name="duration" value="{{ match.duration }}">
+                                <input type="hidden" name="requirements" value="{{ match.requirements }}">
+                                <input type="hidden" name="course_link" value="{{ match.course_link }}">
+                                <button type="submit" class="heart-btn" title="Save Match"
+                                        style="background:none; border:none;">
+                                    {% if match.is_saved %}
+                                        <img src="{% static 'images/heart_filled.svg' %}" class="heart-icon"
+                                             alt="Saved">
+                                    {% else %}
+                                        <img src="{% static 'images/heart.svg' %}" class="heart-icon" alt="Save">
+                                    {% endif %}
+                                </button>
+                            </form>
+                        </td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div style="margin-top: 80px;">
+            <p style="font-size:1.3rem; color:#294366; margin-bottom:10px;">
+                — You haven't saved any matches yet!
+            </p>
+            <p style="color:#6a7fa6; font-size:1.1rem;">
+                Click on the ♥ icon on a course to add it here.
+            </p>
+        </div>
+    {% endif %}
+{% endblock %}
