@@ -6,17 +6,28 @@
 
     <h1>UniMatch</h1>
 
-    <form method="POST" action="{% url 'coursefinder:course_search' %}" id="search-form" autocomplete="off"
+    <div class="tab-switcher">
+        <div class="tab-btns">
+            <a href="{% url 'coursefinder:coursefinder' %}" class="tab-btn{% if mode == 'user' %} active{% endif %}">Matches</a>
+            <a href="{% url 'coursefinder:uni_search' %}" class="tab-btn{% if mode == 'search' %} active{% endif %}">Uni
+                Search</a>
+            <div class="slider-bg" id="sliderBg"
+                 style="left: {% if mode == 'user' %}8px{% else %}164px{% endif %};"></div>
+        </div>
+    </div>
+
+    <form method="POST" action="{% url 'coursefinder:uni_search' %}" id="search-form" autocomplete="off"
           class="search-form">
         {% csrf_token %}
         <div class="search-bar-wrapper">
-            <input type="text" name="query" id="search" placeholder="Say Something..." autocomplete="off">
+            <input type="text" name="query" id="search" placeholder="Search" autocomplete="off">
             <div id="search-tips" class="search-tips">
-                <div class="tips-title">Tips:</div>
+                <div class="tips-title">Examples:</div>
                 <ul>
                     <li>"University of Manchester"</li>
                     <li>"London"</li>
-                    <li>"How to Write a Personal Statement"</li>
+                    <li>"How to write a personal statement"</li>
+                    <li>"Best unis for Law"</li>
                 </ul>
             </div>
         </div>
@@ -50,7 +61,7 @@
         });
     </script>
 
-
+    <!-- Your dropdown and saved matches button like before -->
     {% if user.is_authenticated %}
         <div class="profile-dropdown">
             <img src="{% static 'images/pfp.svg' %}" alt="pfp" class="pfp-small">
@@ -76,7 +87,6 @@
             <a href="{% url 'accounts:login' %}" class="button">SIGN IN</a>
         </div>
     {% endif %}
-
 
     <div class="rotating-text">
         <span id="text"></span>
@@ -124,5 +134,13 @@
         setInterval(showHighlight, 1000);
         setInterval(rotateText, 4000);
     </script>
-{% endblock %}
 
+    <!-- Results -->
+    {% if query %}
+        <div style="text-align:center; margin-top:40px;">
+            <h3>Results for "{{ query }}"</h3>
+            <p>Here you would show resources/articles/tips for the searched query.</p>
+        </div>
+    {% endif %}
+
+{% endblock %}
