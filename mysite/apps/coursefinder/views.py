@@ -58,3 +58,15 @@ def course_search_view(request):
 
     return render(request, 'coursefinder/course_finder.html')
 #endif
+
+def uni_search_view(request):
+    return render(request, 'coursefinder/uni_search.html')
+#enddef
+
+def coursefinder_view(request):
+    return render(request, 'coursefinder/course_finder.html', {"mode": "user"})
+#enddef
+
+def uni_search_view(request):
+    return render(request, 'coursefinder/uni_search.html', {"mode": "search"})
+#enddef

@@ -1,8 +1,6 @@
 from datetime import datetime
 
 from django.utils.html import strip_tags
-from django.views.generic.base import TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 
 from .forms import CustomUserCreationForm
@@ -16,16 +14,14 @@ from django.contrib.auth import get_user_model
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 
-from django.contrib import messages
-
-from django.contrib.auth.decorators import login_required
-
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 
+from ..coursefinder.views import get_dummy_matches
+
+from .models import SavedMatch
 
 User = get_user_model()
 
@@ -188,4 +184,26 @@ def profile_view(request):
         "user": user,
     }
     return render(request, 'accounts/profile.html', context)
+#enddef
+
+@login_required
+def saved_matches_view(request):
+    results = SavedMatch.objects.filter(user=request.user)
+    return render(request, 'accounts/saved_matches.html', {'results': results})
+#enddef
+
+@login_required
+def save_match(request):
+    if request.method == 'POST':
+        SavedMatch.objects.get_or_create(
+            user=request.user,
+            university=request.POST['university'],
+            course=request.POST['course'],
+            type=request.POST['type'],
+            duration=request.POST['duration'],
+            requirements=request.POST['requirements'],
+            course_link=request.POST['course_link']
+        )
+    #endif
+    return redirect(request.META.get('HTTP_REFERER', '/'))
 #enddef
