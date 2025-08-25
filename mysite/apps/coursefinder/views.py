@@ -1,23 +1,14 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.template.loader import render_to_string
+from django.http import JsonResponse
 from .types import UniMatchResult
-from django.contrib import messages
-from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth import update_session_auth_hash
+
 
 # Create your views here.
-
-@login_required
-def coursefinder_view(request):
-    return render(request, 'coursefinder/course_finder.html', {"mode": "user"})
-#enddef
 
 def guest_coursefinder_view(request):
     return render(request, 'coursefinder/course_finder.html')
 #enddef
-
-from django.shortcuts import render, redirect
-
 
 def get_dummy_matches():
     fake_unis = [
@@ -37,36 +28,37 @@ def get_dummy_matches():
     return fake_unis
 #enddef
 
-def course_search_view(request):
-    if request.method == "POST":
+def coursefinder_view(request):
+    tab = request.GET.get('tab') or request.POST.get('tab') or "matches"
+    results = []
+    parsed_input = ""
+    query = ""
+
+    if request.method == 'POST':
         query = request.POST.get('query', '')
-
-        if query:
-            parsed_input = "The following universities accept: A in Maths, B in Physics"
-            matches = get_dummy_matches()
-        else:
-            parsed_input = ""
-            matches = []
+        if tab == 'matches':
+            if query:
+                parsed_input = "The following universities accept: A in Maths, B in Physics"
+                results = get_dummy_matches()
+            #endif
+        elif tab == 'search':
+            pass
         #endif
-
-        return render(request, 'coursefinder/course_finder.html', {
-            'query': query,
-            'parsed_input': parsed_input,
-            'results': matches
-        })
     #endif
 
-    return render(request, 'coursefinder/course_finder.html')
-#endif
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        table_html = render_to_string(
+            'coursefinder/_results_table.html', {
+                'results': results,
+            }, request=request
+        )
+        return JsonResponse({'table_html': table_html})
+    #endif
 
-def uni_search_view(request):
-    return render(request, 'coursefinder/uni_search.html')
-#enddef
-
-def coursefinder_view(request):
-    return render(request, 'coursefinder/course_finder.html', {"mode": "user"})
-#enddef
-
-def uni_search_view(request):
-    return render(request, 'coursefinder/uni_search.html', {"mode": "search"})
+    return render(request, 'coursefinder/course_finder.html', {
+        "mode": tab,
+        'results': results,
+        'parsed_input': parsed_input,
+        'query': query,
+    })
 #enddef

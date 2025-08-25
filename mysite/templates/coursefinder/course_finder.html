@@ -8,62 +8,75 @@
 
     <div class="tab-switcher">
         <div class="tab-btns">
-            <a href="{% url 'coursefinder:coursefinder' %}" class="tab-btn{% if mode == 'user' %} active{% endif %}">Matches</a>
-            <a href="{% url 'coursefinder:uni_search' %}" class="tab-btn{% if mode == 'search' %} active{% endif %}">Uni
-                Search</a>
-            <div class="slider-bg" id="sliderBg"
-                 style="left: {% if mode == 'user' %}8px{% else %}164px{% endif %};"></div>
+            <button class="tab-btn active" id="matchesTabBtn">Matches</button>
+            <button class="tab-btn" id="searchTabBtn">Uni Search</button>
+            <div class="slider-bg" id="sliderBg" style="left:8px;"></div>
         </div>
     </div>
 
-    <form method="POST" action="{% url 'coursefinder:course_search' %}" id="search-form" autocomplete="off"
-          class="search-form">
-        {% csrf_token %}
-        <div class="search-bar-wrapper">
-            <input type="text" name="query" id="search" placeholder="Say Something..." autocomplete="off">
-            <div id="search-tips" class="search-tips">
-                <div class="tips-title">Tips:</div>
-                <ul>
-                    <li>"I have AAA in Maths, Physics, Chemistry"</li>
-                    <li>"ABB in Biology, Chemistry, Maths"</li>
-                    <li>"A in Maths, B in Physics, dropped Chemistry"</li>
-                    <li>"Maths: A, Physics: B, Chemistry: C"</li>
-                    <li>"I want to study Medicine"</li>
-                    <li>"Looking to apply for Psychology"</li>
-                </ul>
+    <!-- MATCHES TAB -->
+    <div id="matchesTabContent" class="tab-content" style="display:block;">
+        <form method="POST" action="{% url 'coursefinder:coursefinder' %}?tab=matches" id="matches-search-form"
+              autocomplete="off"
+              class="search-form">
+            {% csrf_token %}
+            <div class="search-bar-wrapper">
+                <input type="text" name="query" id="matches-search" placeholder="Say Something..." autocomplete="off">
+                <div id="matches-search-tips" class="search-tips">
+                    <div class="tips-title">Tips:</div>
+                    <ul>
+                        <li>"I have AAA in Maths, Physics, Chemistry"</li>
+                        <li>"ABB in Biology, Chemistry, Maths"</li>
+                        <li>"A in Maths, B in Physics, dropped Chemistry"</li>
+                        <li>"Maths: A, Physics: B, Chemistry: C"</li>
+                        <li>"I want to study Medicine"</li>
+                        <li>"Looking to apply for Psychology"</li>
+                    </ul>
+                </div>
             </div>
+        </form>
+
+        <!-- AJAX Results Table -->
+        <div id="results-table">
+            {% if parsed_input %}
+                <p style="text-align:center; margin-top:30px; font-size:1.3rem; font-weight:700; color:#2D5289FF;">
+                    {{ parsed_input }}
+                </p>
+            {% endif %}
+            {% include "coursefinder/_results_table.html" %}
         </div>
-    </form>
-
-    <script>
-        const searchInput = document.getElementById('search');
-        const tipsBox = document.getElementById('search-tips');
-
-        window.addEventListener('DOMContentLoaded', function () {
-            if (document.activeElement === searchInput) {
-                searchInput.blur();
-            }
-            tipsBox.style.opacity = '0';
-            tipsBox.style.pointerEvents = 'none';
-        });
-
-        searchInput.addEventListener('focus', function () {
-            tipsBox.style.opacity = '1';
-            tipsBox.style.pointerEvents = 'auto';
-        });
-        searchInput.addEventListener('blur', function () {
-            setTimeout(() => {
-                tipsBox.style.opacity = '0';
-                tipsBox.style.pointerEvents = 'none';
-            }, 120);
-        });
-        document.getElementById('search-form').addEventListener('submit', function () {
-            tipsBox.style.opacity = '0';
-            tipsBox.style.pointerEvents = 'none';
-        });
-    </script>
+    </div>
 
 
+
+    <!-- UNI SEARCH TAB -->
+    <div id="searchTabContent" class="tab-content" style="display:none;">
+        <form method="POST" action="{% url 'coursefinder:coursefinder' %}?tab=search" id="search-search-form"
+              autocomplete="off"
+              class="search-form">
+            {% csrf_token %}
+            <div class="search-bar-wrapper">
+                <input type="text" name="query" id="search-search" placeholder="Search" autocomplete="off">
+                <div id="search-search-tips" class="search-tips">
+                    <div class="tips-title">Examples:</div>
+                    <ul>
+                        <li>"University of Manchester"</li>
+                        <li>"London"</li>
+                        <li>"How to write a personal statement"</li>
+                        <li>"Best unis for Law"</li>
+                    </ul>
+                </div>
+            </div>
+        </form>
+        {% if query %}
+            <div style="text-align:center; margin-top:40px;">
+                <h3>Results for "{{ query }}"</h3>
+                <p>Here you would show resources/articles/tips for the searched query.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- USER AUTH (PROFILE DROPDOWN ETC) -->
     {% if user.is_authenticated %}
         <div class="profile-dropdown">
             <img src="{% static 'images/pfp.svg' %}" alt="pfp" class="pfp-small">
@@ -90,13 +103,45 @@
         </div>
     {% endif %}
 
-
     <div class="rotating-text">
         <span id="text"></span>
         <span id="highlight"></span>
     </div>
 
     <script>
+        // Handle tips popups for both forms
+        function setupTips(inputId, tipsId, formId) {
+            const input = document.getElementById(inputId);
+            const tipsBox = document.getElementById(tipsId);
+            if (!input || !tipsBox) return;
+            input.addEventListener('focus', function () {
+                tipsBox.style.opacity = '1';
+                tipsBox.style.pointerEvents = 'auto';
+            });
+            input.addEventListener('blur', function () {
+                setTimeout(() => {
+                    tipsBox.style.opacity = '0';
+                    tipsBox.style.pointerEvents = 'none';
+                }, 120);
+            });
+            document.getElementById(formId).addEventListener('submit', function () {
+                tipsBox.style.opacity = '0';
+                tipsBox.style.pointerEvents = 'none';
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', function () {
+            setupTips('matches-search', 'matches-search-tips', 'matches-search-form');
+            setupTips('search-search', 'search-search-tips', 'search-search-form');
+            // Hide all tips by default
+            let allTips = document.querySelectorAll('.search-tips');
+            allTips.forEach(t => {
+                t.style.opacity = '0';
+                t.style.pointerEvents = 'none';
+            });
+        });
+
+        // Rotating Text
         const phrases = [
             "Find your perfect university course in seconds.",
             "Compare degrees from top UK universities.",
@@ -114,7 +159,6 @@
             "Courses for every vibe, every dream.",
             "Start your journey. Find your match today.",
         ];
-
         let index = 1;
         const textElement = document.getElementById("text");
         const highlightElement = document.getElementById("highlight");
@@ -136,67 +180,90 @@
         textElement.textContent = phrases[0];
         setInterval(showHighlight, 1000);
         setInterval(rotateText, 4000);
+
+        // Tabs Switcher (with fade for smoothness)
+        const matchesTabBtn = document.getElementById('matchesTabBtn');
+        const searchTabBtn = document.getElementById('searchTabBtn');
+        const matchesTabContent = document.getElementById('matchesTabContent');
+        const searchTabContent = document.getElementById('searchTabContent');
+        const sliderBg = document.getElementById('sliderBg');
+
+        function showTab(tab) {
+            if (tab === 'matches') {
+                matchesTabBtn.classList.add('active');
+                searchTabBtn.classList.remove('active');
+                sliderBg.style.left = '8px';
+                matchesTabContent.style.opacity = 0;
+                searchTabContent.style.opacity = 0;
+                setTimeout(() => {
+                    matchesTabContent.style.display = 'block';
+                    searchTabContent.style.display = 'none';
+                    setTimeout(() => {
+                        matchesTabContent.style.opacity = 1;
+                    }, 30);
+                }, 120);
+            } else {
+                searchTabBtn.classList.add('active');
+                matchesTabBtn.classList.remove('active');
+                sliderBg.style.left = '164px';
+                matchesTabContent.style.opacity = 0;
+                searchTabContent.style.opacity = 0;
+                setTimeout(() => {
+                    searchTabContent.style.display = 'block';
+                    matchesTabContent.style.display = 'none';
+                    setTimeout(() => {
+                        searchTabContent.style.opacity = 1;
+                    }, 30);
+                }, 120);
+            }
+        }
+
+        matchesTabBtn.addEventListener('click', () => showTab('matches'));
+        searchTabBtn.addEventListener('click', () => showTab('search'));
+
+        // CSS transition for tab-content
+        document.head.insertAdjacentHTML("beforeend", `
+<style>
+.tab-content { transition: opacity .18s; opacity: 1;}
+</style>
+`);
     </script>
 
-    {% if parsed_input %}
-        <p style="text-align:center; margin-top:30px; font-size:1.3rem; font-weight:700; color:#2D5289FF;">
-            {{ parsed_input }}
-        </p>
-    {% endif %}
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+            // Django passes mode as {{ mode|escapejs }}
+            const mode = "{{ mode|escapejs }}";
+            if (mode === 'search') {
+                showTab('search');
+            } else {
+                showTab('matches');
+            }
+        });
 
+    </script>
 
-    {% if results %}
-        <div class="table-container">
-            <table class="pretty-table">
-                <thead>
-                <tr>
-                    <th></th>
-                    <th>University</th>
-                    <th>Course</th>
-                    <th>Type</th>
-                    <th>Duration</th>
-                    <th>Requirements</th>
-                    <th>Link</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for match in results %}
-                    <tr>
-                        <td>
-                            <form action="{% url 'accounts:save_match' %}" method="post" style="display:inline;">
-                                {% csrf_token %}
-                                <input type="hidden" name="university" value="{{ match.university }}">
-                                <input type="hidden" name="course" value="{{ match.course }}">
-                                <input type="hidden" name="type" value="{{ match.type }}">
-                                <input type="hidden" name="duration" value="{{ match.duration }}">
-                                <input type="hidden" name="requirements" value="{{ match.requirements }}">
-                                <input type="hidden" name="course_link" value="{{ match.course_link }}">
-                                <button type="submit" class="heart-btn" title="Save Match"
-                                        style="background:none; border:none;">
-                                    {% if match.is_saved %}
-                                        <img src="{% static 'images/heart_filled.svg' %}" class="heart-icon"
-                                             alt="Saved">
-                                    {% else %}
-                                        <img src="{% static 'images/heart.svg' %}" class="heart-icon" alt="Save">
-                                    {% endif %}
-                                </button>
-                            </form>
-                        </td>
-                        <td>{{ match.university }}</td>
-                        <td>{{ match.course }}</td>
-                        <td>{{ match.type }}</td>
-                        <td>{{ match.duration }}</td>
-                        <td>{{ match.requirements }}</td>
-                        <td>
-                            <a href="{{ match.course_link }}" target="_blank">View</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-
-            </table>
-        </div>
-    {% endif %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("matches-search-form");
+            if (form) {
+                form.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    const formData = new FormData(form);
+                    fetch(form.action, {
+                        method: "POST",
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        body: formData,
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById("results-table").innerHTML = data.table_html;
+                        });
+                });
+            }
+        });
+    </script>
 
 
 {% endblock %}
