@@ -51,8 +51,6 @@ class EntryRequirement(models.Model):
 class SubjectRequirement(models.Model):
     """
     Specific subject requirements for a course.
-    This replaces the complex JSON field with a simple related model.
-    Much easier for A-level students to understand!
     """
     entry_requirement = models.ForeignKey(
         EntryRequirement, 
