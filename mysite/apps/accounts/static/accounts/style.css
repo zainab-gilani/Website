@@ -43,13 +43,21 @@ h1 {
     margin: 10px auto 0;
     position: static;
     width: fit-content;
-    margin-left: 35%;
+    margin-left: 45vh;
 }
 
 .saved-matches-heart {
     font-size: 2.2rem;
     color: #e38088;
     vertical-align: middle;
+}
+
+.saved-matches-sub {
+    color: #2d5283;
+    position: relative;
+    width: fit-content;
+    left: -50vh;
+    top: 5vh;
 }
 
 /* CONTAINERS */
