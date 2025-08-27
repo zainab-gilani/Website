@@ -210,8 +210,7 @@ form {
     align-items: center;
     position: relative;
     width: 500px;
-    margin-left: 510px;
-    margin-top: 60px;
+    margin: 60px auto 0;
     padding: 0;
 }
 
@@ -394,6 +393,7 @@ form {
     form {
         width: 96vw;
         min-width: 0;
+        margin: 60px auto 0;
     }
 }
 @media (max-width: 600px) {
@@ -409,6 +409,7 @@ form {
     form {
         width: 96vw;
         min-width: 0;
+        margin: 60px auto 0;
     }
 }
 @media (max-width: 600px) {

@@ -2,7 +2,7 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 
 from . import views
-from .views import resend_activation_view, saved_matches_view
+from .views import resend_activation_view, saved_matches_view, CustomLoginView
 from .forms import CustomLoginForm
 
 from django.contrib.auth.views import LogoutView
@@ -14,8 +14,7 @@ urlpatterns = [
     # Django Auth
     path(
         "login/",
-        auth_views.LoginView.as_view(
-            template_name="accounts/login.html",
+        CustomLoginView.as_view(
             authentication_form=CustomLoginForm
         ),
         name="login",

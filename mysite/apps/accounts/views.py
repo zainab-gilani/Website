@@ -18,6 +18,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.views import LoginView
 
 from ..coursefinder.views import get_dummy_matches
 
@@ -25,12 +26,17 @@ from .models import SavedMatch
 
 User = get_user_model()
 
+
 def register_view(request):
+    # Redirect to profile if already logged in
+    if request.user.is_authenticated:
+        return redirect('accounts:profile')
+
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.is_active = False # Deactivate until email is confirmed
+            user.is_active = False  # Deactivate until email is confirmed
             user.save()
 
             current_site = request.get_host()
@@ -60,8 +66,22 @@ def register_view(request):
 
     else:
         form = CustomUserCreationForm()
-    return render(request, "accounts/signup.html", { "form": form })
-#enddef
+    return render(request, "accounts/signup.html", {"form": form})
+
+
+# enddef
+
+class CustomLoginView(LoginView):
+    template_name = "accounts/login.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        # Redirect to profile if already logged in
+        if request.user.is_authenticated:
+            return redirect('accounts:profile')
+        return super().dispatch(request, *args, **kwargs)
+
+
+# endclass
 
 def activate(request, uidb64, token):
     try:
@@ -69,7 +89,7 @@ def activate(request, uidb64, token):
         user = User.objects.get(pk=uid)
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
-    #endtry
+    # endtry
 
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
@@ -77,8 +97,10 @@ def activate(request, uidb64, token):
         return redirect('coursefinder:coursefinder')
     else:
         return render(request, 'accounts/activation_invalid.html')
-    #endif
-#enddef
+    # endif
+
+
+# enddef
 
 def resend_activation_view(request):
     if request.method == "POST":
@@ -106,11 +128,13 @@ def resend_activation_view(request):
             messages.success(request, 'Activation link resent! Check your inbox.')
         else:
             messages.error(request, 'No inactive account found with that email.')
-        #endif
+        # endif
         return redirect('accounts:resend_activation')
-    #endif
+    # endif
     return render(request, 'accounts/resend_activation.html')
-#enddef
+
+
+# enddef
 
 
 @login_required
@@ -123,7 +147,7 @@ def profile_view(request):
         if 'delete_account' in request.POST:
             user.delete()
             return redirect('coursefinder:guest_coursefinder')
-        #endif
+        # endif
 
         # SAVE PROFILE CHANGES
         if 'save_changes' in request.POST:
@@ -141,8 +165,8 @@ def profile_view(request):
                 else:
                     user.username = username
                     something_changed = True
-                #endif
-            #endif
+                # endif
+            # endif
 
             # Email update
             if not error and email and email != user.email:
@@ -151,8 +175,8 @@ def profile_view(request):
                 else:
                     user.email = email
                     something_changed = True
-                #endif
-            #endif
+                # endif
+            # endif
 
             # Password update
             if not error and new_password:
@@ -163,7 +187,7 @@ def profile_view(request):
                 else:
                     user.set_password(new_password)
                     something_changed = True
-                #endif
+                # endif
 
             # Save changes if no error
             if not error and something_changed:
@@ -172,25 +196,29 @@ def profile_view(request):
                 # If password changed, keep user logged in
                 if new_password:
                     update_session_auth_hash(request, user)
-                #endif
+                # endif
                 return redirect('accounts:profile')
             else:
                 messages.error(request, error)
-            #endif
-        #endif
-    #endif
+            # endif
+        # endif
+    # endif
 
     context = {
         "user": user,
     }
     return render(request, 'accounts/profile.html', context)
-#enddef
+
+
+# enddef
 
 @login_required
 def saved_matches_view(request):
     results = SavedMatch.objects.filter(user=request.user)
     return render(request, 'accounts/saved_matches.html', {'results': results})
-#enddef
+
+
+# enddef
 
 @login_required
 def save_match(request):
@@ -204,6 +232,6 @@ def save_match(request):
             requirements=request.POST['requirements'],
             course_link=request.POST['course_link']
         )
-    #endif
+    # endif
     return redirect(request.META.get('HTTP_REFERER', '/'))
-#enddef
+# enddef
