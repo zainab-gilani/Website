@@ -81,3 +81,42 @@ python manage.py runserver
 
 The website will be at http://127.0.0.1:8000/
 The admin page is at http://127.0.0.1:8000/admin/ (login with admin/123)
+
+## Importing Course Data
+
+The website needs course data to work. We get this from the WebScraper project.
+
+### Quick Import
+
+If you already have a JSON file:
+```
+python manage.py import_courses /path/to/universities.json
+```
+
+### Full Process
+
+1. First run the WebScraper to get uni data:
+```
+cd ../WebScraper
+python scraper.py
+```
+This creates `universities.json` with all the course info.
+
+2. Import the data:
+```
+cd ../Website  
+python manage.py import_courses ../WebScraper/universities.json
+```
+
+3. Testing that it worked:
+```
+python manage.py shell
+>>> from mysite.apps.coursefinder.models import University
+>>> University.objects.count()
+>>> exit()
+```
+
+### Notes
+- You can run the import multiple times - it updates existing data
+- Won't create duplicates
+- If something goes wrong, nothing gets saved (all or nothing)

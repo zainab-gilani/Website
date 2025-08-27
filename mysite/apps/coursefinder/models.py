@@ -5,8 +5,8 @@ from django.db import models
 class University(models.Model):
     name = models.CharField(max_length=200, unique=True)
     location = models.CharField(max_length=200, blank=True)
-    website = models.URLField(blank=True)  # Link to uni
-    all_courses_url = models.URLField(blank=True)  # "View all courses" page
+    website = models.URLField(max_length=500, blank=True)  # Link to uni
+    all_courses_url = models.URLField(max_length=500, blank=True)  # "View all courses" page
 
     def __str__(self):
         return self.name
@@ -21,7 +21,12 @@ class Course(models.Model):
     mode = models.CharField(max_length=30, blank=True)  # Full time / Part time
     location = models.CharField(max_length=200, blank=True)
     start_date = models.CharField(max_length=50, blank=True)
-    link = models.URLField(blank=True)
+    link = models.URLField(max_length=500, blank=True)
+    
+    class Meta:
+        # Ensure course name is unique within each university
+        unique_together = ['university', 'name']
+    # endclass
 
     def __str__(self):
         return f"{self.name} - {self.university.name}"
