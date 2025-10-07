@@ -24,6 +24,10 @@ from ..coursefinder.views import get_dummy_matches
 
 from .models import SavedMatch
 
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
 User = get_user_model()
 
 
@@ -214,24 +218,107 @@ def profile_view(request):
 
 @login_required
 def saved_matches_view(request):
-    results = SavedMatch.objects.filter(user=request.user)
-    return render(request, 'accounts/saved_matches.html', {'results': results})
+    saved_matches = SavedMatch.objects.filter(user=request.user)
+    # Add is_saved property to each saved match for template consistency
+    for match in saved_matches:
+        match.is_saved = True
+    #endfor
+    return render(request, 'accounts/saved_matches.html', {'results': saved_matches})
 
 
 # enddef
 
+@csrf_exempt
 @login_required
 def save_match(request):
+    print("DEBUG save_match: Method=" + str(request.method))
+    print("DEBUG save_match: Content-Type=" + str(request.content_type))
     if request.method == 'POST':
-        SavedMatch.objects.get_or_create(
-            user=request.user,
-            university=request.POST['university'],
-            course=request.POST['course'],
-            type=request.POST['type'],
-            duration=request.POST['duration'],
-            requirements=request.POST['requirements'],
-            course_link=request.POST['course_link']
-        )
-    # endif
-    return redirect(request.META.get('HTTP_REFERER', '/'))
-# enddef
+        try:
+            # Get the course data from the request
+            print("DEBUG save_match: Raw body=" + str(request.body))
+            data = json.loads(request.body)
+            print("DEBUG save_match: Parsed data=" + str(data))
+            
+            # Create a new saved match or get existing one
+            print("DEBUG save_match: Creating SavedMatch...")
+            saved_match, was_created = SavedMatch.objects.get_or_create(
+                user=request.user,
+                university=data['university'],
+                course=data['course'],
+                course_type=data['course_type'],
+                duration=data['duration'],
+                requirements=data['requirements'],
+                course_link=data['course_link'],
+            )
+            print("DEBUG save_match: SavedMatch created/found, was_created=" + str(was_created))
+            
+            response = JsonResponse({'status': 'saved', 'id': saved_match.id})
+            print("DEBUG save_match: Returning success response")
+            return response
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+    #endtry
+    
+    return JsonResponse({'status': 'error'}, status=400)
+#enddef
+
+@csrf_exempt
+@login_required
+def unsave_match(request):
+    if request.method == 'POST':
+        try:
+            # Get the course data from the request
+            data = json.loads(request.body)
+            
+            # Find the saved match to delete
+            saved_match = SavedMatch.objects.get(
+                user=request.user,
+                university=data['university'],
+                course=data['course'],
+                course_type=data['course_type'],
+                duration=data['duration'],
+                requirements=data['requirements'],
+                course_link=data['course_link'],
+            )
+            
+            # Delete the saved match
+            saved_match.delete()
+            return JsonResponse({'status': 'unsaved'})
+            
+        except SavedMatch.DoesNotExist:
+            return JsonResponse({'status': 'not_found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+    #endtry
+    
+    return JsonResponse({'status': 'error'}, status=400)
+#enddef
+
+
+@csrf_exempt
+@login_required
+def check_saved(request):
+    if request.method == 'POST':
+        try:
+            # Get the course data from the request
+            data = json.loads(request.body)
+            
+            # Check if this course is saved for the user
+            is_saved = SavedMatch.objects.filter(
+                user=request.user,
+                university=data['university'],
+                course=data['course'],
+                course_type=data['course_type'],
+                duration=data['duration'],
+                requirements=data['requirements'],
+                course_link=data['course_link'],
+            ).exists()
+            
+            return JsonResponse({'is_saved': is_saved})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+    #endtry
+    
+    return JsonResponse({'status': 'error'}, status=400)
+#enddef
