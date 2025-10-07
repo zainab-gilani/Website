@@ -25,4 +25,6 @@ urlpatterns = [
     path("profile/", views.profile_view, name="profile"),
     path('saved-matches/', saved_matches_view, name="saved_matches"),
     path('save-match/', views.save_match, name='save_match'),
+    path('unsave-match/', views.unsave_match, name='unsave_match'),
+    path('check-saved/', views.check_saved, name='check_saved'),
 ]
