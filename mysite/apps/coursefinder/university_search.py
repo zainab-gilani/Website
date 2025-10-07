@@ -9,31 +9,28 @@ from ..nlp.synonyms import SYNONYMS
 
 
 def expand_query_with_synonyms(query: str) -> List[str]:
-    """Add synonyms to search query for better matching"""
+    """Convert query to main subject name if it's a synonym"""
     if not query:
         return []
     #endif
     
     query_lower = query.strip().lower()
-    search_terms = [query_lower]  # Always include original query
     
-    # Check each subject in synonyms to see if query matches
-    for subject, synonym_list in SYNONYMS.items():
-        # If query matches any synonym, add all synonyms for that subject
+    # Get course synonyms
+    courses = SYNONYMS.get('courses', {})
+    
+    # Check if query is a synonym for any subject
+    for subject, synonym_list in courses.items():
         for synonym in synonym_list:
             if synonym.lower() == query_lower:
-                # Add all other synonyms for this subject
-                for other_synonym in synonym_list:
-                    if other_synonym.lower() not in search_terms:
-                        search_terms.append(other_synonym.lower())
-                    #endif
-                #endfor
-                break  # Found a match, no need to check other synonyms
+                # Found a match - return just the main subject name
+                return [subject.lower()]
             #endif
         #endfor
     #endfor
     
-    return search_terms
+    # If no synonym found, return original query
+    return [query_lower]
 #enddef
 
 
