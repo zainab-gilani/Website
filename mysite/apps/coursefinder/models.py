@@ -18,7 +18,7 @@ class Course(models.Model):
     name = models.CharField(max_length=255)
     course_type = models.CharField(max_length=50, blank=True)  # e.g. BSc (Hons)
     duration = models.CharField(max_length=50, blank=True)
-    mode = models.CharField(max_length=30, blank=True)  # Full time / Part time
+    mode = models.CharField(max_length=100, blank=True)  # Full time / Part time
     location = models.CharField(max_length=200, blank=True)
     start_date = models.CharField(max_length=50, blank=True)
     link = models.URLField(max_length=500, blank=True)
