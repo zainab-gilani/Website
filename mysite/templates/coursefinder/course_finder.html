@@ -68,12 +68,18 @@
                 </div>
             </div>
         </form>
-        {% if query %}
-            <div style="text-align:center; margin-top:40px;">
-                <h3>Results for "{{ query }}"</h3>
-                <p>resources/articles/tips for the searched query.</p>
-            </div>
-        {% endif %}
+        
+        <!-- AJAX Results for Uni Search -->
+        <div id="search-results-table">
+            {% if mode == 'search' %}
+                {% if parsed_input %}
+                    <p style="text-align:center; margin-top:30px; font-size:1.3rem; font-weight:700; color:#2D5289FF;">
+                        {{ parsed_input }}
+                    </p>
+                {% endif %}
+                {% include "coursefinder/_results_table.html" %}
+            {% endif %}
+        </div>
     </div>
 
     <!-- USER AUTH (PROFILE DROPDOWN ETC) -->
@@ -244,12 +250,13 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const form = document.getElementById("matches-search-form");
-            if (form) {
-                form.addEventListener("submit", function (e) {
+            // Handle matches form (NLP parser)
+            const matchesForm = document.getElementById("matches-search-form");
+            if (matchesForm) {
+                matchesForm.addEventListener("submit", function (e) {
                     e.preventDefault();
-                    const formData = new FormData(form);
-                    fetch(form.action, {
+                    const formData = new FormData(matchesForm);
+                    fetch(matchesForm.action, {
                         method: "POST",
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest',
@@ -259,10 +266,184 @@
                         .then(response => response.json())
                         .then(data => {
                             document.getElementById("results-table").innerHTML = data.table_html;
+                            // Set up heart buttons after loading new content
+                            setupHeartButtons();
+                        });
+                });
+            }
+            
+            // Handle search form (general university search)
+            const searchForm = document.getElementById("search-search-form");
+            if (searchForm) {
+                searchForm.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    const formData = new FormData(searchForm);
+                    fetch(searchForm.action, {
+                        method: "POST",
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        body: formData,
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            // Create results div if not exists
+                            let resultsDiv = document.getElementById("search-results-table");
+                            if (!resultsDiv) {
+                                resultsDiv = document.createElement("div");
+                                resultsDiv.id = "search-results-table";
+                                document.getElementById("searchTabContent").appendChild(resultsDiv);
+                            }
+                            resultsDiv.innerHTML = data.table_html;
+                            // Set up heart buttons after loading new content
+                            setupHeartButtons();
                         });
                 });
             }
         });
+        
+        // Function to set up heart button functionality
+        function setupHeartButtons() {
+            {% if user.is_authenticated %}
+            console.log('Setting up heart buttons...');
+            var heartBtns = document.querySelectorAll('.heart-btn');
+            console.log('Found heart buttons:', heartBtns.length);
+            
+            // Add click event to each heart button
+            for (var i = 0; i < heartBtns.length; i++) {
+                var btn = heartBtns[i];
+                btn.addEventListener('click', function() {
+                    var isCurrentlySaved = this.classList.contains('active');
+                    console.log('Heart button clicked! Currently saved:', isCurrentlySaved);
+                    
+                    // Simple test first - just toggle the active class
+                    this.classList.toggle('active');
+                    console.log('Toggled to:', this.classList.contains('active'));
+                    console.log('Button classes:', this.className);
+                    
+                    // Get all the course info from the button
+                    var courseData = {
+                        university: this.getAttribute('data-university'),
+                        course: this.getAttribute('data-course'),
+                        course_type: this.getAttribute('data-course_type'),
+                        duration: this.getAttribute('data-duration'),
+                        requirements: this.getAttribute('data-requirements'),
+                        course_link: this.getAttribute('data-course_link')
+                    };
+                    
+                    // Choose the right URL - save or unsave
+                    var saveUrl = "{% url 'accounts:save_match' %}";
+                    var unsaveUrl = "{% url 'accounts:unsave_match' %}";
+                    var requestUrl = isCurrentlySaved ? unsaveUrl : saveUrl;
+                    
+                    // Get the security token
+                    var csrfToken = getCookie('csrftoken');
+                    console.log('Sending request to:', requestUrl);
+                    
+                    // Send the request to save or unsave
+                    fetch(requestUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken
+                        },
+                        body: JSON.stringify(courseData)
+                    }).then(function(response) {
+                        if (response.ok) {
+                            console.log('Save/unsave successful');
+                        } else {
+                            console.log('Save failed with status:', response.status);
+                            // Revert the toggle if save failed
+                            btn.classList.toggle('active');
+                        }
+                    }).catch(function(error) {
+                        console.log('Request failed:', error);
+                        // Revert the toggle if request failed
+                        btn.classList.toggle('active');
+                    });
+                });
+            }
+            {% else %}
+            console.log('User is NOT authenticated - no heart buttons');
+            {% endif %}
+        }
+        
+        // Cookie helper function
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        // Set up heart buttons on initial page load
+        document.addEventListener('DOMContentLoaded', setupHeartButtons);
+        
+        // Update heart states when page becomes visible again (like when using back button)
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                // Page is now visible, refresh heart states
+                refreshHeartStates();
+            }
+        });
+        
+        // Function to refresh heart states from server
+        function refreshHeartStates() {
+            {% if user.is_authenticated %}
+            // Get all current hearts on the page
+            var heartBtns = document.querySelectorAll('.heart-btn');
+            
+            // Check each heart to see if it should be saved
+            for (var i = 0; i < heartBtns.length; i++) {
+                var btn = heartBtns[i];
+                var courseData = {
+                    university: btn.getAttribute('data-university'),
+                    course: btn.getAttribute('data-course'),
+                    course_type: btn.getAttribute('data-course_type'),
+                    duration: btn.getAttribute('data-duration'),
+                    requirements: btn.getAttribute('data-requirements'),
+                    course_link: btn.getAttribute('data-course_link')
+                };
+                
+                // Check if this course is saved
+                checkIfSaved(btn, courseData);
+            }
+            {% endif %}
+        }
+        
+        // Function to check if a specific course is saved
+        function checkIfSaved(btn, courseData) {
+            var csrfToken = getCookie('csrftoken');
+            
+            fetch("{% url 'accounts:check_saved' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(courseData)
+            }).then(function(response) {
+                return response.json();
+            }).then(function(data) {
+                // Update the heart based on server response
+                if (data.is_saved) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            }).catch(function(error) {
+                // If check fails, just leave the heart as it is
+                console.log('Could not check saved status:', error);
+            });
+        }
     </script>
 
 
