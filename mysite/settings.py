@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "mysite.apps.accounts",
     "mysite.apps.coursefinder",
+    "mysite.apps.nlp",
 ]
 
 MIDDLEWARE = [
