@@ -231,17 +231,17 @@ def saved_matches_view(request):
 @csrf_exempt
 @login_required
 def save_match(request):
-    print("DEBUG save_match: Method=" + str(request.method))
-    print("DEBUG save_match: Content-Type=" + str(request.content_type))
+    # print("DEBUG save_match: Method=" + str(request.method))
+    # print("DEBUG save_match: Content-Type=" + str(request.content_type))
     if request.method == 'POST':
         try:
             # Get the course data from the request
-            print("DEBUG save_match: Raw body=" + str(request.body))
+            # print("DEBUG save_match: Raw body=" + str(request.body))
             data = json.loads(request.body)
-            print("DEBUG save_match: Parsed data=" + str(data))
+            # print("DEBUG save_match: Parsed data=" + str(data))
             
             # Create a new saved match or get existing one
-            print("DEBUG save_match: Creating SavedMatch...")
+            # print("DEBUG save_match: Creating SavedMatch...")
             saved_match, was_created = SavedMatch.objects.get_or_create(
                 user=request.user,
                 university=data['university'],
@@ -251,10 +251,10 @@ def save_match(request):
                 requirements=data['requirements'],
                 course_link=data['course_link'],
             )
-            print("DEBUG save_match: SavedMatch created/found, was_created=" + str(was_created))
+            # print("DEBUG save_match: SavedMatch created/found, was_created=" + str(was_created))
             
             response = JsonResponse({'status': 'saved', 'id': saved_match.id})
-            print("DEBUG save_match: Returning success response")
+            # print("DEBUG save_match: Returning success response")
             return response
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)

@@ -67,14 +67,14 @@ def coursefinder_view(request):
     results = []
     parsed_input = ""
     query = ""
-    
-    print(f"DEBUG: Request method: {request.method}")
-    print(f"DEBUG: Tab: {tab}")
-    print(f"DEBUG: User authenticated: {request.user.is_authenticated}")
+    #
+    # print(f"DEBUG: Request method: {request.method}")
+    # print(f"DEBUG: Tab: {tab}")
+    # print(f"DEBUG: User authenticated: {request.user.is_authenticated}")
 
     if request.method == 'POST':
         query = request.POST.get('query', '')
-        print(f"DEBUG: Query received: '{query}'")
+        # print(f"DEBUG: Query received: '{query}'")
         
         if tab == 'matches':
             # this tab uses the nlp parser to work out what grades they have
@@ -82,10 +82,10 @@ def coursefinder_view(request):
                 # run the search with nlp parsing
                 search_result = search_courses(query)
                 results = search_result["matching_courses"]
-                print(f"DEBUG: Found {len(results)} results from search_courses")
+                # print(f"DEBUG: Found {len(results)} results from search_courses")
                 # Mark which results are saved for logged in users
                 results = mark_saved_matches(results, request.user)
-                print(f"DEBUG: After marking saved matches: {len(results)} results")
+                # print(f"DEBUG: After marking saved matches: {len(results)} results")
                 
                 # make a message showing what we understood from their input
                 grades_text = ""
@@ -131,10 +131,10 @@ def coursefinder_view(request):
             # this tab is just basic search without nlp
             if query:
                 results = search_universities(query)
-                print(f"DEBUG: Found {len(results)} results from search_universities")
+                # print(f"DEBUG: Found {len(results)} results from search_universities")
                 # Mark which results are saved for logged in users
                 results = mark_saved_matches(results, request.user)
-                print(f"DEBUG: After marking saved matches: {len(results)} results")
+                # print(f"DEBUG: After marking saved matches: {len(results)} results")
                 if results:
                     parsed_input = f"Found {len(results)} results for '{query}'"
                 else:
@@ -145,7 +145,7 @@ def coursefinder_view(request):
     #endif
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        print(f"DEBUG: AJAX request - results count: {len(results)}")
+        # print(f"DEBUG: AJAX request - results count: {len(results)}")
         # ajax request so return just the html for the results
         # put the message and table together
         if parsed_input:
@@ -160,7 +160,7 @@ def coursefinder_view(request):
                 'user': request.user,  # Add user context for authentication checks
             }, request=request
         )
-        print(f"DEBUG: Rendered table_html length: {len(table_html)}")
+        # print(f"DEBUG: Rendered table_html length: {len(table_html)}")
         
         # stick them together
         full_html = message_html + table_html
@@ -170,9 +170,9 @@ def coursefinder_view(request):
             'parsed_input': parsed_input
         })
     #endif
-
-    print(f"DEBUG: Final results count: {len(results)}")
-    print(f"DEBUG: Final parsed_input: '{parsed_input}'")
+    #
+    # print(f"DEBUG: Final results count: {len(results)}")
+    # print(f"DEBUG: Final parsed_input: '{parsed_input}'")
     
     return render(request, 'coursefinder/course_finder.html', {
         "mode": tab,
