@@ -225,8 +225,9 @@ form {
     position: relative;
     display: flex;
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
     margin: 0 auto 0 auto;
+    gap: 12px;
 }
 
 .search-bar-wrapper input[type="text"] {
@@ -244,6 +245,7 @@ form {
     background-position: 11px center;
     color: #2d5289;
     font-family: 'Tahoma', serif;
+    height: 46px;
 }
 
 .search-bar-wrapper input[type="text"]:focus {
@@ -255,6 +257,12 @@ form {
 .search-bar-wrapper input[type="text"]::placeholder {
     color: #7e95b3;
     opacity: 1;
+}
+
+.search-bar-wrapper input[type="text"], .filter-btn {
+    height: 46px;           /* both the same */
+    border-radius: 12px;    /* both the same */
+    /* match other relevant styles */
 }
 
 .search-tips {
@@ -302,7 +310,6 @@ form {
 .pretty-table {
     border-collapse: separate;
     border-spacing: 0;
-    /*width: 100%;*/
     background: #f7f9ff;
     border-radius: 16px;
     overflow: hidden;
@@ -386,7 +393,84 @@ form {
     filter: drop-shadow(0 1px 4px #e380882a) !important;
 }
 
-/* Removed hover effect to keep consistent appearance */
+/* --- FILTER BUTTONS --- */
+.filter-btn {
+    height: 46px;
+    width: 52px;
+    border: 2px solid #b7c7e0;
+    border-radius: 10px;
+    background: #D8E2F0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: background 0.15s, box-shadow 0.15s;
+    padding: 0;
+}
+
+.filter-btn:hover {
+    background: #ccd7e8;
+}
+
+.filter-btn img {
+    width: 30px;
+    height: 30px;
+}
+
+.filter-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 55px;
+    width: 80px;
+    background: #e3eaf7;
+    border-radius: 14px;
+    padding: 12px 12px 12px 12px;
+    z-index: 23;
+    min-width: 230px;
+    border: 2px solid #b7c7e0;
+}
+
+.filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.filter-label {
+    font-size: 1.04rem;
+    color: #294366;
+    font-weight: 600;
+}
+
+.filter-select {
+    margin-top: 5px;
+    width: 100%;
+    border-radius: 7px;
+    border: 1px solid #bcd;
+    font-size: 1.01rem;
+    padding: 6px;
+    background: white;
+}
+
+.filter-submit {
+    margin-top: 9px;
+    background: #41689a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 0;
+    font-size: 1.05rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+    width: 110px;
+}
+
+.filter-submit:hover {
+    background: #294366;
+}
 
 
 /* --- RESPONSIVE --- */
