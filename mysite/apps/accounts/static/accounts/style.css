@@ -222,7 +222,6 @@ button.login-button:hover,
     filter: drop-shadow(0 1px 4px #e380882a) !important;
 }
 
-/* Removed hover effect to keep consistent appearance */
 .heart-btn:hover {
     background: none !important;
     opacity: 1 !important;
@@ -242,7 +241,6 @@ button.login-button:hover,
     transform: none !important;
 }
 
-/* Force no hover effects on any child elements */
 .heart-btn:hover * {
     opacity: 1 !important;
     filter: none !important;
