@@ -20,8 +20,81 @@
               autocomplete="off"
               class="search-form">
             {% csrf_token %}
-            <div class="search-bar-wrapper">
+            <div class="search-bar-wrapper"
+                 style="display: flex; flex-direction: row; align-items: center; gap: 12px; position: relative; width: 100%;">
                 <input type="text" name="query" id="matches-search" placeholder="Say Something..." autocomplete="off">
+
+                <!-- FILTER BUTTONS -->
+                <button type="button" id="matches-filter-btn" class="filter-btn" aria-label="Filter">
+                    <img src="{% static 'images/filter.svg' %}" alt="Filter">
+                </button>
+                <div id="matches-filter-dropdown" class="filter-dropdown">
+                    <form method="get" id="matches-filter-form" class="filter-form">
+                        <!-- DROPDOWNS -->
+                        <label class="filter-label">
+                            Course Type
+                            <select name="course_type" class="filter-select">
+                                <option value="">Any</option>
+                                {% for course_type in course_types %}
+                                    <option value="{{ course_type }}"
+                                            {% if request.GET.course_type == course_type %}selected{% endif %}>{{ course_type }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+
+                        <label class="filter-label">
+                            Duration
+                            <select name="duration" class="filter-select">
+                                <option value="">Any</option>
+                                {% for duration in durations %}
+                                    <option value="{{ duration }}"
+                                            {% if request.GET.duration == duration %}selected{% endif %}>{{ duration }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+
+                    <label class="filter-label">
+                            Mode
+                            <select name="course_type" class="filter-select">
+                                <option value="">Any</option>
+                                {% for mode in modes %}
+                                    <option value="{{ mode }}"
+                                            {% if request.GET.mode == mode %}selected{% endif %}>{{ mode }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+
+                        <label class="filter-label">
+                            Location
+                            <select name="duration" class="filter-select">
+                                <option value="">Any</option>
+                                {% for location in locations %}
+                                    <option value="{{ location }}"
+                                            {% if request.GET.location == location %}selected{% endif %}>{{ location }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+
+                        <!-- CHECKBOXES -->
+                        <label class="filter-label" style="display: flex; align-items: center; gap: 6px;">
+                            <input type="checkbox" name="only_grades"
+                                   {% if request.GET.only_grades %}checked{% endif %}>
+                            Show only grade-based requirements
+                        </label>
+
+                        <label class="filter-label" style="display: flex; align-items: center; gap: 6px;">
+                            <input type="checkbox" name="no_requirements"
+                                   {% if request.GET.no_requirements %}checked{% endif %}>
+                            Show only courses with no requirements
+                        </label>
+
+                        <button type="submit" class="filter-submit">
+                            Apply Filters
+                        </button>
+                    </form>
+                </div>
+
+
                 <div id="matches-search-tips" class="search-tips">
                     <div class="tips-title">Tips:</div>
                     <ul>
@@ -55,31 +128,103 @@
               autocomplete="off"
               class="search-form">
             {% csrf_token %}
-            <div class="search-bar-wrapper">
+            <div class="search-bar-wrapper"
+                 style="display: flex; flex-direction: row; align-items: center; gap: 12px; position: relative; width: 100%;">
                 <input type="text" name="query" id="search-search" placeholder="Search" autocomplete="off">
-                <div id="search-search-tips" class="search-tips">
-                    <div class="tips-title">Examples:</div>
-                    <ul>
-                        <li>"University of Manchester"</li>
-                        <li>"London"</li>
-                        <li>"Best unis for Law"</li>
-                        <li>"Medicine"</li>
-                    </ul>
+
+                <!-- FILTER BUTTONS -->
+                <button type="button" id="search-filter-btn" class="filter-btn" aria-label="Filter">
+                    <img src="{% static 'images/filter.svg' %}" alt="Filter">
+                </button>
+                <div id="search-filter-dropdown" class="filter-dropdown">
+                    <form method="get" id="search-filter-form" class="filter-form">
+                        <!-- DROPDOWNS -->
+                        <label class="filter-label">
+                            Course Type
+                            <select name="course_type" class="filter-select">
+                                <option value="">Any</option>
+                                {% for course_type in course_types %}
+                                    <option value="{{ course_type }}"
+                                            {% if request.GET.course_type == course_type %}selected{% endif %}>{{ course_type }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+
+                        <label class="filter-label">
+                            Duration
+                            <select name="duration" class="filter-select">
+                                <option value="">Any</option>
+                                {% for duration in durations %}
+                                    <option value="{{ duration }}"
+                                            {% if request.GET.duration == duration %}selected{% endif %}>{{ duration }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+
+                    <label class="filter-label">
+                            Mode
+                            <select name="course_type" class="filter-select">
+                                <option value="">Any</option>
+                                {% for mode in modes %}
+                                    <option value="{{ mode }}"
+                                            {% if request.GET.mode == mode %}selected{% endif %}>{{ mode }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+
+                        <label class="filter-label">
+                            Location
+                            <select name="duration" class="filter-select">
+                                <option value="">Any</option>
+                                {% for location in locations %}
+                                    <option value="{{ location }}"
+                                            {% if request.GET.location == location %}selected{% endif %}>{{ location }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+
+                        <!-- CHECKBOXES -->
+
+                        <label class="filter-label" style="display: flex; align-items: center; gap: 6px;">
+                            <input type="checkbox" name="only_grades"
+                                   {% if request.GET.only_grades %}checked{% endif %}>
+                            Show only grade-based requirements
+                        </label>
+
+                        <label class="filter-label" style="display: flex; align-items: center; gap: 6px;">
+                            <input type="checkbox" name="no_requirements"
+                                   {% if request.GET.no_requirements %}checked{% endif %}>
+                            Show only courses with no requirements
+                        </label>
+
+                        <button type="submit" class="filter-submit">
+                            Apply Filters
+                        </button>
+                    </form>
                 </div>
             </div>
         </form>
-        
-        <!-- AJAX Results for Uni Search -->
-        <div id="search-results-table">
-            {% if mode == 'search' %}
-                {% if parsed_input %}
-                    <p style="text-align:center; margin-top:30px; font-size:1.3rem; font-weight:700; color:#2D5289FF;">
-                        {{ parsed_input }}
-                    </p>
-                {% endif %}
-                {% include "coursefinder/_results_table.html" %}
+    </div>
+    <div id="search-search-tips" class="search-tips">
+        <div class="tips-title">Examples:</div>
+        <ul>
+            <li>"University of Manchester"</li>
+            <li>"London"</li>
+            <li>"Best unis for Law"</li>
+            <li>"Medicine"</li>
+        </ul>
+    </div>
+
+    <!-- AJAX Results for Uni Search -->
+    <div id="search-results-table">
+        {% if mode == 'search' %}
+            {% if parsed_input %}
+                <p style="text-align:center; margin-top:30px; font-size:1.3rem; font-weight:700; color:#2D5289FF;">
+                    {{ parsed_input }}
+                </p>
             {% endif %}
-        </div>
+            {% include "coursefinder/_results_table.html" %}
+        {% endif %}
     </div>
 
     <!-- USER AUTH (PROFILE DROPDOWN ETC) -->
@@ -113,6 +258,64 @@
         <span id="text"></span>
         <span id="highlight"></span>
     </div>
+
+    <script>
+        // Set up filter dropdown for matches tab
+        function setupMatchesFilter() {
+            var matchesFilterBtn = document.getElementById('matches-filter-btn');
+            var matchesFilterDropdown = document.getElementById('matches-filter-dropdown');
+
+            if (matchesFilterBtn && matchesFilterDropdown) {
+                matchesFilterBtn.onclick = function (e) {
+                    e.stopPropagation();
+                    matchesFilterDropdown.style.display = (matchesFilterDropdown.style.display === 'block') ? 'none' : 'block';
+                };
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function (e) {
+                    if (matchesFilterDropdown.style.display === 'block' && !matchesFilterDropdown.contains(e.target) && e.target !== matchesFilterBtn) {
+                        matchesFilterDropdown.style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        // Set up filter dropdown for search tab  
+        function setupSearchFilter() {
+            var searchFilterBtn = document.getElementById('search-filter-btn');
+            var searchFilterDropdown = document.getElementById('search-filter-dropdown');
+
+            console.log('Setting up search filter...');
+            console.log('Search filter button found:', searchFilterBtn ? 'YES' : 'NO');
+            console.log('Search filter dropdown found:', searchFilterDropdown ? 'YES' : 'NO');
+
+            if (searchFilterBtn && searchFilterDropdown) {
+                searchFilterBtn.onclick = function (e) {
+                    e.stopPropagation();
+                    console.log('Search filter clicked!');
+                    searchFilterDropdown.style.display = (searchFilterDropdown.style.display === 'block') ? 'none' : 'block';
+                };
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function (e) {
+                    if (searchFilterDropdown.style.display === 'block' && !searchFilterDropdown.contains(e.target) && e.target !== searchFilterBtn) {
+                        searchFilterDropdown.style.display = 'none';
+                    }
+                });
+
+                console.log('Search filter setup complete');
+            } else {
+                console.log('Could not set up search filter - missing elements');
+            }
+        }
+
+        // Set up filters on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            setupMatchesFilter();
+            setupSearchFilter();
+        });
+    </script>
+
 
     <script>
         // Handle tips popups for both forms
@@ -222,6 +425,10 @@
                     }, 30);
                 }, 120);
             }
+            setTimeout(function () {
+                setupMatchesFilter();
+                setupSearchFilter();
+            }, 140);
         }
 
         matchesTabBtn.addEventListener('click', () => showTab('matches'));
@@ -251,123 +458,146 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             // Handle matches form (NLP parser)
-            const matchesForm = document.getElementById("matches-search-form");
+            var matchesForm = document.getElementById("matches-search-form");
             if (matchesForm) {
-                matchesForm.addEventListener("submit", function (e) {
+                matchesForm.onsubmit = function (e) {
                     e.preventDefault();
-                    const formData = new FormData(matchesForm);
-                    fetch(matchesForm.action, {
-                        method: "POST",
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                        },
-                        body: formData,
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            document.getElementById("results-table").innerHTML = data.table_html;
+                    
+                    // Get the form data
+                    var formData = new FormData(matchesForm);
+                    
+                    // Create simple AJAX request
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', matchesForm.action, true);
+                    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                    
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === 4 && xhr.status === 200) {
+                            var response = JSON.parse(xhr.responseText);
+                            document.getElementById("results-table").innerHTML = response.table_html;
                             // Set up heart buttons after loading new content
                             setupHeartButtons();
-                        });
-                });
+                        }
+                    };
+                    
+                    xhr.send(formData);
+                };
             }
-            
+
             // Handle search form (general university search)
-            const searchForm = document.getElementById("search-search-form");
+            var searchForm = document.getElementById("search-search-form");
             if (searchForm) {
-                searchForm.addEventListener("submit", function (e) {
+                searchForm.onsubmit = function (e) {
                     e.preventDefault();
-                    const formData = new FormData(searchForm);
-                    fetch(searchForm.action, {
-                        method: "POST",
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                        },
-                        body: formData,
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            // Create results div if not exists
-                            let resultsDiv = document.getElementById("search-results-table");
+                    
+                    // Get the form data
+                    var formData = new FormData(searchForm);
+                    
+                    // Create simple AJAX request
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', searchForm.action, true);
+                    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                    
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === 4 && xhr.status === 200) {
+                            var response = JSON.parse(xhr.responseText);
+                            
+                            // Find or create results div
+                            var resultsDiv = document.getElementById("search-results-table");
                             if (!resultsDiv) {
                                 resultsDiv = document.createElement("div");
                                 resultsDiv.id = "search-results-table";
                                 document.getElementById("searchTabContent").appendChild(resultsDiv);
                             }
-                            resultsDiv.innerHTML = data.table_html;
+                            resultsDiv.innerHTML = response.table_html;
                             // Set up heart buttons after loading new content
                             setupHeartButtons();
-                        });
-                });
+                        }
+                    };
+                    
+                    xhr.send(formData);
+                };
             }
         });
-        
+
         // Function to set up heart button functionality
         function setupHeartButtons() {
             {% if user.is_authenticated %}
-            console.log('Setting up heart buttons...');
-            var heartBtns = document.querySelectorAll('.heart-btn');
-            console.log('Found heart buttons:', heartBtns.length);
-            
-            // Add click event to each heart button
-            for (var i = 0; i < heartBtns.length; i++) {
-                var btn = heartBtns[i];
-                btn.addEventListener('click', function() {
-                    var isCurrentlySaved = this.classList.contains('active');
-                    console.log('Heart button clicked! Currently saved:', isCurrentlySaved);
-                    
-                    // Simple test first - just toggle the active class
-                    this.classList.toggle('active');
-                    console.log('Toggled to:', this.classList.contains('active'));
-                    console.log('Button classes:', this.className);
-                    
-                    // Get all the course info from the button
-                    var courseData = {
-                        university: this.getAttribute('data-university'),
-                        course: this.getAttribute('data-course'),
-                        course_type: this.getAttribute('data-course_type'),
-                        duration: this.getAttribute('data-duration'),
-                        requirements: this.getAttribute('data-requirements'),
-                        course_link: this.getAttribute('data-course_link')
-                    };
-                    
-                    // Choose the right URL - save or unsave
-                    var saveUrl = "{% url 'accounts:save_match' %}";
-                    var unsaveUrl = "{% url 'accounts:unsave_match' %}";
-                    var requestUrl = isCurrentlySaved ? unsaveUrl : saveUrl;
-                    
-                    // Get the security token
-                    var csrfToken = getCookie('csrftoken');
-                    console.log('Sending request to:', requestUrl);
-                    
-                    // Send the request to save or unsave
-                    fetch(requestUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': csrfToken
-                        },
-                        body: JSON.stringify(courseData)
-                    }).then(function(response) {
-                        if (response.ok) {
-                            console.log('Save/unsave successful');
+                console.log('Setting up heart buttons...');
+                var heartBtns = document.querySelectorAll('.heart-btn');
+                console.log('Found heart buttons:', heartBtns.length);
+
+                // Add click event to each heart button
+                for (var i = 0; i < heartBtns.length; i++) {
+                    var btn = heartBtns[i];
+                    btn.onclick = function () {
+                        var isCurrentlySaved = this.classList.contains('active');
+                        console.log('Heart button clicked! Currently saved:', isCurrentlySaved);
+
+                        // Toggle the active class to change appearance
+                        if (isCurrentlySaved) {
+                            this.classList.remove('active');
                         } else {
-                            console.log('Save failed with status:', response.status);
-                            // Revert the toggle if save failed
-                            btn.classList.toggle('active');
+                            this.classList.add('active');
                         }
-                    }).catch(function(error) {
-                        console.log('Request failed:', error);
-                        // Revert the toggle if request failed
-                        btn.classList.toggle('active');
-                    });
-                });
-            }
+
+                        // Get all the course info from the button
+                        var university = this.getAttribute('data-university');
+                        var course = this.getAttribute('data-course');
+                        var courseType = this.getAttribute('data-course_type');
+                        var duration = this.getAttribute('data-duration');
+                        var requirements = this.getAttribute('data-requirements');
+                        var courseLink = this.getAttribute('data-course_link');
+
+                        // Choose the right URL - save or unsave
+                        var requestUrl;
+                        if (isCurrentlySaved) {
+                            requestUrl = "{% url 'accounts:unsave_match' %}";
+                        } else {
+                            requestUrl = "{% url 'accounts:save_match' %}";
+                        }
+
+                        // Create the request data
+                        var requestData = JSON.stringify({
+                            university: university,
+                            course: course,
+                            course_type: courseType,
+                            duration: duration,
+                            requirements: requirements,
+                            course_link: courseLink
+                        });
+
+                        // Send the request using simple XMLHttpRequest
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('POST', requestUrl, true);
+                        xhr.setRequestHeader('Content-Type', 'application/json');
+                        xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+                        
+                        var currentButton = this;
+                        xhr.onreadystatechange = function() {
+                            if (xhr.readyState === 4) {
+                                if (xhr.status === 200) {
+                                    console.log('Save/unsave successful');
+                                } else {
+                                    console.log('Save failed with status:', xhr.status);
+                                    // Put the button back to original state if save failed
+                                    if (isCurrentlySaved) {
+                                        currentButton.classList.add('active');
+                                    } else {
+                                        currentButton.classList.remove('active');
+                                    }
+                                }
+                            }
+                        };
+                        
+                        xhr.send(requestData);
+                    };
+                }
             {% else %}
-            console.log('User is NOT authenticated - no heart buttons');
+                console.log('User is NOT authenticated - no heart buttons');
             {% endif %}
         }
-        
+
         // Cookie helper function
         function getCookie(name) {
             var cookieValue = null;
@@ -383,67 +613,9 @@
             }
             return cookieValue;
         }
-        
-        // Set up heart buttons on initial page load
+
+        // Set up heart buttons when page loads
         document.addEventListener('DOMContentLoaded', setupHeartButtons);
-        
-        // Update heart states when page becomes visible again (like when using back button)
-        document.addEventListener('visibilitychange', function() {
-            if (!document.hidden) {
-                // Page is now visible, refresh heart states
-                refreshHeartStates();
-            }
-        });
-        
-        // Function to refresh heart states from server
-        function refreshHeartStates() {
-            {% if user.is_authenticated %}
-            // Get all current hearts on the page
-            var heartBtns = document.querySelectorAll('.heart-btn');
-            
-            // Check each heart to see if it should be saved
-            for (var i = 0; i < heartBtns.length; i++) {
-                var btn = heartBtns[i];
-                var courseData = {
-                    university: btn.getAttribute('data-university'),
-                    course: btn.getAttribute('data-course'),
-                    course_type: btn.getAttribute('data-course_type'),
-                    duration: btn.getAttribute('data-duration'),
-                    requirements: btn.getAttribute('data-requirements'),
-                    course_link: btn.getAttribute('data-course_link')
-                };
-                
-                // Check if this course is saved
-                checkIfSaved(btn, courseData);
-            }
-            {% endif %}
-        }
-        
-        // Function to check if a specific course is saved
-        function checkIfSaved(btn, courseData) {
-            var csrfToken = getCookie('csrftoken');
-            
-            fetch("{% url 'accounts:check_saved' %}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken
-                },
-                body: JSON.stringify(courseData)
-            }).then(function(response) {
-                return response.json();
-            }).then(function(data) {
-                // Update the heart based on server response
-                if (data.is_saved) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            }).catch(function(error) {
-                // If check fails, just leave the heart as it is
-                console.log('Could not check saved status:', error);
-            });
-        }
     </script>
 
 
