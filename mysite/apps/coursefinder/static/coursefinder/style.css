@@ -423,7 +423,7 @@ form {
     position: absolute;
     right: 0;
     top: 55px;
-    width: 80px;
+    width: 300px;
     background: #e3eaf7;
     border-radius: 14px;
     padding: 12px 12px 12px 12px;
@@ -442,10 +442,11 @@ form {
     font-size: 1.04rem;
     color: #294366;
     font-weight: 600;
+    margin-top: 12px;
 }
 
 .filter-select {
-    margin-top: 5px;
+    margin-top: 3px;
     width: 100%;
     border-radius: 7px;
     border: 1px solid #bcd;
@@ -455,7 +456,7 @@ form {
 }
 
 .filter-submit {
-    margin-top: 9px;
+    margin-top: 14px;
     background: #41689a;
     color: white;
     border: none;
