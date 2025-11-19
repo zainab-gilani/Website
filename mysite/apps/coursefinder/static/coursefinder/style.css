@@ -225,9 +225,16 @@ form {
     position: relative;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     margin: 0 auto 0 auto;
+}
+
+.search-input-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     gap: 12px;
+    position: relative;
 }
 
 .search-bar-wrapper input[type="text"] {
@@ -282,6 +289,12 @@ form {
     padding: 14px 19px 9px 19px;
     margin: 0;
     transition: opacity 0.15s;
+}
+
+#search-search-tips {
+    top: 55px !important;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 
@@ -366,8 +379,7 @@ form {
 /* --- HEART BUTTON --- */
 .heart-btn {
     padding: 0;
-    margin-left: 25px;
-    margin-top: -17px;
+    margin-left: 18px;
     background: none;
     border: none;
     display: flex;
