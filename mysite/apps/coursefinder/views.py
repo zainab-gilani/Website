@@ -5,6 +5,7 @@ from .types import UniMatchResult
 from .search_service import search_courses
 from .university_search import search_universities
 from ..accounts.models import SavedMatch
+from .models import Course
 
 
 # Create your views here.
@@ -36,29 +37,26 @@ def mark_saved_matches(results, user):
     if not user.is_authenticated:
         return results
     #endif
-    
-    # Get all saved matches for this user
+
+    # Get all the courses this user has saved
     saved_matches = SavedMatch.objects.filter(user=user)
-    
-    # Check each result to see if it's been saved
+
+    # Go through each course result and check if it's been saved
     for result in results:
-        result.is_saved = False  # Default to not saved
-        
-        # Look through saved matches to see if this one is saved
+        result.is_saved = False  # Start by assuming it's not saved
+
+        # Check if this result matches any of the saved courses
         for saved_match in saved_matches:
-            # Check if all the details match
-            if (result.university == saved_match.university and 
-                result.course == saved_match.course and 
-                result.course_type == saved_match.course_type and
-                result.duration == saved_match.duration and
-                result.requirements == saved_match.requirements and
+            # We check university name, course name, and link to see if they match
+            if (result.university == saved_match.university and
+                result.course == saved_match.course and
                 result.course_link == saved_match.course_link):
                 result.is_saved = True
-                break  # Found a match, no need to keep looking
+                break  # We found it, so stop looking
             #endif
         #endfor
     #endfor
-    
+
     return results
 #enddef
 
@@ -72,18 +70,83 @@ def coursefinder_view(request):
     # print(f"DEBUG: Tab: {tab}")
     # print(f"DEBUG: User authenticated: {request.user.is_authenticated}")
 
+    # Get all unique course types
+    all_course_types = Course.objects.values_list('course_type', flat = True).distinct().order_by('course_type')
+
+    # Use normal loop to filter out empty strings
+    course_types = []
+    for t in all_course_types:
+        if t: # Only add if string is not empty
+            course_types.append(t)
+        #endif
+    #endfor
+
+    # Get all unique durations
+    all_durations = Course.objects.values_list('duration', flat=True).distinct().order_by('duration')
+
+    # Use normal loop to filter out empty strings
+    durations = []
+    for d in all_durations:
+        if d:  # Only add if string is not empty
+            durations.append(d)
+        # endif
+    # endfor
+
+    # Get all unique modes
+    all_modes = Course.objects.values_list('mode', flat=True).distinct().order_by('mode')
+
+    # Use normal loop to filter out empty strings
+    modes = []
+    for m in all_modes:
+        if m:  # Only add if string is not empty
+            modes.append(m)
+        # endif
+    # endfor
+
+    # Get all unique locations
+    all_locations = Course.objects.values_list('location', flat=True).distinct().order_by('location')
+
+    # Use normal loop to filter out empty strings
+    locations = []
+    for l in all_locations:
+        if l:  # Only add if string is not empty
+            locations.append(l)
+        # endif
+    # endfor
+
+    # Hardcoded UCAS point options for filtering
+    ucas_options = [
+        (48, "48+ UCAS points (Pass/PPP)"),
+        (80, "80+ UCAS points (BCC/BBC)"),
+        (104, "104+ UCAS points (BCC/CDD)"),
+        (120, "120+ UCAS points (BBB/DDD)"),
+        (136, "136+ UCAS points (AAB/Dist*DD)"),
+        (144, "144+ UCAS points (AAA/DistDistDist)"),
+        (160, "160+ UCAS points (AAA*)"),
+    ]
+
     if request.method == 'POST':
         query = request.POST.get('query', '')
         # print(f"DEBUG: Query received: '{query}'")
-        
+
+        filters = {
+            'course_type': request.POST.get('course_type', ''),
+            'duration': request.POST.get('duration', ''),
+            'mode': request.POST.get('mode', ''),
+            'location': request.POST.get('location', ''),
+            'only_grades': request.POST.get('only_grades', '') == 'on',
+            'no_requirements': request.POST.get('no_requirements', '') == 'on',
+            'ucas_range': request.POST.get('ucas_range', '')
+        }
+
         if tab == 'matches':
             # this tab uses the nlp parser to work out what grades they have
             if query:
                 # run the search with nlp parsing
-                search_result = search_courses(query)
+                search_result = search_courses(query, filters)
                 results = search_result["matching_courses"]
                 # print(f"DEBUG: Found {len(results)} results from search_courses")
-                # Mark which results are saved for logged in users
+                # Mark which results are saved for logged-in users
                 results = mark_saved_matches(results, request.user)
                 # print(f"DEBUG: After marking saved matches: {len(results)} results")
                 
@@ -130,7 +193,7 @@ def coursefinder_view(request):
         elif tab == 'search':
             # this tab is just basic search without nlp
             if query:
-                results = search_universities(query)
+                results = search_universities(query, filters)
                 # print(f"DEBUG: Found {len(results)} results from search_universities")
                 # Mark which results are saved for logged in users
                 results = mark_saved_matches(results, request.user)
@@ -144,6 +207,19 @@ def coursefinder_view(request):
         #endif
     #endif
 
+    # This context will now pass all filter options to the template
+    context = {
+        "mode": tab,
+        'results': results,
+        'parsed_input': parsed_input,
+        'query': query,
+        'course_types': course_types,
+        'durations': durations,
+        'modes': modes,
+        'locations': locations,
+        'ucas_options': ucas_options,
+    }
+
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         # print(f"DEBUG: AJAX request - results count: {len(results)}")
         # ajax request so return just the html for the results
@@ -153,18 +229,18 @@ def coursefinder_view(request):
         else:
             message_html = ''
         #endif
-        
+
+        # Pass the full context to the template
         table_html = render_to_string(
-            'coursefinder/_results_table.html', {
-                'results': results,
-                'user': request.user,  # Add user context for authentication checks
-            }, request=request
+            'coursefinder/_results_table.html',
+            context,
+            request=request
         )
         # print(f"DEBUG: Rendered table_html length: {len(table_html)}")
-        
+
         # stick them together
         full_html = message_html + table_html
-        
+
         return JsonResponse({
             'table_html': full_html,
             'parsed_input': parsed_input
