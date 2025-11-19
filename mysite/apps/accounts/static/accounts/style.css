@@ -200,6 +200,7 @@ button.login-button:hover,
     border: none;
     cursor: pointer;
     padding: 0;
+    margin-left: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -552,6 +553,14 @@ button.login-button:hover,
     background: #dbe5f6;
     color: #19355b;
     border-bottom: 2px solid #c1cbe3;
+}
+
+.pretty-table th:first-child,
+.pretty-table td:first-child {
+    width: 36px;
+    min-width: 36px;
+    max-width: 36px;
+    padding: 0;
 }
 
 .pretty-table tr:last-child td {
