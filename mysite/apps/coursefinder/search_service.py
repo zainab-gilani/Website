@@ -8,7 +8,7 @@ from mysite.apps.nlp.grade_parser import GradeParser
 from mysite.apps.nlp.course_interests import parse_interests
 
 
-def search_courses(query: str) -> Dict[str, Any]:
+def search_courses(query: str, filters: Dict) -> Dict[str, Any]:
     """
     Main search function that parses natural language and finds matching courses.
 
@@ -48,12 +48,15 @@ def search_courses(query: str) -> Dict[str, Any]:
     if result["parsed_grades"]:
         ucas_points = calculate_ucas_points(result["parsed_grades"])
         result["ucas_points"] = ucas_points
+    #endif
 
     # find matching courses
+    # Pass filters dictionary to the next function
     courses = find_matching_courses(
         grades=result["parsed_grades"],
         ucas_points=ucas_points,
-        interests=result["interests"]
+        interests=result["interests"],
+        filters=filters
     )
 
     result["matching_courses"] = courses
@@ -89,7 +92,7 @@ def calculate_ucas_points(grades: Dict[str, str]) -> int:
 # enddef
 
 
-def find_matching_courses(grades: Dict, ucas_points: int, interests: List[str]) -> List:
+def find_matching_courses(grades: Dict, ucas_points: int, interests: List[str], filters: Dict) -> List:
     """
     Find courses that match the given criteria.
     This is for the MATCHES tab - focuses on finding courses that accept the student's grades.
@@ -117,8 +120,7 @@ def find_matching_courses(grades: Dict, ucas_points: int, interests: List[str]) 
         # this filters in the database which is way faster
         qualifying_courses = all_courses.filter(
             Q(entryrequirement__min_ucas_points__lte=ucas_points) | Q(entryrequirement__isnull=True)
-        )[:20]
-
+        )
         # convert to list for processing
         courses_to_show = list(qualifying_courses)
 
@@ -128,11 +130,33 @@ def find_matching_courses(grades: Dict, ucas_points: int, interests: List[str]) 
         for interest in interests:
             interest_query |= Q(name__icontains=interest)
         # endfor
-        courses_to_show = Course.objects.select_related('university').prefetch_related('entryrequirement').filter(interest_query)[:20]
+        qualifying_courses = Course.objects.select_related('university').prefetch_related('entryrequirement').filter(interest_query)
     else:
         # nothing to search for
-        courses_to_show = []
+        qualifying_courses = Course.objects.none()
     # endif
+
+    if filters.get('course_type'):
+        # If 'course_type' is not an empty string, filter the list
+        qualifying_courses = qualifying_courses.filter(course_type=filters['course_type'])
+
+    if filters.get('duration'):
+        qualifying_courses = qualifying_courses.filter(duration=filters['duration'])
+
+    if filters.get('mode'):
+        qualifying_courses = qualifying_courses.filter(mode=filters['mode'])
+
+    if filters.get('location'):
+        qualifying_courses = qualifying_courses.filter(location=filters['location'])
+
+    if filters.get('only_grades'):  # This will be True if the box was ticked
+        qualifying_courses = qualifying_courses.filter(entryrequirement__display_grades__isnull=False).exclude(
+            entryrequirement__display_grades='')
+
+    if filters.get('no_requirements'):  # This will be True if the box was ticked
+        qualifying_courses = qualifying_courses.filter(entryrequirement__has_requirements=False)
+
+    courses_to_show = list(qualifying_courses[:20])
 
     # format results as UniMatchResult objects for the template
     for course in courses_to_show:
