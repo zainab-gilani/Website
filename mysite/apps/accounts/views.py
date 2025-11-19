@@ -231,35 +231,36 @@ def saved_matches_view(request):
 @csrf_exempt
 @login_required
 def save_match(request):
-    # print("DEBUG save_match: Method=" + str(request.method))
-    # print("DEBUG save_match: Content-Type=" + str(request.content_type))
     if request.method == 'POST':
         try:
             # Get the course data from the request
-            # print("DEBUG save_match: Raw body=" + str(request.body))
             data = json.loads(request.body)
-            # print("DEBUG save_match: Parsed data=" + str(data))
-            
-            # Create a new saved match or get existing one
-            # print("DEBUG save_match: Creating SavedMatch...")
+
+            # Remove extra whitespace from the data to make sure matching works properly
+            university = data['university'].strip()
+            course = data['course'].strip()
+            course_type = data['course_type'].strip()
+            duration = data['duration'].strip()
+            requirements = data['requirements'].strip()
+            course_link = data['course_link'].strip()
+
+            # Save the match to the database (or get it if it already exists)
             saved_match, was_created = SavedMatch.objects.get_or_create(
                 user=request.user,
-                university=data['university'],
-                course=data['course'],
-                course_type=data['course_type'],
-                duration=data['duration'],
-                requirements=data['requirements'],
-                course_link=data['course_link'],
+                university=university,
+                course=course,
+                course_type=course_type,
+                duration=duration,
+                requirements=requirements,
+                course_link=course_link,
             )
-            # print("DEBUG save_match: SavedMatch created/found, was_created=" + str(was_created))
-            
-            response = JsonResponse({'status': 'saved', 'id': saved_match.id})
-            # print("DEBUG save_match: Returning success response")
-            return response
+
+            # Send back success response
+            return JsonResponse({'status': 'saved', 'id': saved_match.id})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
     #endtry
-    
+
     return JsonResponse({'status': 'error'}, status=400)
 #enddef
 
@@ -270,28 +271,37 @@ def unsave_match(request):
         try:
             # Get the course data from the request
             data = json.loads(request.body)
-            
-            # Find the saved match to delete
-            saved_match = SavedMatch.objects.get(
+
+            # Remove extra whitespace from the data
+            university = data['university'].strip()
+            course = data['course'].strip()
+            course_link = data['course_link'].strip()
+
+            # Find all saved matches with these details and delete them
+            # We only check university, course, and link to make sure it matches properly
+            matches_to_delete = SavedMatch.objects.filter(
                 user=request.user,
-                university=data['university'],
-                course=data['course'],
-                course_type=data['course_type'],
-                duration=data['duration'],
-                requirements=data['requirements'],
-                course_link=data['course_link'],
+                university=university,
+                course=course,
+                course_link=course_link,
             )
-            
-            # Delete the saved match
-            saved_match.delete()
-            return JsonResponse({'status': 'unsaved'})
-            
-        except SavedMatch.DoesNotExist:
-            return JsonResponse({'status': 'not_found'}, status=404)
+
+            # Count how many we're deleting
+            count = matches_to_delete.count()
+
+            # Delete them
+            matches_to_delete.delete()
+
+            # Check if we actually deleted anything
+            if count > 0:
+                return JsonResponse({'status': 'unsaved', 'deleted': count})
+            else:
+                return JsonResponse({'status': 'not_found'}, status=404)
+
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
     #endtry
-    
+
     return JsonResponse({'status': 'error'}, status=400)
 #enddef
 
@@ -303,22 +313,26 @@ def check_saved(request):
         try:
             # Get the course data from the request
             data = json.loads(request.body)
-            
-            # Check if this course is saved for the user
+
+            # Remove extra whitespace
+            university = data['university'].strip()
+            course = data['course'].strip()
+            course_link = data['course_link'].strip()
+
+            # Check if this course is in the user's saved matches
+            # We only check university, course, and link
             is_saved = SavedMatch.objects.filter(
                 user=request.user,
-                university=data['university'],
-                course=data['course'],
-                course_type=data['course_type'],
-                duration=data['duration'],
-                requirements=data['requirements'],
-                course_link=data['course_link'],
+                university=university,
+                course=course,
+                course_link=course_link,
             ).exists()
-            
+
+            # Send back whether it's saved or not
             return JsonResponse({'is_saved': is_saved})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
     #endtry
-    
+
     return JsonResponse({'status': 'error'}, status=400)
 #enddef
