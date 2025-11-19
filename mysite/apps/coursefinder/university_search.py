@@ -34,7 +34,7 @@ def expand_query_with_synonyms(query: str) -> List[str]:
 #enddef
 
 
-def search_universities(query: str) -> List:
+def search_universities(query: str, filters: dict = None) -> List:
     """
     Search for universities and courses based on general text query.
     This searches university names, locations, and course names.
@@ -50,6 +50,10 @@ def search_universities(query: str) -> List:
         return []
     #endif
 
+    if filters is None:
+        filters = {}
+    #endif
+
     # Get all search terms including synonyms
     search_terms = expand_query_with_synonyms(query)
 
@@ -62,8 +66,24 @@ def search_universities(query: str) -> List:
         term_query = Q(name__icontains=term) | Q(university__name__icontains=term) | Q(university__location__icontains=term)
         course_query |= term_query
     #endfor
-    
-    courses = Course.objects.select_related('university').prefetch_related('entryrequirement').filter(course_query)[:30]
+
+    courses = Course.objects.select_related('university').prefetch_related('entryrequirement').filter(course_query)
+
+    # add filters
+    if filters.get('course_type'):
+        courses = courses.filter(course_type=filters['course_type'])
+    #endif
+    if filters.get('duration'):
+        courses = courses.filter(duration=filters['duration'])
+    #endif
+    if filters.get('mode'):
+        courses = courses.filter(mode=filters['mode'])
+    #endif
+    if filters.get('location'):
+        courses = courses.filter(location=filters['location'])
+    #endif
+
+    courses = courses[:30]
 
     # format everything for display
     for course in courses:
