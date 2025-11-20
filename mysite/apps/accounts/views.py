@@ -32,6 +32,12 @@ User = get_user_model()
 
 
 def register_view(request):
+    """
+    Handles user registration and sends activation email.
+
+    :param request: Django HTTP request object
+    :return: Rendered HTML response for signup page or success page
+    """
     # Redirect to profile if already logged in
     if request.user.is_authenticated:
         return redirect('accounts:profile')
@@ -88,6 +94,14 @@ class CustomLoginView(LoginView):
 # endclass
 
 def activate(request, uidb64, token):
+    """
+    Activates user account from email verification link.
+
+    :param request: Django HTTP request object
+    :param uidb64: Base64 encoded user ID
+    :param token: Account activation token
+    :return: Redirect to coursefinder page or activation invalid page
+    """
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
@@ -107,6 +121,12 @@ def activate(request, uidb64, token):
 # enddef
 
 def resend_activation_view(request):
+    """
+    Resends activation email to user if account is inactive.
+
+    :param request: Django HTTP request object
+    :return: Rendered HTML response for resend activation page
+    """
     if request.method == "POST":
         email = request.POST.get('email')
         user = User.objects.filter(email=email).first()
@@ -143,6 +163,12 @@ def resend_activation_view(request):
 
 @login_required
 def profile_view(request):
+    """
+    Handles user profile page including updates and account deletion.
+
+    :param request: Django HTTP request object
+    :return: Rendered HTML response for profile page or redirect
+    """
     user = request.user
     error = None
 
@@ -218,6 +244,12 @@ def profile_view(request):
 
 @login_required
 def saved_matches_view(request):
+    """
+    Displays all courses saved by the logged-in user.
+
+    :param request: Django HTTP request object
+    :return: Rendered HTML response for saved matches page
+    """
     saved_matches = SavedMatch.objects.filter(user=request.user)
     # Add is_saved property to each saved match for template consistency
     for match in saved_matches:
@@ -231,6 +263,12 @@ def saved_matches_view(request):
 @csrf_exempt
 @login_required
 def save_match(request):
+    """
+    Saves a course match to the user's saved matches list.
+
+    :param request: Django HTTP request object containing course data in JSON body
+    :return: JSON response with save status and match ID
+    """
     if request.method == 'POST':
         try:
             # Get the course data from the request
@@ -267,6 +305,12 @@ def save_match(request):
 @csrf_exempt
 @login_required
 def unsave_match(request):
+    """
+    Removes a course match from the user's saved matches list.
+
+    :param request: Django HTTP request object containing course data in JSON body
+    :return: JSON response with unsave status and deletion count
+    """
     if request.method == 'POST':
         try:
             # Get the course data from the request
@@ -309,6 +353,12 @@ def unsave_match(request):
 @csrf_exempt
 @login_required
 def check_saved(request):
+    """
+    Checks if a course is in the user's saved matches list.
+
+    :param request: Django HTTP request object containing course data in JSON body
+    :return: JSON response with is_saved boolean
+    """
     if request.method == 'POST':
         try:
             # Get the course data from the request

@@ -11,10 +11,21 @@ from .models import Course
 # Create your views here.
 
 def guest_coursefinder_view(request):
+    """
+    Renders the course finder page for guest users.
+
+    :param request: Django HTTP request object
+    :return: Rendered HTML response for course finder page
+    """
     return render(request, 'coursefinder/course_finder.html')
 #enddef
 
 def get_dummy_matches():
+    """
+    Creates example university match results for testing purposes.
+
+    :return: List of dummy UniMatchResult objects
+    """
     fake_unis = [
         UniMatchResult(
             "University of Exampleton", "Computer Science", "BSc (Hons)", "3 years",
@@ -33,6 +44,13 @@ def get_dummy_matches():
 #enddef
 
 def mark_saved_matches(results, user):
+    """
+    Marks which course results have been saved by the user.
+
+    :param results: List of course result objects to check
+    :param user: Django user object (must be authenticated)
+    :return: List of results with is_saved attribute added
+    """
     # Only check saved matches if user is logged in
     if not user.is_authenticated:
         return results
@@ -61,6 +79,12 @@ def mark_saved_matches(results, user):
 #enddef
 
 def coursefinder_view(request):
+    """
+    Main view for course finder page that handles both matches and search tabs.
+
+    :param request: Django HTTP request object
+    :return: Rendered HTML response or JSON response for AJAX requests
+    """
     tab = request.GET.get('tab') or request.POST.get('tab') or "matches"
     results = []
     parsed_input = ""

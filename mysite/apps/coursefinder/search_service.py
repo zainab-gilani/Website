@@ -12,10 +12,9 @@ def search_courses(query: str, filters: Dict) -> Dict[str, Any]:
     """
     Main search function that parses natural language and finds matching courses.
 
-    Examples:
-    - "I got AAB in Maths, Physics, Chemistry"
-    - "Looking for Computer Science courses"
-    - "BBB grades, interested in Law"
+    :param query: Natural language input from user describing grades and interests
+    :param filters: Dictionary containing filter options (course_type, duration, mode, location, etc.)
+    :return: Dictionary containing query, parsed_grades, interests, ucas_points, and matching_courses list
     """
 
     # initialize parser
@@ -67,7 +66,10 @@ def search_courses(query: str, filters: Dict) -> Dict[str, Any]:
 
 def calculate_ucas_points(grades: Dict[str, str]) -> int:
     """
-    Calculate total UCAS points from grades dict.
+    Calculates total UCAS points from grades dictionary.
+
+    :param grades: Dictionary mapping subject names to grade strings (e.g., {"mathematics": "A", "physics": "B"})
+    :return: Total UCAS points as integer
     """
     # UCAS points for each grade
     grade_points = {
@@ -94,9 +96,13 @@ def calculate_ucas_points(grades: Dict[str, str]) -> int:
 
 def find_matching_courses(grades: Dict, ucas_points: int, interests: List[str], filters: Dict) -> List:
     """
-    Find courses that match the given criteria.
-    This is for the MATCHES tab - focuses on finding courses that accept the student's grades.
-    Returns course data formatted for the template.
+    Finds courses that match the given criteria by comparing grades and interests with database entries.
+
+    :param grades: Dictionary of subject-grade pairs
+    :param ucas_points: Total UCAS points calculated from grades
+    :param interests: List of course/subject names the user is interested in
+    :param filters: Dictionary containing filter options (course_type, duration, mode, location, etc.)
+    :return: List of UniMatchResult objects containing matching courses
     """
     from .types import UniMatchResult
 

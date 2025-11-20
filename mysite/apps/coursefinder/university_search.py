@@ -9,7 +9,12 @@ from ..nlp.synonyms import SYNONYMS
 
 
 def expand_query_with_synonyms(query: str) -> List[str]:
-    """Convert query to main subject name if it's a synonym"""
+    """
+    Converts query to main subject name if it's a synonym.
+
+    :param query: Search query string from user
+    :return: List containing main subject name or original query in lowercase
+    """
     if not query:
         return []
     #endif
@@ -36,14 +41,11 @@ def expand_query_with_synonyms(query: str) -> List[str]:
 
 def search_universities(query: str, filters: dict = None) -> List:
     """
-    Search for universities and courses based on general text query.
-    This searches university names, locations, and course names.
+    Searches for universities and courses based on general text query.
 
-    Examples:
-    - "Manchester" - finds unis in Manchester or with Manchester in the name
-    - "University of Oxford" - finds Oxford uni
-    - "Computer Science" - finds CS courses at any uni
-    - "London" - finds all London-based universities
+    :param query: Search string (university name, location, or course name)
+    :param filters: Optional dictionary containing filter options (course_type, duration, mode, location)
+    :return: List of UniMatchResult objects containing matching courses
     """
 
     if not query:
