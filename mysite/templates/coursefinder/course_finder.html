@@ -185,6 +185,41 @@
                             </select>
                         </label>
 
+                    <label class="filter-label">
+                            Mode
+                            <select name="course_type" class="filter-select">
+                                <option value="">Any</option>
+                                {% for mode in modes %}
+                                    <option value="{{ mode }}"
+                                            {% if request.GET.mode == mode %}selected{% endif %}>{{ mode }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+
+                        <label class="filter-label">
+                            Location
+                            <select name="duration" class="filter-select">
+                                <option value="">Any</option>
+                                {% for location in locations %}
+                                    <option value="{{ location }}"
+                                            {% if request.GET.location == location %}selected{% endif %}>{{ location }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+
+                        <!-- CHECKBOXES -->
+                        <label class="filter-label" style="display: flex; align-items: center; gap: 6px;">
+                            <input type="checkbox" name="only_grades"
+                                   {% if request.GET.only_grades %}checked{% endif %}>
+                            Show only grade-based requirements
+                        </label>
+
+                        <label class="filter-label" style="display: flex; align-items: center; gap: 6px;">
+                            <input type="checkbox" name="no_requirements"
+                                   {% if request.GET.no_requirements %}checked{% endif %}>
+                            Show only courses with no requirements
+                        </label>
+
                         <button type="submit" class="filter-submit">
                             Apply Filters
                         </button>
