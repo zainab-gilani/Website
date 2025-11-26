@@ -49,21 +49,20 @@
             {% csrf_token %}
             <div class="search-bar-wrapper">
                 <div class="search-input-row">
-                    <input type="text" name="query" id="matches-search" placeholder="Say Something..." autocomplete="off">
+                    <input type="text" name="query" id="matches-search" placeholder="Say Something..."
+                           autocomplete="off">
                     <button type="button" id="matches-filter-btn" class="filter-btn" aria-label="Filter">
                         <img src="{% static 'images/filter.svg' %}" alt="Filter">
                     </button>
                 </div>
                 <div id="matches-filter-dropdown" class="filter-dropdown">
-                    <form method="get" id="matches-filter-form" class="filter-form">
-                        <!-- DROPDOWNS -->
+                    <div class="filter-form">
                         <label class="filter-label">
                             Course Type
                             <select name="course_type" class="filter-select">
                                 <option value="">Any</option>
                                 {% for course_type in course_types %}
-                                    <option value="{{ course_type }}"
-                                            {% if request.GET.course_type == course_type %}selected{% endif %}>{{ course_type }}</option>
+                                    <option value="{{ course_type }}">{{ course_type }}</option>
                                 {% endfor %}
                             </select>
                         </label>
@@ -73,51 +72,45 @@
                             <select name="duration" class="filter-select">
                                 <option value="">Any</option>
                                 {% for duration in durations %}
-                                    <option value="{{ duration }}"
-                                            {% if request.GET.duration == duration %}selected{% endif %}>{{ duration }}</option>
+                                    <option value="{{ duration }}">{{ duration }}</option>
                                 {% endfor %}
                             </select>
                         </label>
 
-                    <label class="filter-label">
+                        <label class="filter-label">
                             Mode
-                            <select name="course_type" class="filter-select">
+                            <select name="mode" class="filter-select">
                                 <option value="">Any</option>
                                 {% for mode in modes %}
-                                    <option value="{{ mode }}"
-                                            {% if request.GET.mode == mode %}selected{% endif %}>{{ mode }}</option>
+                                    <option value="{{ mode }}">{{ mode }}</option>
                                 {% endfor %}
                             </select>
                         </label>
 
                         <label class="filter-label">
                             Location
-                            <select name="duration" class="filter-select">
+                            <select name="location" class="filter-select">
                                 <option value="">Any</option>
                                 {% for location in locations %}
-                                    <option value="{{ location }}"
-                                            {% if request.GET.location == location %}selected{% endif %}>{{ location }}</option>
+                                    <option value="{{ location }}">{{ location }}</option>
                                 {% endfor %}
                             </select>
                         </label>
 
-                        <!-- CHECKBOXES -->
                         <label class="filter-label" style="display: flex; align-items: center; gap: 6px;">
-                            <input type="checkbox" name="only_grades"
-                                   {% if request.GET.only_grades %}checked{% endif %}>
+                            <input type="checkbox" name="only_grades">
                             Show only grade-based requirements
                         </label>
 
                         <label class="filter-label" style="display: flex; align-items: center; gap: 6px;">
-                            <input type="checkbox" name="no_requirements"
-                                   {% if request.GET.no_requirements %}checked{% endif %}>
+                            <input type="checkbox" name="no_requirements">
                             Show only courses with no requirements
                         </label>
 
-                        <button type="submit" class="filter-submit">
+                        <button type="button" class="filter-submit" id="matches-apply-filters">
                             Apply Filters
                         </button>
-                    </form>
+                    </div>
                 </div>
 
 
@@ -162,14 +155,24 @@
                     </button>
                 </div>
                 <div id="search-filter-dropdown" class="filter-dropdown">
-                    <form method="get" id="search-filter-form" class="filter-form">
+                    <div class="filter-form">
+
+                        <label class="filter-label">
+                            Min. UCAS Points
+                            <select name="ucas_range" class="filter-select">
+                                <option value="">Any</option>
+                                {% for points, label in ucas_options %}
+                                    <option value="{{ points }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+
                         <label class="filter-label">
                             Course Type
                             <select name="course_type" class="filter-select">
                                 <option value="">Any</option>
                                 {% for course_type in course_types %}
-                                    <option value="{{ course_type }}"
-                                            {% if request.GET.course_type == course_type %}selected{% endif %}>{{ course_type }}</option>
+                                    <option value="{{ course_type }}">{{ course_type }}</option>
                                 {% endfor %}
                             </select>
                         </label>
@@ -179,51 +182,45 @@
                             <select name="duration" class="filter-select">
                                 <option value="">Any</option>
                                 {% for duration in durations %}
-                                    <option value="{{ duration }}"
-                                            {% if request.GET.duration == duration %}selected{% endif %}>{{ duration }}</option>
+                                    <option value="{{ duration }}">{{ duration }}</option>
                                 {% endfor %}
                             </select>
                         </label>
 
-                    <label class="filter-label">
+                        <label class="filter-label">
                             Mode
-                            <select name="course_type" class="filter-select">
+                            <select name="mode" class="filter-select">
                                 <option value="">Any</option>
                                 {% for mode in modes %}
-                                    <option value="{{ mode }}"
-                                            {% if request.GET.mode == mode %}selected{% endif %}>{{ mode }}</option>
+                                    <option value="{{ mode }}">{{ mode }}</option>
                                 {% endfor %}
                             </select>
                         </label>
 
                         <label class="filter-label">
                             Location
-                            <select name="duration" class="filter-select">
+                            <select name="location" class="filter-select">
                                 <option value="">Any</option>
                                 {% for location in locations %}
-                                    <option value="{{ location }}"
-                                            {% if request.GET.location == location %}selected{% endif %}>{{ location }}</option>
+                                    <option value="{{ location }}">{{ location }}</option>
                                 {% endfor %}
                             </select>
                         </label>
 
-                        <!-- CHECKBOXES -->
                         <label class="filter-label" style="display: flex; align-items: center; gap: 6px;">
-                            <input type="checkbox" name="only_grades"
-                                   {% if request.GET.only_grades %}checked{% endif %}>
+                            <input type="checkbox" name="only_grades">
                             Show only grade-based requirements
                         </label>
 
                         <label class="filter-label" style="display: flex; align-items: center; gap: 6px;">
-                            <input type="checkbox" name="no_requirements"
-                                   {% if request.GET.no_requirements %}checked{% endif %}>
+                            <input type="checkbox" name="no_requirements">
                             Show only courses with no requirements
                         </label>
 
-                        <button type="submit" class="filter-submit">
+                        <button type="button" class="filter-submit" id="search-apply-filters">
                             Apply Filters
                         </button>
-                    </form>
+                    </div>
                 </div>
 
                 <div id="search-search-tips" class="search-tips">
@@ -238,17 +235,17 @@
             </div>
         </form>
 
-    <!-- AJAX Results for Uni Search -->
-    <div id="search-results-table">
-        {% if mode == 'search' %}
-            {% if parsed_input %}
-                <p style="text-align:center; margin-top:30px; font-size:1.3rem; font-weight:700; color:#2D5289FF;">
-                    {{ parsed_input }}
-                </p>
+        <!-- AJAX Results for Uni Search -->
+        <div id="search-results-table">
+            {% if mode == 'search' %}
+                {% if parsed_input %}
+                    <p style="text-align:center; margin-top:30px; font-size:1.3rem; font-weight:700; color:#2D5289FF;">
+                        {{ parsed_input }}
+                    </p>
+                {% endif %}
+                {% include "coursefinder/_results_table.html" %}
             {% endif %}
-            {% include "coursefinder/_results_table.html" %}
-        {% endif %}
-    </div>
+        </div>
     </div>
 
     <div class="rotating-text">
@@ -468,7 +465,7 @@
                     xhr.open('POST', matchesForm.action, true);
                     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
-                    xhr.onreadystatechange = function() {
+                    xhr.onreadystatechange = function () {
                         if (xhr.readyState === 4 && xhr.status === 200) {
                             var response = JSON.parse(xhr.responseText);
                             document.getElementById("results-table").innerHTML = response.table_html;
@@ -495,7 +492,7 @@
                     xhr.open('POST', searchForm.action, true);
                     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
-                    xhr.onreadystatechange = function() {
+                    xhr.onreadystatechange = function () {
                         if (xhr.readyState === 4 && xhr.status === 200) {
                             var response = JSON.parse(xhr.responseText);
 
@@ -538,7 +535,7 @@
                     btn.setAttribute('data-listener-attached', 'true');
 
                     // Create a new event listener function
-                    btn.addEventListener('click', function(e) {
+                    btn.addEventListener('click', function (e) {
                         e.preventDefault();
                         e.stopPropagation();
 
@@ -579,7 +576,7 @@
                         xhr.setRequestHeader('Content-Type', 'application/json');
                         xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
 
-                        xhr.onreadystatechange = function() {
+                        xhr.onreadystatechange = function () {
                             if (xhr.readyState === 4) {
                                 if (xhr.status === 200) {
                                     console.log('Save/unsave successful');
@@ -647,7 +644,7 @@
                     // Store reference to button for use in response handler
                     xhr.buttonElement = btn;
 
-                    xhr.onreadystatechange = function() {
+                    xhr.onreadystatechange = function () {
                         if (this.readyState === 4 && this.status === 200) {
                             var response = JSON.parse(this.responseText);
                             // Update the heart based on whether it's saved
@@ -677,11 +674,38 @@
         document.addEventListener('DOMContentLoaded', setupHeartButtons);
 
         // Refresh heart states when user navigates back to page (no reload, just update hearts)
-        window.addEventListener('pageshow', function(event) {
+        window.addEventListener('pageshow', function (event) {
             if (event.persisted) {
                 console.log('Page loaded from cache, refreshing heart states...');
                 refreshHeartStates();
             }
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Function to submit the correct form and close the dropdown
+            function setupApplyButton(buttonId, formId, dropdownId) {
+                var applyBtn = document.getElementById(buttonId);
+                var dropdown = document.getElementById(dropdownId);
+                var mainForm = document.getElementById(formId);
+
+                if (applyBtn && mainForm) {
+                    applyBtn.addEventListener('click', function () {
+                        // This command correctly triggers the AJAX form submission
+                        mainForm.requestSubmit();
+                        if (dropdown) {
+                            dropdown.style.display = 'none'; // Hide dropdown
+                        }
+                    });
+                }
+            }
+
+            // Setup for Matches tab
+            setupApplyButton('matches-apply-filters', 'matches-search-form', 'matches-filter-dropdown');
+
+            // Setup for Uni Search tab
+            setupApplyButton('search-apply-filters', 'search-search-form', 'search-filter-dropdown');
         });
     </script>
 
