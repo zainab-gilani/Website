@@ -417,7 +417,7 @@ form {
     justify-content: center;
     cursor: pointer;
     margin-left: 8px;
-    transition: background 0.15s, box-shadow 0.15s;
+    transition: background 0.15s;
     padding: 0;
 }
 
@@ -447,14 +447,14 @@ form {
 .filter-form {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 5px; /* This sets the space between direct children */
 }
 
 .filter-label {
     font-size: 1.04rem;
     color: #294366;
     font-weight: 600;
-    margin-top: 12px;
+    margin-top: 5px; /* THIS IS THE PROBLEM LINE */
 }
 
 .filter-select {
