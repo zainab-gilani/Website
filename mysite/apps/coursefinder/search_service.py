@@ -127,8 +127,6 @@ def find_matching_courses(grades: Dict, ucas_points: int, interests: List[str], 
         qualifying_courses = all_courses.filter(
             Q(entryrequirement__min_ucas_points__lte=ucas_points) | Q(entryrequirement__isnull=True)
         )
-        # convert to list for processing
-        courses_to_show = list(qualifying_courses)
 
     elif interests:
         # they didn't give grades but mentioned interests
@@ -155,22 +153,49 @@ def find_matching_courses(grades: Dict, ucas_points: int, interests: List[str], 
     if filters.get('location'):
         qualifying_courses = qualifying_courses.filter(location=filters['location'])
 
-    if filters.get('only_grades'):  # This will be True if the box was ticked
-        qualifying_courses = qualifying_courses.filter(entryrequirement__display_grades__isnull=False).exclude(
-            entryrequirement__display_grades='')
+    # if user wants to see only courses with grade requirements
+    if filters.get('only_grades'):
+        # filter for courses that have requirements and grades arent empty
+        qualifying_courses = qualifying_courses.filter(
+            entryrequirement__has_requirements=True,
+            entryrequirement__display_grades__isnull=False
+        ).exclude(
+            entryrequirement__display_grades=''
+        ).distinct()
+    #endif
 
-    if filters.get('no_requirements'):  # This will be True if the box was ticked
-        qualifying_courses = qualifying_courses.filter(entryrequirement__has_requirements=False)
+    # if user wants to see only courses with no requirements
+    if filters.get('no_requirements'):
+        # filter for courses where has_requirements is false
+        qualifying_courses = qualifying_courses.filter(
+            entryrequirement__has_requirements=False
+        ).distinct()
+    #endif
 
     courses_to_show = list(qualifying_courses[:20])
 
-    # format results as UniMatchResult objects for the template
+    # format the courses as UniMatchResult objects for the template
     for course in courses_to_show:
         try:
             req = course.entryrequirement
-            requirements_str = req.display_grades or f"{req.min_ucas_points} UCAS points"
-            if req.btec_grades:
-                requirements_str += f" / {req.btec_grades}"
+            # decide what to show for requirements
+            if req.has_requirements:
+                # course has requirements so show them
+                if req.display_grades and req.display_grades.strip():
+                    requirements_str = req.display_grades
+                elif req.min_ucas_points > 0:
+                    requirements_str = f"{req.min_ucas_points} UCAS points"
+                else:
+                    requirements_str = "No specific requirements"
+                #endif
+
+                # add btec grades if they exist
+                if req.btec_grades:
+                    requirements_str += f" / {req.btec_grades}"
+                #endif
+            else:
+                # no requirements for this course
+                requirements_str = "No specific requirements"
             #endif
         except:
             requirements_str = "No specific requirements"

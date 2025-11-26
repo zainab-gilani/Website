@@ -85,18 +85,62 @@ def search_universities(query: str, filters: dict = None) -> List:
         courses = courses.filter(location=filters['location'])
     #endif
 
+    if filters.get('ucas_range'):
+        # Filter by minimum UCAS points
+        try:
+            min_points = int(filters['ucas_range'])
+            courses = courses.filter(entryrequirement__min_ucas_points__lte=min_points)
+        except ValueError:
+            pass
+        #endtry
+    #endif
+
+    # if user wants to see only courses with grade requirements
+    if filters.get('only_grades'):
+        # filter for courses that have requirements and grades arent empty
+        courses = courses.filter(
+            entryrequirement__has_requirements=True,
+            entryrequirement__display_grades__isnull=False
+        ).exclude(
+            entryrequirement__display_grades=''
+        ).distinct()
+    #endif
+
+    # if user wants to see only courses with no requirements
+    if filters.get('no_requirements'):
+        # filter for courses where has_requirements is false
+        courses = courses.filter(
+            entryrequirement__has_requirements=False
+        ).distinct()
+    #endif
+
     courses = courses[:30]
 
     # format everything for display
     for course in courses:
         try:
             req = course.entryrequirement
-            requirements_str = req.display_grades or f"{req.min_ucas_points} UCAS points"
-            if req.btec_grades:
-                requirements_str += f" / {req.btec_grades}"
+            # decide what to show for requirements
+            if req.has_requirements:
+                # course has requirements so show them
+                if req.display_grades and req.display_grades.strip():
+                    requirements_str = req.display_grades
+                elif req.min_ucas_points > 0:
+                    requirements_str = f"{req.min_ucas_points} UCAS points"
+                else:
+                    requirements_str = "No specific requirements"
+                #endif
+
+                # add btec grades if they exist
+                if req.btec_grades:
+                    requirements_str += f" / {req.btec_grades}"
+                #endif
+            else:
+                # no requirements for this course
+                requirements_str = "No specific requirements"
             #endif
         except:
-            requirements_str = "Requirements not specified"
+            requirements_str = "No specific requirements"
         #endtry
 
         match = UniMatchResult(
