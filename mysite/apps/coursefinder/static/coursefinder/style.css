@@ -435,26 +435,26 @@ form {
     position: absolute;
     right: 0;
     top: 55px;
-    width: 300px;
+    width: 350px;
     background: #e3eaf7;
     border-radius: 14px;
     padding: 12px 12px 12px 12px;
     z-index: 23;
-    min-width: 230px;
+    min-width: 200px;
     border: 2px solid #b7c7e0;
 }
 
 .filter-form {
     display: flex;
     flex-direction: column;
-    gap: 5px; /* This sets the space between direct children */
+    gap: 5px;
 }
 
 .filter-label {
     font-size: 1.04rem;
     color: #294366;
     font-weight: 600;
-    margin-top: 5px; /* THIS IS THE PROBLEM LINE */
+    margin-top: 5px;
 }
 
 .filter-select {
