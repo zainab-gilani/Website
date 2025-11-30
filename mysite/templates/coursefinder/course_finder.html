@@ -58,6 +58,15 @@
                 <div id="matches-filter-dropdown" class="filter-dropdown">
                     <div class="filter-form">
                         <label class="filter-label">
+                            Min. UCAS Points
+                            <select name="ucas_range" class="filter-select">
+                                <option value="">Any</option>
+                                {% for points, label in ucas_options %}
+                                    <option value="{{ points }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                        <label class="filter-label">
                             Course Type
                             <select name="course_type" class="filter-select">
                                 <option value="">Any</option>
