@@ -21,20 +21,20 @@ def expand_query_with_synonyms(query: str) -> List[str]:
     
     query_lower = query.strip().lower()
     
-    # Get course synonyms
+    # get course synonyms
     courses = SYNONYMS.get('courses', {})
-    
-    # Check if query is a synonym for any subject
+
+    # see if query matches any synonym
     for subject, synonym_list in courses.items():
         for synonym in synonym_list:
             if synonym.lower() == query_lower:
-                # Found a match - return just the main subject name
+                # found a match so return the main subject
                 return [subject.lower()]
             #endif
         #endfor
     #endfor
-    
-    # If no synonym found, return original query
+
+    # no synonym found so just return original query
     return [query_lower]
 #enddef
 
@@ -56,37 +56,61 @@ def search_universities(query: str, filters: dict = None) -> List:
         filters = {}
     #endif
 
-    # Get all search terms including synonyms
+    # get search terms with synonyms
     search_terms = expand_query_with_synonyms(query)
 
     results = []
 
-    # Build search query using all terms
+    # build the search query
     course_query = Q()
     for term in search_terms:
-        # Search in course name, university name, and location
+        # search in course name, uni name, and location
         term_query = Q(name__icontains=term) | Q(university__name__icontains=term) | Q(university__location__icontains=term)
         course_query |= term_query
     #endfor
 
     courses = Course.objects.select_related('university').prefetch_related('entryrequirement').filter(course_query)
 
-    # add filters
+    # filter by course type if selected
     if filters.get('course_type'):
-        courses = courses.filter(course_type=filters['course_type'])
-    #endif
-    if filters.get('duration'):
-        courses = courses.filter(duration=filters['duration'])
-    #endif
-    if filters.get('mode'):
-        courses = courses.filter(mode=filters['mode'])
-    #endif
-    if filters.get('location'):
-        courses = courses.filter(location=filters['location'])
+        selected_type = filters['course_type']
+        # matches "BA (Hons)" in both short and long forms
+        courses = courses.filter(course_type__icontains=selected_type)
     #endif
 
+    # filter by duration
+    if filters.get('duration'):
+        val = filters['duration']
+        if "5+" in val:
+            courses = courses.filter(Q(duration__icontains="5") | Q(duration__icontains="6"))
+        else:
+            years = val.split(' ')[0]
+            courses = courses.filter(duration__icontains=years)
+        #endif
+    #endif
+
+    # filter by mode
+    if filters.get('mode'):
+        courses = courses.filter(mode__icontains=filters['mode'])
+    #endif
+
+    # filter by location/region
+    if filters.get('location'):
+        region = filters['location']
+        region_map = filters.get('region_mapping', {})
+        cities = region_map.get(region, [])
+
+        if cities:
+            loc_q = Q()
+            for city in cities:
+                loc_q |= Q(university__location__icontains=city) | Q(location__icontains=city)
+            #endfor
+            courses = courses.filter(loc_q)
+        #endif
+    #endif
+
+    # filter by ucas points
     if filters.get('ucas_range'):
-        # Filter by minimum UCAS points
         try:
             min_points = int(filters['ucas_range'])
             courses = courses.filter(entryrequirement__min_ucas_points__lte=min_points)

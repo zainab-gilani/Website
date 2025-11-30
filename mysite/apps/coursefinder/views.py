@@ -10,6 +10,60 @@ from .models import Course
 
 # Create your views here.
 
+UCAS_OPTIONS = [
+    (48, "48+ (Pass/PPP)"),
+    (80, "80+ (BCC/BBC)"),
+    (96, "96+ (CCC/BCC)"),
+    (104, "104+ (BCC/CDD)"),
+    (112, "112+ (BBC)"),
+    (120, "120+ (BBB)"),
+    (128, "128+ (ABB)"),
+    (136, "136+ (AAB)"),
+    (144, "144+ (AAA)"),
+    (168, "168+ (A*A*A*)"),
+]
+
+DURATION_OPTIONS = [
+    "1 Year",
+    "2 Years",
+    "3 Years",
+    "4 Years",
+    "5+ Years",
+]
+
+MODE_OPTIONS = [
+"Full-time",
+    "Part-time",
+    "Sandwich", # e.g. "Placement year", "Industry", etc.
+    "Distance Learning"
+]
+
+LOCATION_REGIONS = {
+    "London & South East": ["London", "Brighton", "Oxford", "Reading", "Southampton", "Surrey", "Kent", "Sussex"],
+    "South West": ["Bristol", "Bath", "Exeter", "Plymouth", "Bournemouth", "Falmouth"],
+    "West Midlands": ["Birmingham", "Coventry", "Warwick", "Wolverhampton", "Aston"],
+    "East Midlands": ["Nottingham", "Leicester", "Loughborough", "Derby", "Lincoln"],
+    "North West": ["Manchester", "Liverpool", "Lancaster", "Chester", "Salford"],
+    "North East & Yorkshire": ["Leeds", "Sheffield", "York", "Newcastle", "Durham", "Hull", "Bradford"],
+    "Scotland": ["Edinburgh", "Glasgow", "Aberdeen", "St Andrews", "Dundee", "Stirling"],
+    "Wales": ["Cardiff", "Swansea", "Bangor", "Aberystwyth"],
+    "Northern Ireland": ["Belfast", "Ulster"],
+}
+
+LOCATION_OPTIONS = list(LOCATION_REGIONS.keys())
+
+COURSE_TYPE_OPTIONS = [
+    "BA (Hons)",  # bachelor of arts with honours
+    "BSc (Hons)",  # bachelor of science with honours
+    "BEng (Hon)",  # bachelor of engineering with honours
+    "LLB (Hons)",  # bachelor of law with honours
+    "MA",  # master of arts
+    "MSc",  # master of science
+    "MBA",  # master of business administration
+    "MEng",  # integrated masters in engineering
+    "Foundation",  # foundation degrees (FdA, FdSc, etc)
+]
+
 def guest_coursefinder_view(request):
     """
     Renders the course finder page for guest users.
@@ -17,7 +71,15 @@ def guest_coursefinder_view(request):
     :param request: Django HTTP request object
     :return: Rendered HTML response for course finder page
     """
-    return render(request, 'coursefinder/course_finder.html')
+    # pass filter options to template
+    context = {
+        'course_types': COURSE_TYPE_OPTIONS,
+        'durations': DURATION_OPTIONS,
+        'modes': MODE_OPTIONS,
+        'locations': LOCATION_OPTIONS,
+        'ucas_options': UCAS_OPTIONS,
+    }
+    return render(request, 'coursefinder/course_finder.html', context)
 #enddef
 
 def get_dummy_matches():
@@ -94,61 +156,6 @@ def coursefinder_view(request):
     # print(f"DEBUG: Tab: {tab}")
     # print(f"DEBUG: User authenticated: {request.user.is_authenticated}")
 
-    # Get all unique course types
-    all_course_types = Course.objects.values_list('course_type', flat = True).distinct().order_by('course_type')
-
-    # Use normal loop to filter out empty strings
-    course_types = []
-    for t in all_course_types:
-        if t: # Only add if string is not empty
-            course_types.append(t)
-        #endif
-    #endfor
-
-    # Get all unique durations
-    all_durations = Course.objects.values_list('duration', flat=True).distinct().order_by('duration')
-
-    # Use normal loop to filter out empty strings
-    durations = []
-    for d in all_durations:
-        if d:  # Only add if string is not empty
-            durations.append(d)
-        # endif
-    # endfor
-
-    # Get all unique modes
-    all_modes = Course.objects.values_list('mode', flat=True).distinct().order_by('mode')
-
-    # Use normal loop to filter out empty strings
-    modes = []
-    for m in all_modes:
-        if m:  # Only add if string is not empty
-            modes.append(m)
-        # endif
-    # endfor
-
-    # Get all unique locations
-    all_locations = Course.objects.values_list('location', flat=True).distinct().order_by('location')
-
-    # Use normal loop to filter out empty strings
-    locations = []
-    for l in all_locations:
-        if l:  # Only add if string is not empty
-            locations.append(l)
-        # endif
-    # endfor
-
-    # Hardcoded UCAS point options for filtering
-    ucas_options = [
-        (48, "48+ UCAS points (Pass/PPP)"),
-        (80, "80+ UCAS points (BCC/BBC)"),
-        (104, "104+ UCAS points (BCC/CDD)"),
-        (120, "120+ UCAS points (BBB/DDD)"),
-        (136, "136+ UCAS points (AAB/Dist*DD)"),
-        (144, "144+ UCAS points (AAA/DistDistDist)"),
-        (160, "160+ UCAS points (AAA*)"),
-    ]
-
     if request.method == 'POST':
         query = request.POST.get('query', '')
         # print(f"DEBUG: Query received: '{query}'")
@@ -162,6 +169,9 @@ def coursefinder_view(request):
             'no_requirements': request.POST.get('no_requirements', '') == 'on',
             'ucas_range': request.POST.get('ucas_range', '')
         }
+
+        filters['region_mapping'] = LOCATION_REGIONS
+
 
         if tab == 'matches':
             # this tab uses the nlp parser to work out what grades they have
@@ -237,11 +247,11 @@ def coursefinder_view(request):
         'results': results,
         'parsed_input': parsed_input,
         'query': query,
-        'course_types': course_types,
-        'durations': durations,
-        'modes': modes,
-        'locations': locations,
-        'ucas_options': ucas_options,
+        'course_types': COURSE_TYPE_OPTIONS,
+        'durations': DURATION_OPTIONS,
+        'modes': MODE_OPTIONS,
+        'locations': LOCATION_OPTIONS,
+        'ucas_options': UCAS_OPTIONS,
     }
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -274,10 +284,5 @@ def coursefinder_view(request):
     # print(f"DEBUG: Final results count: {len(results)}")
     # print(f"DEBUG: Final parsed_input: '{parsed_input}'")
     
-    return render(request, 'coursefinder/course_finder.html', {
-        "mode": tab,
-        'results': results,
-        'parsed_input': parsed_input,
-        'query': query,
-    })
+    return render(request, 'coursefinder/course_finder.html', context)
 #enddef

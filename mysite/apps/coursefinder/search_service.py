@@ -4,6 +4,7 @@ Search service that uses NLP parser to find matching courses
 from typing import List, Dict, Any
 from django.db.models import Q
 from .models import University, Course, EntryRequirement, SubjectRequirement
+from .types import UniMatchResult
 from mysite.apps.nlp.grade_parser import GradeParser
 from mysite.apps.nlp.course_interests import parse_interests
 
@@ -104,8 +105,6 @@ def find_matching_courses(grades: Dict, ucas_points: int, interests: List[str], 
     :param filters: Dictionary containing filter options (course_type, duration, mode, location, etc.)
     :return: List of UniMatchResult objects containing matching courses
     """
-    from .types import UniMatchResult
-
     results = []
 
     # need to find courses the student can actually get into with their grades
@@ -122,8 +121,7 @@ def find_matching_courses(grades: Dict, ucas_points: int, interests: List[str], 
             all_courses = all_courses.filter(interest_query)
         # endif
 
-        # find courses where student has enough points OR no requirements listed
-        # this filters in the database which is way faster
+        # get courses where they have enough points or no requirements
         qualifying_courses = all_courses.filter(
             Q(entryrequirement__min_ucas_points__lte=ucas_points) | Q(entryrequirement__isnull=True)
         )
@@ -140,22 +138,66 @@ def find_matching_courses(grades: Dict, ucas_points: int, interests: List[str], 
         qualifying_courses = Course.objects.none()
     # endif
 
+    # apply ucas points filter if selected
+    if filters.get('ucas_range'):
+        try:
+            min_points = int(filters['ucas_range'])
+            # only show courses that require at least this many points
+            if min_points > 0:
+                qualifying_courses = qualifying_courses.filter(
+                    entryrequirement__min_ucas_points__gte=min_points
+                )
+            #endif
+        except ValueError:
+            pass
+        #endtry
+    #endif
+
+    # filter by course type if they selected one
     if filters.get('course_type'):
-        # If 'course_type' is not an empty string, filter the list
-        qualifying_courses = qualifying_courses.filter(course_type=filters['course_type'])
+        selected_type = filters['course_type']
+        # matches "BA (Hons)" in both short and long forms
+        qualifying_courses = qualifying_courses.filter(course_type__icontains=selected_type)
+    #endif
 
     if filters.get('duration'):
-        qualifying_courses = qualifying_courses.filter(duration=filters['duration'])
+        selected_duration = filters['duration']
+        if "5+" in selected_duration:
+            qualifying_courses = qualifying_courses.filter(
+                Q(duration__icontains="5") | Q(duration__icontains="6") | Q(duration__icontains="7")
+            )
+        else:
+            years = selected_duration.split(' ')[0]
+            qualifying_courses = qualifying_courses.filter(duration__icontains=years)
+        #endif
+    #endif
 
     if filters.get('mode'):
-        qualifying_courses = qualifying_courses.filter(mode=filters['mode'])
+        qualifying_courses = qualifying_courses.filter(mode__icontains=filters['mode'])
+    #endif
 
     if filters.get('location'):
-        qualifying_courses = qualifying_courses.filter(location=filters['location'])
+        selected_region = filters['location']
+        region_map = filters.get('region_mapping', {})
+
+        cities_in_region = region_map.get(selected_region, [])
+
+        if cities_in_region:
+            location_query = Q()
+            for city in cities_in_region:
+                location_query |= Q(location__icontains=city)
+            #endfor
+            qualifying_courses = qualifying_courses.filter(
+                Q(location__in=cities_in_region) |
+                Q(university__location__in=cities_in_region) |
+                location_query
+            )
+        #endif
+    #endif
 
     # if user wants to see only courses with grade requirements
     if filters.get('only_grades'):
-        # filter for courses that have requirements and grades arent empty
+        # filter for courses that have requirements and grades aren't empty
         qualifying_courses = qualifying_courses.filter(
             entryrequirement__has_requirements=True,
             entryrequirement__display_grades__isnull=False
