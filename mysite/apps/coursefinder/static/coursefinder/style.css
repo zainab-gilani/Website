@@ -487,6 +487,42 @@ form {
     background: #294366;
 }
 
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    min-height: 18px;
+    border: 2px solid #41689a;
+    border-radius: 4px;
+    background-color: white;
+    cursor: pointer;
+    margin-right: 10px;
+    display: grid;
+    place-content: center;
+    transition: background 0.1s, border-color 0.1s;
+}
+
+input[type="checkbox"]:checked {
+    background-color: #41689a;
+    border-color: #41689a;
+}
+
+input[type="checkbox"]:checked::after {
+    content: '';
+    width: 5px;
+    height: 9px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    margin-top: -2px;
+}
+
+input[type="checkbox"]:hover {
+    border-color: #294366;
+}
+
 /* --- RESPONSIVE --- */
 @media (max-width: 800px) {
     .pretty-table, .table-container {
