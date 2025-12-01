@@ -7,6 +7,7 @@ from .models import University, Course, EntryRequirement, SubjectRequirement
 from .types import UniMatchResult
 from mysite.apps.nlp.grade_parser import GradeParser
 from mysite.apps.nlp.course_interests import parse_interests
+from .university_search import expand_query_with_synonyms
 
 
 def search_courses(query: str, filters: Dict) -> Dict[str, Any]:
@@ -116,7 +117,12 @@ def find_matching_courses(grades: Dict, ucas_points: int, interests: List[str], 
         if interests:
             interest_query = Q()
             for interest in interests:
-                interest_query |= Q(name__icontains=interest)
+                # use the synonym function to expand search terms
+                # this means if someone searches "math" it also finds "mathematics"
+                expanded_terms = expand_query_with_synonyms(interest)
+                for term in expanded_terms:
+                    interest_query |= Q(name__icontains=term)
+                # endfor
             # endfor
             all_courses = all_courses.filter(interest_query)
         # endif
@@ -130,7 +136,12 @@ def find_matching_courses(grades: Dict, ucas_points: int, interests: List[str], 
         # they didn't give grades but mentioned interests
         interest_query = Q()
         for interest in interests:
-            interest_query |= Q(name__icontains=interest)
+            # use the synonym function to expand search terms
+            # this means if someone searches "math" it also finds "mathematics"
+            expanded_terms = expand_query_with_synonyms(interest)
+            for term in expanded_terms:
+                interest_query |= Q(name__icontains=term)
+            # endfor
         # endfor
         qualifying_courses = Course.objects.select_related('university').prefetch_related('entryrequirement').filter(interest_query)
     else:
