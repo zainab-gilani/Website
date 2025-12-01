@@ -435,56 +435,57 @@ form {
     position: absolute;
     right: 0;
     top: 55px;
-    width: 350px;
-    background: #e3eaf7;
-    border-radius: 14px;
-    padding: 12px 12px 12px 12px;
-    z-index: 23;
+    width: 240px;
     min-width: 200px;
+    background: #e3eaf7;
+    border-radius: 12px;
+    padding: 10px;
+    z-index: 23;
     border: 2px solid #b7c7e0;
 }
 
 .filter-form {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 8px;
 }
 
 .filter-label {
-    font-size: 1.04rem;
+    font-size: 0.9rem;
     color: #294366;
     font-weight: 600;
-    margin-top: 5px;
+    margin-top: 0;
+    line-height: 1.2;
 }
 
 .filter-select {
-    margin-top: 3px;
+    margin-top: 2px;
     width: 100%;
-    border-radius: 7px;
+    border-radius: 6px;
     border: 1px solid #bcd;
-    font-size: 1.01rem;
-    padding: 6px;
+    font-size: 0.88rem;
+    padding: 4px;
     background: white;
 }
 
 .filter-submit {
-    margin-top: 14px;
+    margin: 8px auto 0 auto;
     background: #41689a;
     color: white;
     border: none;
-    border-radius: 8px;
-    padding: 7px 0;
-    font-size: 1.05rem;
+    border-radius: 6px;
+    padding: 8px 0;
+    font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
     transition: background 0.15s;
-    width: 110px;
+    width: 50%;
+    display: block;
 }
 
 .filter-submit:hover {
     background: #294366;
 }
-
 
 /* --- RESPONSIVE --- */
 @media (max-width: 800px) {
