@@ -710,10 +710,33 @@
                 }
             }
 
-            // Setup for Matches tab
-            setupApplyButton('matches-apply-filters', 'matches-search-form', 'matches-filter-dropdown');
+            // Function to make checkboxes act like radio buttons (only one at a time)
+            function setupCheckboxExclusivity(formId) {
+                var form = document.getElementById(formId);
+                if (!form) return;
 
-            // Setup for Uni Search tab
+                var onlyGrades = form.querySelector('input[name="only_grades"]');
+                var noRequirements = form.querySelector('input[name="no_requirements"]');
+
+                if (onlyGrades && noRequirements) {
+                    onlyGrades.addEventListener('change', function () {
+                        if (this.checked) {
+                            noRequirements.checked = false;
+                        }
+                    });
+
+                    noRequirements.addEventListener('change', function () {
+                        if (this.checked) {
+                            onlyGrades.checked = false;
+                        }
+                    });
+                }
+            }
+
+            setupCheckboxExclusivity('matches-search-form');
+            setupCheckboxExclusivity('search-search-form');
+
+            setupApplyButton('matches-apply-filters', 'matches-search-form', 'matches-filter-dropdown');
             setupApplyButton('search-apply-filters', 'search-search-form', 'search-filter-dropdown');
         });
     </script>
