@@ -264,7 +264,13 @@
 
     <script>
         // Set up filter dropdown for matches tab
+        // Use flags to prevent duplicate listener setup
+        var matchesFilterSetup = false;
+        var searchFilterSetup = false;
+
         function setupMatchesFilter() {
+            if (matchesFilterSetup) return;
+
             var matchesFilterBtn = document.getElementById('matches-filter-btn');
             var matchesFilterDropdown = document.getElementById('matches-filter-dropdown');
 
@@ -273,18 +279,14 @@
                     e.stopPropagation();
                     matchesFilterDropdown.style.display = (matchesFilterDropdown.style.display === 'block') ? 'none' : 'block';
                 };
-
-                // Close dropdown when clicking outside
-                document.addEventListener('click', function (e) {
-                    if (matchesFilterDropdown.style.display === 'block' && !matchesFilterDropdown.contains(e.target) && e.target !== matchesFilterBtn) {
-                        matchesFilterDropdown.style.display = 'none';
-                    }
-                });
+                matchesFilterSetup = true;
             }
         }
 
         // Set up filter dropdown for search tab
         function setupSearchFilter() {
+            if (searchFilterSetup) return;
+
             var searchFilterBtn = document.getElementById('search-filter-btn');
             var searchFilterDropdown = document.getElementById('search-filter-dropdown');
 
@@ -298,24 +300,35 @@
                     console.log('Search filter clicked!');
                     searchFilterDropdown.style.display = (searchFilterDropdown.style.display === 'block') ? 'none' : 'block';
                 };
-
-                // Close dropdown when clicking outside
-                document.addEventListener('click', function (e) {
-                    if (searchFilterDropdown.style.display === 'block' && !searchFilterDropdown.contains(e.target) && e.target !== searchFilterBtn) {
-                        searchFilterDropdown.style.display = 'none';
-                    }
-                });
-
+                searchFilterSetup = true;
                 console.log('Search filter setup complete');
             } else {
                 console.log('Could not set up search filter - missing elements');
             }
         }
 
-        // Set up filters on page load
+        // Global click handler for closing dropdowns - only set up once
         document.addEventListener('DOMContentLoaded', function () {
             setupMatchesFilter();
             setupSearchFilter();
+
+            // Single global listener to close dropdowns when clicking outside
+            document.addEventListener('click', function (e) {
+                var matchesFilterDropdown = document.getElementById('matches-filter-dropdown');
+                var matchesFilterBtn = document.getElementById('matches-filter-btn');
+                var searchFilterDropdown = document.getElementById('search-filter-dropdown');
+                var searchFilterBtn = document.getElementById('search-filter-btn');
+
+                if (matchesFilterDropdown && matchesFilterDropdown.style.display === 'block' &&
+                    !matchesFilterDropdown.contains(e.target) && e.target !== matchesFilterBtn) {
+                    matchesFilterDropdown.style.display = 'none';
+                }
+
+                if (searchFilterDropdown && searchFilterDropdown.style.display === 'block' &&
+                    !searchFilterDropdown.contains(e.target) && e.target !== searchFilterBtn) {
+                    searchFilterDropdown.style.display = 'none';
+                }
+            });
         });
     </script>
 
@@ -405,33 +418,21 @@
                 matchesTabBtn.classList.add('active');
                 searchTabBtn.classList.remove('active');
                 sliderBg.style.left = '8px';
-                matchesTabContent.style.opacity = 0;
-                searchTabContent.style.opacity = 0;
-                setTimeout(() => {
-                    matchesTabContent.style.display = 'block';
-                    searchTabContent.style.display = 'none';
-                    setTimeout(() => {
-                        matchesTabContent.style.opacity = 1;
-                    }, 30);
-                }, 120);
+                searchTabContent.style.display = 'none';
+                matchesTabContent.style.display = 'block';
+                // Force reflow for smooth transition
+                matchesTabContent.offsetHeight;
+                matchesTabContent.style.opacity = 1;
             } else {
                 searchTabBtn.classList.add('active');
                 matchesTabBtn.classList.remove('active');
                 sliderBg.style.left = '164px';
-                matchesTabContent.style.opacity = 0;
-                searchTabContent.style.opacity = 0;
-                setTimeout(() => {
-                    searchTabContent.style.display = 'block';
-                    matchesTabContent.style.display = 'none';
-                    setTimeout(() => {
-                        searchTabContent.style.opacity = 1;
-                    }, 30);
-                }, 120);
+                matchesTabContent.style.display = 'none';
+                searchTabContent.style.display = 'block';
+                // Force reflow for smooth transition
+                searchTabContent.offsetHeight;
+                searchTabContent.style.opacity = 1;
             }
-            setTimeout(function () {
-                setupMatchesFilter();
-                setupSearchFilter();
-            }, 140);
         }
 
         matchesTabBtn.addEventListener('click', () => showTab('matches'));
