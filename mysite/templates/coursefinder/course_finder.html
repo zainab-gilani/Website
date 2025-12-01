@@ -264,11 +264,12 @@
 
     <script>
         // Set up filter dropdown for matches tab
-        // Use flags to prevent duplicate listener setup
+        // These flags stop the setup from running multiple times which would slow down the page
         var matchesFilterSetup = false;
         var searchFilterSetup = false;
 
         function setupMatchesFilter() {
+            // if already set up then don't do it again
             if (matchesFilterSetup) return;
 
             var matchesFilterBtn = document.getElementById('matches-filter-btn');
@@ -277,6 +278,7 @@
             if (matchesFilterBtn && matchesFilterDropdown) {
                 matchesFilterBtn.onclick = function (e) {
                     e.stopPropagation();
+                    // toggle between showing and hiding the dropdown
                     matchesFilterDropdown.style.display = (matchesFilterDropdown.style.display === 'block') ? 'none' : 'block';
                 };
                 matchesFilterSetup = true;
@@ -285,6 +287,7 @@
 
         // Set up filter dropdown for search tab
         function setupSearchFilter() {
+            // if already set up then don't do it again
             if (searchFilterSetup) return;
 
             var searchFilterBtn = document.getElementById('search-filter-btn');
@@ -298,6 +301,7 @@
                 searchFilterBtn.onclick = function (e) {
                     e.stopPropagation();
                     console.log('Search filter clicked!');
+                    // toggle between showing and hiding the dropdown
                     searchFilterDropdown.style.display = (searchFilterDropdown.style.display === 'block') ? 'none' : 'block';
                 };
                 searchFilterSetup = true;
@@ -307,23 +311,26 @@
             }
         }
 
-        // Global click handler for closing dropdowns - only set up once
+        // Run this code when the page loads
         document.addEventListener('DOMContentLoaded', function () {
             setupMatchesFilter();
             setupSearchFilter();
 
-            // Single global listener to close dropdowns when clicking outside
+            // Set up a single click listener that closes dropdowns when you click outside them
+            // This is better than having multiple listeners because it improves performance
             document.addEventListener('click', function (e) {
                 var matchesFilterDropdown = document.getElementById('matches-filter-dropdown');
                 var matchesFilterBtn = document.getElementById('matches-filter-btn');
                 var searchFilterDropdown = document.getElementById('search-filter-dropdown');
                 var searchFilterBtn = document.getElementById('search-filter-btn');
 
+                // check if matches dropdown is open and user clicked outside it
                 if (matchesFilterDropdown && matchesFilterDropdown.style.display === 'block' &&
                     !matchesFilterDropdown.contains(e.target) && e.target !== matchesFilterBtn) {
                     matchesFilterDropdown.style.display = 'none';
                 }
 
+                // check if search dropdown is open and user clicked outside it
                 if (searchFilterDropdown && searchFilterDropdown.style.display === 'block' &&
                     !searchFilterDropdown.contains(e.target) && e.target !== searchFilterBtn) {
                     searchFilterDropdown.style.display = 'none';
@@ -415,21 +422,25 @@
 
         function showTab(tab) {
             if (tab === 'matches') {
+                // update which tab button looks active
                 matchesTabBtn.classList.add('active');
                 searchTabBtn.classList.remove('active');
                 sliderBg.style.left = '8px';
+                // hide search tab and show matches tab
                 searchTabContent.style.display = 'none';
                 matchesTabContent.style.display = 'block';
-                // Force reflow for smooth transition
+                // this line forces the browser to recalculate the layout which makes the fade transition work properly
                 matchesTabContent.offsetHeight;
                 matchesTabContent.style.opacity = 1;
             } else {
+                // update which tab button looks active
                 searchTabBtn.classList.add('active');
                 matchesTabBtn.classList.remove('active');
                 sliderBg.style.left = '164px';
+                // hide matches tab and show search tab
                 matchesTabContent.style.display = 'none';
                 searchTabContent.style.display = 'block';
-                // Force reflow for smooth transition
+                // this line forces the browser to recalculate the layout which makes the fade transition work properly
                 searchTabContent.offsetHeight;
                 searchTabContent.style.opacity = 1;
             }
