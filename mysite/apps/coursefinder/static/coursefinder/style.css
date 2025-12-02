@@ -468,25 +468,64 @@ form {
     background: white;
 }
 
+.filter-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
 .filter-submit {
-    margin: 8px auto 0 auto;
     background: #41689a;
     color: white;
     border: none;
     border-radius: 6px;
-    padding: 8px 0;
+    padding: 4px 0;
     font-size: 0.9rem;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     transition: background 0.15s;
-    width: 50%;
-    display: block;
+    flex: 2;
 }
 
 .filter-submit:hover {
     background: #294366;
 }
 
+.filter-clear {
+    background: white;
+    color: #667791;
+    border: 1px solid #b7c7e0;
+    border-radius: 6px;
+    padding: 4px 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex: 1;
+}
+
+.filter-clear:hover {
+    background: #dce5f2;
+    color: #4a5e7a;
+    border-color: #94a8c9;
+}
+
+/* --- ACTIVE FILTER BUTTON STATE --- */
+.filter-btn.active {
+    background-color: #34568b;
+    border-color: #34568b;
+}
+
+.filter-btn.active img {
+    filter: brightness(0) invert(1);
+}
+
+.filter-btn.active:hover {
+    background-color: #294366;
+}
+
+
+/* --- CUSTOM CHECKBOXES --- */
 input[type="checkbox"] {
     appearance: none;
     -webkit-appearance: none;
