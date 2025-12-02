@@ -116,9 +116,14 @@
                             Show only courses with no requirements
                         </label>
 
-                        <button type="button" class="filter-submit" id="matches-apply-filters">
-                            Apply Filters
-                        </button>
+                        <div class="filter-actions">
+                            <button type="button" class="filter-submit" id="matches-apply-filters">
+                                Apply Filters
+                            </button>
+                            <button type="button" class="filter-clear" id="matches-clear-filters">
+                                Clear Filters
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -226,9 +231,14 @@
                             Show only courses with no requirements
                         </label>
 
-                        <button type="button" class="filter-submit" id="search-apply-filters">
-                            Apply Filters
-                        </button>
+                        <div class="filter-actions">
+                            <button type="button" class="filter-submit" id="search-apply-filters">
+                                Apply Filters
+                            </button>
+                            <button type="button" class="filter-clear" id="search-clear-filters">
+                                Clear
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -472,24 +482,26 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Handle matches form (NLP parser)
-            var matchesForm = document.getElementById("matches-search-form");
-            if (matchesForm) {
-                matchesForm.onsubmit = function (e) {
+            // Generic function to handle form submission with AJAX
+            function setupFormAjax(formId, resultsId) {
+                var form = document.getElementById(formId);
+                if (!form) return;
+
+                form.onsubmit = function (e) {
                     e.preventDefault();
 
                     // Get the form data
-                    var formData = new FormData(matchesForm);
+                    var formData = new FormData(form);
 
-                    // Create simple AJAX request
+                    // Create AJAX request
                     var xhr = new XMLHttpRequest();
-                    xhr.open('POST', matchesForm.action, true);
+                    xhr.open('POST', form.action, true);
                     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
                     xhr.onreadystatechange = function () {
                         if (xhr.readyState === 4 && xhr.status === 200) {
                             var response = JSON.parse(xhr.responseText);
-                            document.getElementById("results-table").innerHTML = response.table_html;
+                            document.getElementById(resultsId).innerHTML = response.table_html;
                             // Set up heart buttons after loading new content
                             setupHeartButtons();
                         }
@@ -499,40 +511,9 @@
                 };
             }
 
-            // Handle search form (general university search)
-            var searchForm = document.getElementById("search-search-form");
-            if (searchForm) {
-                searchForm.onsubmit = function (e) {
-                    e.preventDefault();
-
-                    // Get the form data
-                    var formData = new FormData(searchForm);
-
-                    // Create simple AJAX request
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('POST', searchForm.action, true);
-                    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-
-                    xhr.onreadystatechange = function () {
-                        if (xhr.readyState === 4 && xhr.status === 200) {
-                            var response = JSON.parse(xhr.responseText);
-
-                            // Find or create results div
-                            var resultsDiv = document.getElementById("search-results-table");
-                            if (!resultsDiv) {
-                                resultsDiv = document.createElement("div");
-                                resultsDiv.id = "search-results-table";
-                                document.getElementById("searchTabContent").appendChild(resultsDiv);
-                            }
-                            resultsDiv.innerHTML = response.table_html;
-                            // Set up heart buttons after loading new content
-                            setupHeartButtons();
-                        }
-                    };
-
-                    xhr.send(formData);
-                };
-            }
+            // Set up both forms using the same function
+            setupFormAjax('matches-search-form', 'results-table');
+            setupFormAjax('search-search-form', 'search-results-table');
         });
 
         // Function to set up heart button functionality
@@ -744,6 +725,87 @@
                     });
                 }
             }
+
+            function monitorFilterState(dropdownId, buttonId) {
+                var dropdown = document.getElementById(dropdownId);
+                var button = document.getElementById(buttonId);
+
+                if (!dropdown || !button) return;
+
+                // Function to check if any filter is actually active
+                function checkState() {
+                    var isActive = false;
+
+                    // Check all dropdowns
+                    var selects = dropdown.querySelectorAll('select');
+                    for (var i = 0; i < selects.length; i++) {
+                        if (selects[i].value !== "") { // If it's not "Any"
+                            isActive = true;
+                        }
+                    }
+
+                    // Check all checkboxes
+                    var checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
+                    for (var i = 0; i < checkboxes.length; i++) {
+                        if (checkboxes[i].checked) {
+                            isActive = true;
+                        }
+                    }
+
+                    // Toggle the class based on result
+                    if (isActive) {
+                        button.classList.add('active');
+                    } else {
+                        button.classList.remove('active');
+                    }
+                }
+
+                // Run check immediately (in case browser cached values)
+                checkState();
+
+                // Run check whenever user changes something
+                dropdown.addEventListener('change', checkState);
+            }
+
+            // Function to clear filters and submit
+            function setupClearButton(clearBtnId, formId, dropdownId) {
+                var clearBtn = document.getElementById(clearBtnId);
+                var form = document.getElementById(formId);
+                var dropdown = document.getElementById(dropdownId);
+
+                if (clearBtn && form) {
+                    clearBtn.addEventListener('click', function () {
+                        // 1. Reset all Dropdowns to empty
+                        var selects = dropdown.querySelectorAll('select');
+                        for (var i = 0; i < selects.length; i++) {
+                            selects[i].value = "";
+                        }
+
+                        // 2. Uncheck all Checkboxes
+                        var checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
+                        for (var i = 0; i < checkboxes.length; i++) {
+                            checkboxes[i].checked = false;
+                        }
+
+                        // 3. Trigger the "Change" event so the blue button turns grey immediately
+                        dropdown.dispatchEvent(new Event('change'));
+
+                        // 4. Submit the form (to refresh results with no filters)
+                        form.requestSubmit();
+
+                        // 5. Close the dropdown
+                        if (dropdown) dropdown.style.display = 'none';
+                    });
+                }
+            }
+
+            // Setup Clear Buttons
+            setupClearButton('matches-clear-filters', 'matches-search-form', 'matches-filter-dropdown');
+            setupClearButton('search-clear-filters', 'search-search-form', 'search-filter-dropdown');
+
+            // Activate monitoring for both tabs
+            monitorFilterState('matches-filter-dropdown', 'matches-filter-btn');
+            monitorFilterState('search-filter-dropdown', 'search-filter-btn');
 
             setupCheckboxExclusivity('matches-search-form');
             setupCheckboxExclusivity('search-search-form');
