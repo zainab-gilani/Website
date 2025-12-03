@@ -174,12 +174,14 @@ def find_matching_courses(grades: Dict, ucas_points: int, interests: List[str], 
     if filters.get('duration'):
         selected_duration = filters['duration']
         if "5+" in selected_duration:
+            # match courses with 5, 6, or 7 years
             qualifying_courses = qualifying_courses.filter(
-                Q(duration__icontains="5") | Q(duration__icontains="6") | Q(duration__icontains="7")
+                Q(duration__icontains="5 year") | Q(duration__icontains="6 year") | Q(duration__icontains="7 year")
             )
         else:
+            # extract the number and match with the word "year" to avoid matching months
             years = selected_duration.split(' ')[0]
-            qualifying_courses = qualifying_courses.filter(duration__icontains=years)
+            qualifying_courses = qualifying_courses.filter(duration__icontains=years + " year")
         #endif
     #endif
 

@@ -82,10 +82,12 @@ def search_universities(query: str, filters: dict = None) -> List:
     if filters.get('duration'):
         val = filters['duration']
         if "5+" in val:
-            courses = courses.filter(Q(duration__icontains="5") | Q(duration__icontains="6"))
+            # match courses with 5, 6, or 7 years
+            courses = courses.filter(Q(duration__icontains="5 year") | Q(duration__icontains="6 year") | Q(duration__icontains="7 year"))
         else:
+            # extract the number and match with the word "year" to avoid matching months
             years = val.split(' ')[0]
-            courses = courses.filter(duration__icontains=years)
+            courses = courses.filter(duration__icontains=years + " year")
         #endif
     #endif
 
