@@ -5,7 +5,7 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'accounts/style.css' %}">
     <link href="https://fonts.googleapis.com/css?family=Abril+Fatface" rel="stylesheet">
-    <title>UniMatch</title>
+    <title>{% block title %}Unimatch{% endblock %}</title>
 </head>
 <body>
     <a href="{% url 'coursefinder:coursefinder' %}">

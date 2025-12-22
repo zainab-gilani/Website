@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
+
 {% block content %}
     <link rel="stylesheet" href="{% static 'coursefinder/style.css' %}?v=1763455540">
 
@@ -432,6 +433,8 @@
 
         function showTab(tab) {
             if (tab === 'matches') {
+                // Separate title for coursefinder
+                document.title = "Coursefinder"
                 // update which tab button looks active
                 matchesTabBtn.classList.add('active');
                 searchTabBtn.classList.remove('active');
@@ -443,6 +446,8 @@
                 matchesTabContent.offsetHeight;
                 matchesTabContent.style.opacity = 1;
             } else {
+                // Separate title for Uni Search tab
+                document.title = "Uni Search"
                 // update which tab button looks active
                 searchTabBtn.classList.add('active');
                 matchesTabBtn.classList.remove('active');
@@ -460,11 +465,9 @@
         searchTabBtn.addEventListener('click', () => showTab('search'));
 
         // CSS transition for tab-content
-        document.head.insertAdjacentHTML("beforeend", `
-<style>
-.tab-content { transition: opacity .18s; opacity: 1;}
-</style>
-`);
+        document.head.insertAdjacentHTML("beforeend",
+    '<style>.tab-content { transition: opacity .18s; opacity: 1;}</style>'
+);
     </script>
 
     <script>

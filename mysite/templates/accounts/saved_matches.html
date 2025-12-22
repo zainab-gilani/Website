@@ -1,7 +1,42 @@
 {% extends 'base.html' %}
 {% load static %}
+
+<title>{% block title %}Saved Matches{% endblock %}</title>
+
 {% block content %}
     <link rel="stylesheet" href="{% static 'accounts/style.css' %}?v={% now 'U' %}">
+
+        <!-- USER AUTH (PROFILE DROPDOWN ETC) -->
+    {% if user.is_authenticated %}
+        <div class="profile-dropdown">
+            <img src="{% static 'images/pfp.svg' %}" alt="pfp" class="pfp-small">
+            <div class="dropdown-content">
+                <a href="{% url 'accounts:profile' %}" class="dropdown-link">
+                    <img src="{% static 'images/profile.svg' %}" alt="" class="icon">
+                    <span>Profile</span>
+                </a>
+                <hr>
+                <form action="{% url 'accounts:logout' %}?next={% url 'coursefinder:guest_coursefinder' %}"
+                      method="post" style="margin:0;padding:0;">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-link" style="background:none;border:none;">
+                        <img src="{% static 'images/logout.svg' %}" alt="" class="icon">
+                        <span>Logout</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <a href="{% url 'accounts:saved_matches' %}"
+           class="saved-btn {% if request.resolver_match.url_name == 'saved_matches' %}active{% endif %}">
+           Saved Matches
+        </a>
+
+    {% else %}
+        <div class="guest-options">
+            <a href="{% url 'accounts:login' %}" class="button">SIGN IN</a>
+        </div>
+    {% endif %}
 
     <span class="saved-matches-title">
         Your Saved Matches
@@ -12,7 +47,7 @@
     </span>
 
     {% if results %}
-        <div class="table-container">
+        <div class="table-container" id="results-table">
             <table class="pretty-table">
                 <thead>
                     <tr>
@@ -91,14 +126,14 @@ function getCookie(name) {
 document.addEventListener('DOMContentLoaded', function () {
     var heartBtns = document.querySelectorAll('.heart-btn');
     console.log('Found heart buttons:', heartBtns.length);
-    
+
     // Loop through each heart button and add click event
     for (var i = 0; i < heartBtns.length; i++) {
         heartBtns[i].addEventListener('click', function () {
             var btn = this;
             var isCurrentlySaved = btn.classList.contains('active');
             console.log('Heart button clicked! Currently saved:', isCurrentlySaved);
-            
+
             // Get all the course info from the button
             var courseData = {
                 university: btn.getAttribute('data-university'),
@@ -108,15 +143,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 requirements: btn.getAttribute('data-requirements'),
                 course_link: btn.getAttribute('data-course_link')
             };
-            
+
             // Choose the right URL - save or unsave
             var saveUrl = "{% url 'accounts:save_match' %}";
             var unsaveUrl = "{% url 'accounts:unsave_match' %}";
             var requestUrl = isCurrentlySaved ? unsaveUrl : saveUrl;
-            
+
             // Get the security token
             var csrfToken = getCookie('csrftoken');
-            
+
             // Send the request to save or unsave
             fetch(requestUrl, {
                 method: 'POST',
@@ -136,24 +171,24 @@ document.addEventListener('DOMContentLoaded', function () {
                             var tableRow = btn.closest('tr');
                             if (tableRow) {
                                 tableRow.remove();
-                                
+
                                 // Check if table is now empty
                                 var table = document.querySelector('.pretty-table');
                                 var tbody = table.querySelector('tbody');
                                 var remainingRows = tbody.querySelectorAll('tr');
-                                
+
                                 if (remainingRows.length === 0) {
                                     // No more saved matches, hide table and show empty message
                                     var tableContainer = document.querySelector('.table-container');
                                     if (tableContainer) {
                                         tableContainer.style.display = 'none';
                                     }
-                                    
+
                                     // Show the empty message
                                     var emptyMessage = document.createElement('div');
                                     emptyMessage.style.marginTop = '80px';
                                     emptyMessage.innerHTML = '<p style="font-size:1.3rem; color:#294366; margin-bottom:10px;">— You haven\'t saved any matches yet!</p><p style="color:#6a7fa6; font-size:1.1rem;">Click on the ♥ icon on a course to add it here.</p>';
-                                    
+
                                     // Add the message after the subtitle
                                     var subtitle = document.querySelector('.saved-matches-sub');
                                     if (subtitle) {
