@@ -6,5 +6,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", coursefinder_views.coursefinder_view, name='home'),
     path("accounts/", include('mysite.apps.accounts.urls')),
-    path("coursefinder/", include('mysite.apps.coursefinder.urls')),
+    path("coursefinder/", include('mysite.apps.coursefinder.urls'))
 ]

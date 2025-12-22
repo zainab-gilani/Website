@@ -82,6 +82,10 @@ def guest_coursefinder_view(request):
     return render(request, 'coursefinder/course_finder.html', context)
 #enddef
 
+def resources_view(request):
+    return render(request, 'coursefinder/resources.html')
+#enddef
+
 def get_dummy_matches():
     """
     Creates example university match results for testing purposes.
