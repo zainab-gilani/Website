@@ -45,6 +45,7 @@ h1 {
     margin-left: -6vh;
     position: absolute;
     top: 50px;
+    horiz-align: center;
 }
 
 .saved-matches-heart {
@@ -59,6 +60,7 @@ h1 {
     width: fit-content;
     left: 2vh;
     top: 1vh;
+    horiz-align: center;
 }
 
 /* CONTAINERS */
@@ -192,6 +194,12 @@ button.login-button:hover,
     box-sizing: border-box;
     appearance: none;
     transition: background 0.18s;
+}
+
+.saved-btn.active {
+    background-color: #2D5289 !important;
+    color: white !important;
+    pointer-events: none;
 }
 
 
@@ -577,6 +585,12 @@ button.login-button:hover,
 .pretty-table td a:hover {
     color: #19355b;
 }
+
+#results-table .pretty-table td:nth-child(2) {
+    font-weight: 700;
+    color: #2D5289;
+}
+
 
 /* RESPONSIVE */
 @media (max-width: 900px) {

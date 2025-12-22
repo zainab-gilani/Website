@@ -124,6 +124,16 @@ h1 {
 
 .saved-btn:hover { background-color: #b6ccea; }
 
+.saved-btn-default {
+    background-color: #E0E7FF;
+    color: #333;
+}
+
+.saved-btn-active {
+    background-color: #1E3A8A;
+    color: white;
+}
+
 .guest-options {
     display: flex;
     justify-content: center;
@@ -267,9 +277,8 @@ form {
 }
 
 .search-bar-wrapper input[type="text"], .filter-btn {
-    height: 46px;           /* both the same */
-    border-radius: 12px;    /* both the same */
-    /* match other relevant styles */
+    height: 46px;
+    border-radius: 12px;
 }
 
 .search-tips {
@@ -373,6 +382,19 @@ form {
 }
 .pretty-table tr:nth-child td {
     background: #f3f7ff;
+}
+
+/* --- BOLDING ONLY --- */
+
+.resources-table-container .pretty-table td:first-child {
+    font-weight: 700;
+    color: #2D5289;
+}
+
+#results-table .pretty-table td:nth-child(2),
+#search-results-table .pretty-table td:nth-child(2) {
+    font-weight: 700;
+    color: #2D5289;
 }
 
 
@@ -561,6 +583,51 @@ input[type="checkbox"]:checked::after {
 input[type="checkbox"]:hover {
     border-color: #294366;
 }
+
+/* --- HELPFUL RESOURCES --- */
+
+.resources-table-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 60px;
+}
+
+.resources-title {
+    font-family: 'Abril Fatface', serif;
+    font-size: 2.9rem;
+    color: #2D5289;
+    width: fit-content;
+    margin-left: 1vh;
+    position: absolute;
+    horiz-align: center;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.resources-star {
+    font-size: 3.5rem;
+    color: #efbf73;
+    vertical-align: 0px;
+    margin-left: 5px;
+}
+
+.resources-sub {
+    color: #2d5283;
+    position: relative;
+    display: block;
+    width: fit-content;
+    margin-top: 23px;
+    margin-bottom: 30px;
+    font-size: 1.05rem;
+    margin-left: 64vh;
+}
+
+.pretty-table td {
+    vertical-align: middle;
+    line-height: 1.4;
+}
+
 
 /* --- RESPONSIVE --- */
 @media (max-width: 800px) {
