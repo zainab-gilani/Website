@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'coursefinder/style.css' %}?v=1763455540">
+    <title>{% block title %}Resources{% endblock %}</title>
+
+    <div class="resources-title">
+        Helpful Resources
+        <span class="resources-star">⭑</span>
+    </div>
+
+    <span class="resources-sub">
+        Everything you need to navigate your university journey.
+    </span>
+
+    <div class="resources-table-container">
+        <table class="pretty-table">
+            <thead>
+            <tr>
+                <th style="width: 20%;">Resource</th>
+                <th style="width: 15%;">Category</th>
+                <th style="width: 55%;">Description</th>
+                <th style="width: 10%;">Link</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>UCAS Hub</td>
+                <td>Application</td>
+                <td>The official portal for applying to UK universities.</td>
+                <td><a href="https://www.ucas.com/" target="_blank">View</a></td>
+            </tr>
+            <tr>
+                <td>Student Finance</td>
+                <td>Finance</td>
+                <td>Apply for tuition fee loans and maintenance loans.</td>
+                <td><a href="https://www.gov.uk/student-finance" target="_blank">View</a></td>
+            </tr>
+            <tr>
+                <td>The Student Room</td>
+                <td>Community</td>
+                <td>Chat with other students and get advice on courses.</td>
+                <td><a href="https://www.thestudentroom.co.uk/" target="_blank">View</a></td>
+            </tr>
+            <tr>
+                <td>Save the Student</td>
+                <td>Finance</td>
+                <td>Tips on student discounts, budgeting and saving money.</td>
+                <td><a href="https://www.savethestudent.org/" target="_blank">View</a></td>
+            </tr>
+            <tr>
+                <td>Studential</td>
+                <td>Application</td>
+                <td>Thousands of real personal statement examples to get inspiration.</td>
+                <td><a href="https://www.studential.com/personal-statement-examples/subjects" target="_blank">View</a></td>
+            </tr>
+            <tr>
+                <td>UCAS Personal Statement Tool</td>
+                <td>Application</td>
+                <td>The official step-by-step guide and builder for your statement.</td>
+                <td>
+                    <a href="https://www.ucas.com/undergraduate/applying-university/writing-personal-statement/how-write-personal-statement"
+                       target="_blank">View</a></td>
+            </tr>
+            <tr>
+                <td>Apply to Uni (Personal Statement)</td>
+                <td>Application</td>
+                <td>Dos and Don'ts, structure guides, and editing tips.</td>
+                <td><a href="https://www.applytouni.com/applying/personal-statements/writing-the-perfect-personal-statement/" target="_blank">View</a></td>
+            </tr>
+
+            <tr>
+                <td>Discover Uni</td>
+                <td>Comparison</td>
+                <td>Official government stats on course satisfaction and graduate earnings.</td>
+                <td><a href="https://discoveruni.gov.uk/" target="_blank">View</a></td>
+            </tr>
+            <tr>
+                <td>Complete University Guide</td>
+                <td>Rankings</td>
+                <td>Detailed league tables and university rankings by subject.</td>
+                <td><a href="https://www.thecompleteuniversityguide.co.uk/" target="_blank">View</a></td>
+            </tr>
+            <tr>
+                <td>Open Days</td>
+                <td>Events</td>
+                <td>A calendar of university open days and virtual tours across the UK.</td>
+                <td><a href="https://www.opendays.com/" target="_blank">View</a></td>
+            </tr>
+
+            <tr>
+                <td>Prospects</td>
+                <td>Careers</td>
+                <td>"What can I do with my degree?" – Connects courses to real jobs.</td>
+                <td><a href="https://www.prospects.ac.uk/" target="_blank">View</a></td>
+            </tr>
+            <tr>
+                <td>Target Careers</td>
+                <td>Advice</td>
+                <td>Career paths, school leaver advice, and university choices.</td>
+                <td><a href="https://targetcareers.co.uk/" target="_blank">View</a></td>
+            </tr>
+
+            <tr>
+                <td>Student Minds</td>
+                <td>Wellbeing</td>
+                <td>Mental health support and resources specifically for university students.</td>
+                <td><a href="https://www.studentminds.org.uk/" target="_blank">View</a></td>
+            </tr>
+            <tr>
+                <td>Nightline Services</td>
+                <td>Wellbeing</td>
+                <td>Confidential listening service run by students, for students.</td>
+                <td><a href="https://nightline.ac.uk/listening-services/" target="_blank">View</a></td>
+            </tr>
+
+            <tr>
+                <td>UCAS for Advisers</td>
+                <td>Teachers</td>
+                <td>Toolkits, lesson plans, and guides for career counsellors.</td>
+                <td><a href="https://www.ucas.com/advisers" target="_blank">View</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
