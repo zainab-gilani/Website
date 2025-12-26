@@ -31,6 +31,8 @@
            class="saved-btn {% if request.resolver_match.url_name == 'saved_matches' %}active{% endif %}">
            Saved Matches
         </a>
+        <a href="{% url 'coursefinder:resources' %}" class="resources-btn">Helpful<br>Resources</a>
+
 
     {% else %}
         <div class="guest-options">

@@ -494,6 +494,37 @@ button.login-button:hover,
     background: #b6ccea;
 }
 
+.resources-btn {
+    position: fixed;
+    top: 29px;
+    right: 260px;
+    width: 110px;
+    padding: 12px 0;
+    font-size: 1.1rem;
+    font-weight: bold;
+    background-color: #d8e2f0;
+    color: #2D5289;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    z-index: 1001;
+    text-align: center;
+    line-height: 1.12;
+}
+
+.resources-btn:hover { background-color: #b6ccea; }
+
+.resources-btn.default {
+    background-color: #E0E7FF;
+    color: #333;
+}
+
+.resources-btn.active {
+    background-color: #2D5289;
+    color: white;
+}
+
 /* TOASTS */
 #profile-toast-messages {
     position: fixed;
