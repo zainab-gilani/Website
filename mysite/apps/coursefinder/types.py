@@ -7,5 +7,5 @@ class UniMatchResult:
         self.requirements = requirements
         self.course_link = course_link
         self.is_saved = is_saved
-    #enddef
-#endclass
+    # enddef
+# endclass

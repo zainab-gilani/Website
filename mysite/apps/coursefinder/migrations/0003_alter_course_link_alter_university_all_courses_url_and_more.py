@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("coursefinder", "0002_alter_course_unique_together"),
     ]

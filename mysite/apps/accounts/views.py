@@ -254,7 +254,7 @@ def saved_matches_view(request):
     # Add is_saved property to each saved match for template consistency
     for match in saved_matches:
         match.is_saved = True
-    #endfor
+    # endfor
     return render(request, 'accounts/saved_matches.html', {'results': saved_matches})
 
 
@@ -296,10 +296,12 @@ def save_match(request):
             return JsonResponse({'status': 'saved', 'id': saved_match.id})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
-    #endtry
+    # endtry
 
     return JsonResponse({'status': 'error'}, status=400)
-#enddef
+
+
+# enddef
 
 @login_required
 def unsave_match(request):
@@ -342,10 +344,12 @@ def unsave_match(request):
 
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
-    #endtry
+    # endtry
 
     return JsonResponse({'status': 'error'}, status=400)
-#enddef
+
+
+# enddef
 
 
 @login_required
@@ -379,7 +383,7 @@ def check_saved(request):
             return JsonResponse({'is_saved': is_saved})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
-    #endtry
+    # endtry
 
     return JsonResponse({'status': 'error'}, status=400)
-#enddef
+# enddef

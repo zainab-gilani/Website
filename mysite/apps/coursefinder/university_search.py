@@ -17,10 +17,10 @@ def expand_query_with_synonyms(query: str) -> List[str]:
     """
     if not query:
         return []
-    #endif
-    
+    # endif
+
     query_lower = query.strip().lower()
-    
+
     # get course synonyms
     courses = SYNONYMS.get('courses', {})
 
@@ -30,13 +30,15 @@ def expand_query_with_synonyms(query: str) -> List[str]:
             if synonym.lower() == query_lower:
                 # found a match so return the main subject
                 return [subject.lower()]
-            #endif
-        #endfor
-    #endfor
+            # endif
+        # endfor
+    # endfor
 
     # no synonym found so just return original query
     return [query_lower]
-#enddef
+
+
+# enddef
 
 
 def search_universities(query: str, filters: dict = None) -> List:
@@ -50,11 +52,11 @@ def search_universities(query: str, filters: dict = None) -> List:
 
     if not query:
         return []
-    #endif
+    # endif
 
     if filters is None:
         filters = {}
-    #endif
+    # endif
 
     # get search terms with synonyms
     search_terms = expand_query_with_synonyms(query)
@@ -65,9 +67,10 @@ def search_universities(query: str, filters: dict = None) -> List:
     course_query = Q()
     for term in search_terms:
         # search in course name, uni name, and location
-        term_query = Q(name__icontains=term) | Q(university__name__icontains=term) | Q(university__location__icontains=term)
+        term_query = Q(name__icontains=term) | Q(university__name__icontains=term) | Q(
+            university__location__icontains=term)
         course_query |= term_query
-    #endfor
+    # endfor
 
     courses = Course.objects.select_related('university').prefetch_related('entryrequirement').filter(course_query)
 
@@ -76,25 +79,26 @@ def search_universities(query: str, filters: dict = None) -> List:
         selected_type = filters['course_type']
         # matches "BA (Hons)" in both short and long forms
         courses = courses.filter(course_type__icontains=selected_type)
-    #endif
+    # endif
 
     # filter by duration
     if filters.get('duration'):
         val = filters['duration']
         if "5+" in val:
             # match courses with 5, 6, or 7 years
-            courses = courses.filter(Q(duration__icontains="5 year") | Q(duration__icontains="6 year") | Q(duration__icontains="7 year"))
+            courses = courses.filter(
+                Q(duration__icontains="5 year") | Q(duration__icontains="6 year") | Q(duration__icontains="7 year"))
         else:
             # extract the number and match with the word "year" to avoid matching months
             years = val.split(' ')[0]
             courses = courses.filter(duration__icontains=years + " year")
-        #endif
-    #endif
+        # endif
+    # endif
 
     # filter by mode
     if filters.get('mode'):
         courses = courses.filter(mode__icontains=filters['mode'])
-    #endif
+    # endif
 
     # filter by location/region
     if filters.get('location'):
@@ -106,10 +110,10 @@ def search_universities(query: str, filters: dict = None) -> List:
             loc_q = Q()
             for city in cities:
                 loc_q |= Q(university__location__icontains=city) | Q(location__icontains=city)
-            #endfor
+            # endfor
             courses = courses.filter(loc_q)
-        #endif
-    #endif
+        # endif
+    # endif
 
     # filter by ucas points
     if filters.get('ucas_range'):
@@ -118,8 +122,8 @@ def search_universities(query: str, filters: dict = None) -> List:
             courses = courses.filter(entryrequirement__min_ucas_points__lte=min_points)
         except ValueError:
             pass
-        #endtry
-    #endif
+        # endtry
+    # endif
 
     # if user wants to see only courses with grade requirements
     if filters.get('only_grades'):
@@ -130,7 +134,7 @@ def search_universities(query: str, filters: dict = None) -> List:
         ).exclude(
             entryrequirement__display_grades=''
         ).distinct()
-    #endif
+    # endif
 
     # if user wants to see only courses with no requirements
     if filters.get('no_requirements'):
@@ -138,7 +142,7 @@ def search_universities(query: str, filters: dict = None) -> List:
         courses = courses.filter(
             entryrequirement__has_requirements=False
         ).distinct()
-    #endif
+    # endif
 
     courses = courses[:30]
 
@@ -155,19 +159,19 @@ def search_universities(query: str, filters: dict = None) -> List:
                     requirements_str = f"{req.min_ucas_points} UCAS points"
                 else:
                     requirements_str = "No specific requirements"
-                #endif
+                # endif
 
                 # add btec grades if they exist
                 if req.btec_grades:
                     requirements_str += f" / {req.btec_grades}"
-                #endif
+                # endif
             else:
                 # no requirements for this course
                 requirements_str = "No specific requirements"
-            #endif
+            # endif
         except:
             requirements_str = "No specific requirements"
-        #endtry
+        # endtry
 
         match = UniMatchResult(
             university=course.university.name,
@@ -178,7 +182,7 @@ def search_universities(query: str, filters: dict = None) -> List:
             course_link=course.link or "#"
         )
         results.append(match)
-    #endfor
+    # endfor
 
     return results
-#enddef
+# enddef

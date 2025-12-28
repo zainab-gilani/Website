@@ -6,7 +6,7 @@
 {% block content %}
     <link rel="stylesheet" href="{% static 'accounts/style.css' %}?v={% now 'U' %}">
 
-        <!-- USER AUTH (PROFILE DROPDOWN ETC) -->
+    <!-- USER AUTH (PROFILE DROPDOWN ETC) -->
     {% if user.is_authenticated %}
         <div class="profile-dropdown">
             <img src="{% static 'images/pfp.svg' %}" alt="pfp" class="pfp-small">
@@ -29,7 +29,7 @@
 
         <a href="{% url 'accounts:saved_matches' %}"
            class="saved-btn {% if request.resolver_match.url_name == 'saved_matches' %}active{% endif %}">
-           Saved Matches
+            Saved Matches
         </a>
         <a href="{% url 'coursefinder:resources' %}" class="resources-btn">Helpful<br>Resources</a>
 
@@ -52,21 +52,21 @@
         <div class="table-container" id="results-table">
             <table class="pretty-table">
                 <thead>
-                    <tr>
-                        <th></th>
-                        <th>University</th>
-                        <th>Course</th>
-                        <th>Qualification</th>
-                        <th>Duration</th>
-                        <th>Requirements</th>
-                        <th>Link</th>
-                    </tr>
+                <tr>
+                    <th></th>
+                    <th>University</th>
+                    <th>Course</th>
+                    <th>Qualification</th>
+                    <th>Duration</th>
+                    <th>Requirements</th>
+                    <th>Link</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {% for match in results %}
-                        <tr>
-                            <td>
-                                <button
+                {% for match in results %}
+                    <tr>
+                        <td>
+                            <button
                                     type="button"
                                     class="heart-btn {% if match.is_saved %}active{% endif %}"
                                     data-university="{{ match.university }}"
@@ -76,25 +76,25 @@
                                     data-requirements="{{ match.requirements }}"
                                     data-course_link="{{ match.course_link }}"
                                     aria-label="Save Match"
-                                >
-                                    <svg class="heart-icon" width="28" height="24" viewBox="0 0 207 169" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M152.563 5.51172C180.171 6.09912 202.076 28.9555 201.488 56.5635C201.022 78.4876 190.138 95.1107 182.955 104.209C160.313 132.888 125.86 149.994 103 162.614C80.1203 149.983 45.475 132.795 23.0234 103.912C15.8452 94.6774 5 77.7449 5 55.5C5 27.8858 27.3858 5.5 55 5.5C78.0606 5.5 92 26 103 48C115 26 129.137 5.01333 152.563 5.51172Z"
-                                              stroke="#b83a42" stroke-width="10">
-                                        </path>
-                                    </svg>
-                                </button>
-                            </td>
-                            <td>{{ match.university }}</td>
-                            <td>{{ match.course }}</td>
-                            <td>{{ match.course_type }}</td>
-                            <td>{{ match.duration }}</td>
-                            <td>{{ match.requirements }}</td>
-                            <td>
-                                <a href="{{ match.course_link }}" target="_blank">View</a>
-                            </td>
-                        </tr>
-                    {% endfor %}
+                            >
+                                <svg class="heart-icon" width="28" height="24" viewBox="0 0 207 169" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M152.563 5.51172C180.171 6.09912 202.076 28.9555 201.488 56.5635C201.022 78.4876 190.138 95.1107 182.955 104.209C160.313 132.888 125.86 149.994 103 162.614C80.1203 149.983 45.475 132.795 23.0234 103.912C15.8452 94.6774 5 77.7449 5 55.5C5 27.8858 27.3858 5.5 55 5.5C78.0606 5.5 92 26 103 48C115 26 129.137 5.01333 152.563 5.51172Z"
+                                          stroke="#b83a42" stroke-width="10">
+                                    </path>
+                                </svg>
+                            </button>
+                        </td>
+                        <td>{{ match.university }}</td>
+                        <td>{{ match.course }}</td>
+                        <td>{{ match.course_type }}</td>
+                        <td>{{ match.duration }}</td>
+                        <td>{{ match.requirements }}</td>
+                        <td>
+                            <a href="{{ match.course_link }}" target="_blank">View</a>
+                        </td>
+                    </tr>
+                {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -110,111 +110,111 @@
     {% endif %}
 
     <script>
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
             }
+            return cookieValue;
         }
-    }
-    return cookieValue;
-}
 
-document.addEventListener('DOMContentLoaded', function () {
-    var heartBtns = document.querySelectorAll('.heart-btn');
-    console.log('Found heart buttons:', heartBtns.length);
+        document.addEventListener('DOMContentLoaded', function () {
+            var heartBtns = document.querySelectorAll('.heart-btn');
+            console.log('Found heart buttons:', heartBtns.length);
 
-    // Loop through each heart button and add click event
-    for (var i = 0; i < heartBtns.length; i++) {
-        heartBtns[i].addEventListener('click', function () {
-            var btn = this;
-            var isCurrentlySaved = btn.classList.contains('active');
-            console.log('Heart button clicked! Currently saved:', isCurrentlySaved);
+            // Loop through each heart button and add click event
+            for (var i = 0; i < heartBtns.length; i++) {
+                heartBtns[i].addEventListener('click', function () {
+                    var btn = this;
+                    var isCurrentlySaved = btn.classList.contains('active');
+                    console.log('Heart button clicked! Currently saved:', isCurrentlySaved);
 
-            // Get all the course info from the button
-            var courseData = {
-                university: btn.getAttribute('data-university'),
-                course: btn.getAttribute('data-course'),
-                course_type: btn.getAttribute('data-course_type'),
-                duration: btn.getAttribute('data-duration'),
-                requirements: btn.getAttribute('data-requirements'),
-                course_link: btn.getAttribute('data-course_link')
-            };
+                    // Get all the course info from the button
+                    var courseData = {
+                        university: btn.getAttribute('data-university'),
+                        course: btn.getAttribute('data-course'),
+                        course_type: btn.getAttribute('data-course_type'),
+                        duration: btn.getAttribute('data-duration'),
+                        requirements: btn.getAttribute('data-requirements'),
+                        course_link: btn.getAttribute('data-course_link')
+                    };
 
-            // Choose the right URL - save or unsave
-            var saveUrl = "{% url 'accounts:save_match' %}";
-            var unsaveUrl = "{% url 'accounts:unsave_match' %}";
-            var requestUrl = isCurrentlySaved ? unsaveUrl : saveUrl;
+                    // Choose the right URL - save or unsave
+                    var saveUrl = "{% url 'accounts:save_match' %}";
+                    var unsaveUrl = "{% url 'accounts:unsave_match' %}";
+                    var requestUrl = isCurrentlySaved ? unsaveUrl : saveUrl;
 
-            // Get the security token
-            var csrfToken = getCookie('csrftoken');
+                    // Get the security token
+                    var csrfToken = getCookie('csrftoken');
 
-            // Send the request to save or unsave
-            fetch(requestUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken
-                },
-                body: JSON.stringify(courseData)
-            }).then(function (response) {
-                if (response.ok) {
-                    // Update the button appearance
-                    if (isCurrentlySaved) {
-                        // Was saved, now unsave it
-                        btn.classList.remove('active');
-                        // If we're on saved matches page, remove the whole row
-                        if (window.location.pathname.indexOf('saved-matches') !== -1) {
-                            var tableRow = btn.closest('tr');
-                            if (tableRow) {
-                                tableRow.remove();
+                    // Send the request to save or unsave
+                    fetch(requestUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken
+                        },
+                        body: JSON.stringify(courseData)
+                    }).then(function (response) {
+                        if (response.ok) {
+                            // Update the button appearance
+                            if (isCurrentlySaved) {
+                                // Was saved, now unsave it
+                                btn.classList.remove('active');
+                                // If we're on saved matches page, remove the whole row
+                                if (window.location.pathname.indexOf('saved-matches') !== -1) {
+                                    var tableRow = btn.closest('tr');
+                                    if (tableRow) {
+                                        tableRow.remove();
 
-                                // Check if table is now empty
-                                var table = document.querySelector('.pretty-table');
-                                var tbody = table.querySelector('tbody');
-                                var remainingRows = tbody.querySelectorAll('tr');
+                                        // Check if table is now empty
+                                        var table = document.querySelector('.pretty-table');
+                                        var tbody = table.querySelector('tbody');
+                                        var remainingRows = tbody.querySelectorAll('tr');
 
-                                if (remainingRows.length === 0) {
-                                    // No more saved matches, hide table and show empty message
-                                    var tableContainer = document.querySelector('.table-container');
-                                    if (tableContainer) {
-                                        tableContainer.style.display = 'none';
-                                    }
+                                        if (remainingRows.length === 0) {
+                                            // No more saved matches, hide table and show empty message
+                                            var tableContainer = document.querySelector('.table-container');
+                                            if (tableContainer) {
+                                                tableContainer.style.display = 'none';
+                                            }
 
-                                    // Show the empty message
-                                    var emptyMessage = document.createElement('div');
-                                    emptyMessage.style.marginTop = '80px';
-                                    emptyMessage.innerHTML = '<p style="font-size:1.3rem; color:#294366; margin-bottom:10px;">— You haven\'t saved any matches yet!</p><p style="color:#6a7fa6; font-size:1.1rem;">Click on the ♥ icon on a course to add it here.</p>';
+                                            // Show the empty message
+                                            var emptyMessage = document.createElement('div');
+                                            emptyMessage.style.marginTop = '80px';
+                                            emptyMessage.innerHTML = '<p style="font-size:1.3rem; color:#294366; margin-bottom:10px;">— You haven\'t saved any matches yet!</p><p style="color:#6a7fa6; font-size:1.1rem;">Click on the ♥ icon on a course to add it here.</p>';
 
-                                    // Add the message after the subtitle
-                                    var subtitle = document.querySelector('.saved-matches-sub');
-                                    if (subtitle) {
-                                        subtitle.parentNode.insertBefore(emptyMessage, subtitle.nextSibling);
+                                            // Add the message after the subtitle
+                                            var subtitle = document.querySelector('.saved-matches-sub');
+                                            if (subtitle) {
+                                                subtitle.parentNode.insertBefore(emptyMessage, subtitle.nextSibling);
+                                            }
+                                        }
                                     }
                                 }
+                            } else {
+                                // Wasn't saved, now save it
+                                btn.classList.add('active');
                             }
+                        } else {
+                            // Something went wrong
+                            console.log('Save failed with status:', response.status);
+                            alert('Error saving course. Please try again.');
                         }
-                    } else {
-                        // Wasn't saved, now save it
-                        btn.classList.add('active');
-                    }
-                } else {
-                    // Something went wrong
-                    console.log('Save failed with status:', response.status);
-                    alert('Error saving course. Please try again.');
-                }
-            }).catch(function(error) {
-                console.log('Request failed:', error);
-                alert('Error saving course. Please try again.');
-            });
+                    }).catch(function (error) {
+                        console.log('Request failed:', error);
+                        alert('Error saving course. Please try again.');
+                    });
+                });
+            }
         });
-    }
-});
-</script>
+    </script>
 
 {% endblock %}

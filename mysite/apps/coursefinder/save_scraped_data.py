@@ -1,5 +1,6 @@
 from .models import University, Course, EntryRequirement
 
+
 def saved_Data(scraped_unis):
     for uni_data in scraped_unis:
         uni = University.objects.create(

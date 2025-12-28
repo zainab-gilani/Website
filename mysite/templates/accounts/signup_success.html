@@ -11,13 +11,15 @@
         <p style="color: #888;">
             Didn’t get the email? Check your spam folder,
             or
-            <form action="{% url 'accounts:resend_activation' %}" method="post" style="display:inline;">
-                {% csrf_token %}
-                <input type="hidden" name="email" value="{{ user_email }}">
-                <button type="submit" style="background:none;border:none;color:#2D5289;text-decoration:underline;cursor:pointer;padding:0;">
-                    resend activation link
-                </button>
-            </form>.
+        <form action="{% url 'accounts:resend_activation' %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <input type="hidden" name="email" value="{{ user_email }}">
+            <button type="submit"
+                    style="background:none;border:none;color:#2D5289;text-decoration:underline;cursor:pointer;padding:0;">
+                resend activation link
+            </button>
+        </form>
+        .
         </p>
         {% if message %}
             <p style="color:#2D5289;margin-top:12px;">{{ message }}</p>

@@ -122,7 +122,9 @@ h1 {
     line-height: 1.12;
 }
 
-.saved-btn:hover { background-color: #b6ccea; }
+.saved-btn:hover {
+    background-color: #b6ccea;
+}
 
 .saved-btn.default {
     background-color: #E0E7FF;
@@ -159,7 +161,9 @@ a.button, .guest-options .button {
     text-align: center;
 }
 
-a.button:hover { background-color: #b6ccea; }
+a.button:hover {
+    background-color: #b6ccea;
+}
 
 
 /* --- TABS & SLIDER --- */
@@ -179,6 +183,7 @@ a.button:hover { background-color: #b6ccea; }
     margin: 0 auto;
     position: relative;
 }
+
 .tab-btn {
     flex: 1;
     display: flex;
@@ -197,9 +202,11 @@ a.button:hover { background-color: #b6ccea; }
     height: 44px;
     user-select: none;
 }
+
 .tab-btn.active {
     color: #fff !important;
 }
+
 .slider-bg {
     position: absolute;
     top: 4px;
@@ -208,7 +215,7 @@ a.button:hover { background-color: #b6ccea; }
     height: 36px;
     background: #34568b;
     border-radius: 12px;
-    transition: left 0.25s cubic-bezier(.5,1.5,.5,1);
+    transition: left 0.25s cubic-bezier(.5, 1.5, .5, 1);
     z-index: 1;
 }
 
@@ -317,6 +324,7 @@ form {
     text-align: center;
     color: #667791;
 }
+
 .rotating-text span {
     opacity: 1;
     transition: opacity 0.5s ease-in-out;
@@ -354,6 +362,7 @@ form {
     color: #223c5c;
     font-family: "Tahoma", serif;
 }
+
 .pretty-table th {
     background: #dbe5f6;
     color: #19355b;
@@ -369,18 +378,22 @@ form {
     max-width: 36px;
     padding: 0;
 }
+
 .pretty-table tr:last-child td {
     border-bottom: none;
 }
+
 .pretty-table td a {
     color: #304b99;
     font-weight: bold;
     text-decoration: underline;
     transition: color .13s;
 }
+
 .pretty-table td a:hover {
     color: #19355b;
 }
+
 .pretty-table tr:nth-child td {
     background: #f3f7ff;
 }
@@ -417,7 +430,9 @@ form {
     line-height: 1.12;
 }
 
-.resources-btn:hover { background-color: #b6ccea; }
+.resources-btn:hover {
+    background-color: #b6ccea;
+}
 
 .resources-btn.default {
     background-color: #E0E7FF;
@@ -668,35 +683,42 @@ input[type="checkbox"]:hover {
         width: 99vw;
         font-size: 1.07rem;
     }
+
     .pretty-table th, .pretty-table td {
         padding: 10px 6px;
     }
+
     .search-bar-wrapper {
         width: 96vw;
         min-width: 0;
     }
+
     form {
         width: 96vw;
         min-width: 0;
         margin: 60px auto 0;
     }
 }
+
 @media (max-width: 600px) {
     .search-bar-wrapper {
         width: 96vw;
         min-width: 0;
         margin-top: 30px;
     }
+
     #search {
         font-size: .97rem;
         padding-left: 35px;
     }
+
     form {
         width: 96vw;
         min-width: 0;
         margin: 60px auto 0;
     }
 }
+
 @media (max-width: 600px) {
     .search-bar-wrapper,
     .search-bar-wrapper input[type="text"],

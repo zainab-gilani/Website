@@ -381,24 +381,24 @@ button.login-button:hover,
 
 /* PROFILE */
 .profile-bg {
-  min-height: 90vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 64px;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 64px;
     margin-top: -65px;
 }
 
 .profile-side-menu {
-  background: #d5e2f5;
-  border-radius: 18px 18px 0 0;
-  min-width: 400px;
-  height: 260px;
-  padding-top: 120px;
-  margin-top: -150px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    background: #d5e2f5;
+    border-radius: 18px 18px 0 0;
+    min-width: 400px;
+    height: 260px;
+    padding-top: 120px;
+    margin-top: -150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .profile-pfp-big {
@@ -513,7 +513,9 @@ button.login-button:hover,
     line-height: 1.12;
 }
 
-.resources-btn:hover { background-color: #b6ccea; }
+.resources-btn:hover {
+    background-color: #b6ccea;
+}
 
 .resources-btn.default {
     background-color: #E0E7FF;

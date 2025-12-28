@@ -49,7 +49,7 @@ def search_courses(query: str, filters: Dict) -> Dict[str, Any]:
     if result["parsed_grades"]:
         ucas_points = calculate_ucas_points(result["parsed_grades"])
         result["ucas_points"] = ucas_points
-    #endif
+    # endif
 
     # find matching courses
     # Pass filters dictionary to the next function
@@ -63,6 +63,8 @@ def search_courses(query: str, filters: Dict) -> Dict[str, Any]:
     result["matching_courses"] = courses
 
     return result
+
+
 # enddef
 
 
@@ -93,6 +95,8 @@ def calculate_ucas_points(grades: Dict[str, str]) -> int:
     # endfor
 
     return total
+
+
 # enddef
 
 
@@ -143,7 +147,8 @@ def find_matching_courses(grades: Dict, ucas_points: int, interests: List[str], 
                 interest_query |= Q(name__icontains=term)
             # endfor
         # endfor
-        qualifying_courses = Course.objects.select_related('university').prefetch_related('entryrequirement').filter(interest_query)
+        qualifying_courses = Course.objects.select_related('university').prefetch_related('entryrequirement').filter(
+            interest_query)
     else:
         # nothing to search for
         qualifying_courses = Course.objects.none()
@@ -158,18 +163,18 @@ def find_matching_courses(grades: Dict, ucas_points: int, interests: List[str], 
                 qualifying_courses = qualifying_courses.filter(
                     entryrequirement__min_ucas_points__gte=min_points
                 )
-            #endif
+            # endif
         except ValueError:
             pass
-        #endtry
-    #endif
+        # endtry
+    # endif
 
     # filter by course type if they selected one
     if filters.get('course_type'):
         selected_type = filters['course_type']
         # matches "BA (Hons)" in both short and long forms
         qualifying_courses = qualifying_courses.filter(course_type__icontains=selected_type)
-    #endif
+    # endif
 
     if filters.get('duration'):
         selected_duration = filters['duration']
@@ -182,12 +187,12 @@ def find_matching_courses(grades: Dict, ucas_points: int, interests: List[str], 
             # extract the number and match with the word "year" to avoid matching months
             years = selected_duration.split(' ')[0]
             qualifying_courses = qualifying_courses.filter(duration__icontains=years + " year")
-        #endif
-    #endif
+        # endif
+    # endif
 
     if filters.get('mode'):
         qualifying_courses = qualifying_courses.filter(mode__icontains=filters['mode'])
-    #endif
+    # endif
 
     if filters.get('location'):
         selected_region = filters['location']
@@ -199,14 +204,14 @@ def find_matching_courses(grades: Dict, ucas_points: int, interests: List[str], 
             location_query = Q()
             for city in cities_in_region:
                 location_query |= Q(location__icontains=city)
-            #endfor
+            # endfor
             qualifying_courses = qualifying_courses.filter(
                 Q(location__in=cities_in_region) |
                 Q(university__location__in=cities_in_region) |
                 location_query
             )
-        #endif
-    #endif
+        # endif
+    # endif
 
     # if user wants to see only courses with grade requirements
     if filters.get('only_grades'):
@@ -217,7 +222,7 @@ def find_matching_courses(grades: Dict, ucas_points: int, interests: List[str], 
         ).exclude(
             entryrequirement__display_grades=''
         ).distinct()
-    #endif
+    # endif
 
     # if user wants to see only courses with no requirements
     if filters.get('no_requirements'):
@@ -225,7 +230,7 @@ def find_matching_courses(grades: Dict, ucas_points: int, interests: List[str], 
         qualifying_courses = qualifying_courses.filter(
             entryrequirement__has_requirements=False
         ).distinct()
-    #endif
+    # endif
 
     courses_to_show = list(qualifying_courses[:20])
 
@@ -242,16 +247,16 @@ def find_matching_courses(grades: Dict, ucas_points: int, interests: List[str], 
                     requirements_str = f"{req.min_ucas_points} UCAS points"
                 else:
                     requirements_str = "No specific requirements"
-                #endif
+                # endif
 
                 # add btec grades if they exist
                 if req.btec_grades:
                     requirements_str += f" / {req.btec_grades}"
-                #endif
+                # endif
             else:
                 # no requirements for this course
                 requirements_str = "No specific requirements"
-            #endif
+            # endif
         except:
             requirements_str = "No specific requirements"
         # endtry
