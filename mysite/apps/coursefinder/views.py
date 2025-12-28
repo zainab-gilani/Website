@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.http import JsonResponse
+from django.utils.html import escape
 from .types import UniMatchResult
 from .search_service import search_courses
 from .university_search import search_universities
 from ..accounts.models import SavedMatch
 from .models import Course
-
 
 # Create your views here.
 
@@ -32,9 +32,9 @@ DURATION_OPTIONS = [
 ]
 
 MODE_OPTIONS = [
-"Full-time",
+    "Full-time",
     "Part-time",
-    "Sandwich", # e.g. "Placement year", "Industry", etc.
+    "Sandwich",  # e.g. "Placement year", "Industry", etc.
     "Distance Learning"
 ]
 
@@ -64,6 +64,7 @@ COURSE_TYPE_OPTIONS = [
     "Foundation",  # foundation degrees (FdA, FdSc, etc)
 ]
 
+
 def guest_coursefinder_view(request):
     """
     Renders the course finder page for guest users.
@@ -80,11 +81,15 @@ def guest_coursefinder_view(request):
         'ucas_options': UCAS_OPTIONS,
     }
     return render(request, 'coursefinder/course_finder.html', context)
-#enddef
+
+
+# enddef
 
 def resources_view(request):
     return render(request, 'coursefinder/resources.html')
-#enddef
+
+
+# enddef
 
 def get_dummy_matches():
     """
@@ -107,7 +112,9 @@ def get_dummy_matches():
         ),
     ]
     return fake_unis
-#enddef
+
+
+# enddef
 
 def mark_saved_matches(results, user):
     """
@@ -120,7 +127,7 @@ def mark_saved_matches(results, user):
     # Only check saved matches if user is logged in
     if not user.is_authenticated:
         return results
-    #endif
+    # endif
 
     # Get all the courses this user has saved
     saved_matches = SavedMatch.objects.filter(user=user)
@@ -133,16 +140,18 @@ def mark_saved_matches(results, user):
         for saved_match in saved_matches:
             # We check university name, course name, and link to see if they match
             if (result.university == saved_match.university and
-                result.course == saved_match.course and
-                result.course_link == saved_match.course_link):
+                    result.course == saved_match.course and
+                    result.course_link == saved_match.course_link):
                 result.is_saved = True
                 break  # We found it, so stop looking
-            #endif
-        #endfor
-    #endfor
+            # endif
+        # endfor
+    # endfor
 
     return results
-#enddef
+
+
+# enddef
 
 def coursefinder_view(request):
     """
@@ -176,7 +185,6 @@ def coursefinder_view(request):
 
         filters['region_mapping'] = LOCATION_REGIONS
 
-
         if tab == 'matches':
             # this tab uses the nlp parser to work out what grades they have
             if query:
@@ -187,47 +195,47 @@ def coursefinder_view(request):
                 # Mark which results are saved for logged-in users
                 results = mark_saved_matches(results, request.user)
                 # print(f"DEBUG: After marking saved matches: {len(results)} results")
-                
+
                 # make a message showing what we understood from their input
                 grades_text = ""
                 if search_result["parsed_grades"]:
                     grade_items = []
                     for subject, grade in search_result["parsed_grades"].items():
                         grade_items.append(f"{grade} in {subject.title()}")
-                    #endfor
+                    # endfor
                     grades_text = ", ".join(grade_items)
-                #endif
-                
+                # endif
+
                 interests_text = ""
                 if search_result["interests"]:
                     interests_text = ", ".join([i.title() for i in search_result["interests"]])
-                #endif
-                
+                # endif
+
                 # different messages depending on what we found
                 if grades_text and interests_text:
                     if results:
                         parsed_input = f"Found {len(results)} courses accepting: {grades_text} • Interests: {interests_text}"
                     else:
                         parsed_input = f"No courses found accepting: {grades_text} with interests in {interests_text}"
-                    #endif
+                    # endif
                 elif grades_text:
                     if results:
                         ucas = search_result.get("ucas_points", 0)
                         parsed_input = f"Found {len(results)} courses accepting: {grades_text} ({ucas} UCAS points)"
                     else:
                         parsed_input = f"No courses found for: {grades_text}"
-                    #endif
+                    # endif
                 elif interests_text:
                     if results:
                         parsed_input = f"Found {len(results)} courses in: {interests_text}"
                     else:
                         parsed_input = f"No courses found for: {interests_text}"
-                    #endif
+                    # endif
                 else:
                     parsed_input = f"Could not parse grades or interests from: {query}"
-                #endif
-            #endif
-            
+                # endif
+            # endif
+
         elif tab == 'search':
             # this tab is just basic search without nlp
             if query:
@@ -240,10 +248,10 @@ def coursefinder_view(request):
                     parsed_input = f"Found {len(results)} results for '{query}'"
                 else:
                     parsed_input = f"No universities or courses found for '{query}'"
-                #endif
-            #endif
-        #endif
-    #endif
+                # endif
+            # endif
+        # endif
+    # endif
 
     # This context will now pass all filter options to the template
     context = {
@@ -263,10 +271,11 @@ def coursefinder_view(request):
         # ajax request so return just the html for the results
         # put the message and table together
         if parsed_input:
-            message_html = f'<p style="text-align:center; margin-top:30px; font-size:1.3rem; font-weight:700; color:#2D5289FF;">{parsed_input}</p>'
+            safe_parsed_input = escape(parsed_input)
+            message_html = f'<p style="text-align:center; margin-top:30px; font-size:1.3rem; font-weight:700; color:#2D5289FF;">{safe_parsed_input}</p>'
         else:
             message_html = ''
-        #endif
+        # endif
 
         # Pass the full context to the template
         table_html = render_to_string(
@@ -283,10 +292,10 @@ def coursefinder_view(request):
             'table_html': full_html,
             'parsed_input': parsed_input
         })
-    #endif
+    # endif
     #
     # print(f"DEBUG: Final results count: {len(results)}")
     # print(f"DEBUG: Final parsed_input: '{parsed_input}'")
-    
+
     return render(request, 'coursefinder/course_finder.html', context)
-#enddef
+# enddef
