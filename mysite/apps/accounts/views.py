@@ -260,7 +260,6 @@ def saved_matches_view(request):
 
 # enddef
 
-@csrf_exempt
 @login_required
 def save_match(request):
     """
@@ -302,7 +301,6 @@ def save_match(request):
     return JsonResponse({'status': 'error'}, status=400)
 #enddef
 
-@csrf_exempt
 @login_required
 def unsave_match(request):
     """
@@ -350,7 +348,6 @@ def unsave_match(request):
 #enddef
 
 
-@csrf_exempt
 @login_required
 def check_saved(request):
     """
