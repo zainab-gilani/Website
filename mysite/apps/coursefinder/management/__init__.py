@@ -1,1 +1,0 @@
-# Management module for coursefinder app
