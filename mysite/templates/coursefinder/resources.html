@@ -158,4 +158,84 @@
             </tbody>
         </table>
     </div>
+
+    <script>
+        function replaceMain(html, url, pushState) {
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(html, 'text/html');
+            var newMain = doc.querySelector('main');
+            if (!newMain) {
+                window.location.href = url;
+                return;
+            }
+
+            var main = document.querySelector('main');
+            if (!main) {
+                window.location.href = url;
+                return;
+            }
+
+            main.innerHTML = newMain.innerHTML;
+            if (doc.title) {
+                document.title = doc.title;
+            }
+
+            if (pushState === true) {
+                history.pushState({href: url}, '', url);
+            }
+
+            // Re-run inline scripts from the new content.
+            var scripts = main.querySelectorAll('script');
+            for (var i = 0; i < scripts.length; i++) {
+                var oldScript = scripts[i];
+                var newScript = document.createElement('script');
+                if (oldScript.src) {
+                    newScript.src = oldScript.src;
+                } else {
+                    newScript.text = oldScript.textContent;
+                }
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+            }
+        }
+
+        function loadPage(url, pushState) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        replaceMain(xhr.responseText, url, pushState);
+                    } else {
+                        window.location.href = url;
+                    }
+                }
+            };
+            xhr.send();
+        }
+
+        function setupAjaxNav() {
+            var savedLink = document.querySelector('.saved-btn');
+            if (!savedLink) return;
+
+            savedLink.addEventListener('click', function (e) {
+                e.preventDefault();
+                loadPage(savedLink.getAttribute('href'), true);
+            });
+
+            history.replaceState({href: window.location.href}, '', window.location.href);
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupAjaxNav);
+        } else {
+            setupAjaxNav();
+        }
+
+        window.addEventListener('popstate', function (event) {
+            if (event.state && event.state.href) {
+                loadPage(event.state.href, false);
+            }
+        });
+    </script>
 {% endblock %}

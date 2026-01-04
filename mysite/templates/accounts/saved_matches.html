@@ -125,7 +125,7 @@
             return cookieValue;
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
+        function initSavedMatches() {
             var heartBtns = document.querySelectorAll('.heart-btn');
             console.log('Found heart buttons:', heartBtns.length);
 
@@ -214,7 +214,13 @@
                     });
                 });
             }
-        });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initSavedMatches);
+        } else {
+            initSavedMatches();
+        }
     </script>
 
 {% endblock %}
