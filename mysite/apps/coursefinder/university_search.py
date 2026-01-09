@@ -143,11 +143,72 @@ def search_universities(query: str, filters: dict = None) -> List:
             entryrequirement__has_requirements=False
         ).distinct()
     # endif
+    # If the query is a location, show one course per university
+    # Otherwise, show all matching courses
+    query_for_match = query.strip()
+    show_all_courses = True
+    is_location_query = False
 
-    courses = courses[:30]
+    if query_for_match:
+        if University.objects.filter(location__icontains=query_for_match).exists():
+            is_location_query = True
+        # endif
 
-    # format everything for display
-    for course in courses:
+        region_map = filters.get('region_mapping', {})
+        for cities in region_map.values():
+            for city in cities:
+                if query_for_match.lower() == city.lower():
+                    is_location_query = True
+                    break
+                # endif
+            # endfor
+            if is_location_query:
+                break
+            # endif
+        # endfor
+    # endif
+
+    if is_location_query:
+        show_all_courses = False
+    # endif
+
+    if query_for_match:
+        exact_unis = University.objects.filter(name__iexact=query_for_match)
+        if exact_unis.exists():
+            courses = courses.filter(university__in=exact_unis)
+            show_all_courses = True
+        else:
+            matching_unis = University.objects.filter(name__icontains=query_for_match)
+            if matching_unis.count() == 1:
+                courses = courses.filter(university__in=matching_unis)
+                show_all_courses = True
+            # endif
+        # endif
+    # endif
+
+    courses = courses.order_by("university__name", "name")
+
+    # pick one representative course per university to keep layout consistent
+    if show_all_courses:
+        selected_courses = courses
+    else:
+        selected_courses = []
+        seen_universities = set()
+        for course in courses:
+            uni_id = course.university_id
+            if uni_id in seen_universities:
+                continue
+            # endif
+            seen_universities.add(uni_id)
+            selected_courses.append(course)
+            if len(selected_courses) >= 200:
+                break
+            # endif
+        # endfor
+    # endif
+
+    # format everything for display (one row per university)
+    for course in selected_courses:
         try:
             req = course.entryrequirement
             # decide what to show for requirements
@@ -173,13 +234,18 @@ def search_universities(query: str, filters: dict = None) -> List:
             requirements_str = "No specific requirements"
         # endtry
 
+        link = course.link
+        if not link:
+            link = "#"
+        # endif
+
         match = UniMatchResult(
             university=course.university.name,
             course=course.name,
             course_type=course.course_type,
             duration=course.duration,
             requirements=requirements_str,
-            course_link=course.link or "#"
+            course_link=link
         )
         results.append(match)
     # endfor
