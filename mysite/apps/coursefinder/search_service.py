@@ -83,7 +83,10 @@ def calculate_ucas_points(grades: Dict[str, str]) -> int:
         'C': 32,
         'D': 24,
         'E': 16,
-        'U': 0
+        'U': 0,
+        'D*': 56,
+        'M': 32,
+        'P': 16
     }
 
     total = 0
