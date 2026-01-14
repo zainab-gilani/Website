@@ -119,7 +119,9 @@ def search_universities(query: str, filters: dict = None) -> List:
     if filters.get('ucas_range'):
         try:
             min_points = int(filters['ucas_range'])
-            courses = courses.filter(entryrequirement__min_ucas_points__lte=min_points)
+            if min_points > 0:
+                courses = courses.filter(entryrequirement__min_ucas_points__gte=min_points)
+            # endif
         except ValueError:
             pass
         # endtry
