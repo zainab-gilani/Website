@@ -43,3 +43,6 @@ htmlcov/
 dist/
 build/
 *.egg-info/
+/FUNCTION_DOCUMENTATION.md
+
+/universities.json
