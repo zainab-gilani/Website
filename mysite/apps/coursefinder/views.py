@@ -1,12 +1,12 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
-from django.http import JsonResponse
 from django.utils.html import escape
-from .types import UniMatchResult
+
 from .search_service import search_courses
+from .types import UniMatchResult
 from .university_search import search_universities
 from ..accounts.models import SavedMatch
-from .models import Course
 
 # Create your views here.
 
