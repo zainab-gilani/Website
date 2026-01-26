@@ -1,32 +1,25 @@
+import json
 from datetime import datetime
 
-from django.utils.html import strip_tags
-from django.shortcuts import render, redirect
-
-from .forms import CustomUserCreationForm
-
+from django.contrib import messages
+from django.contrib.auth import get_user_model
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib.auth.views import LoginView
 from django.core.mail import EmailMultiAlternatives
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
-from .tokens import account_activation_token
-from django.contrib.auth import get_user_model
 from django.utils.encoding import force_str
+from django.utils.html import strip_tags
 from django.utils.http import urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_encode
 
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.contrib.auth.models import User
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.views import LoginView
-
-from ..coursefinder.views import get_dummy_matches
-
+from .forms import CustomUserCreationForm
 from .models import SavedMatch
-
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-import json
+from .tokens import account_activation_token
 
 User = get_user_model()
 
