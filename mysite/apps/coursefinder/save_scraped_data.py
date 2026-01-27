@@ -28,3 +28,7 @@ def saved_Data(scraped_unis):
                     min_ucas_points=req_data.min_ucas_points,
 
                 )
+            # endfor
+        # endfor
+    # endfor
+# enddef
