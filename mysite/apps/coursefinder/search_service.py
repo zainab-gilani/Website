@@ -2,11 +2,13 @@
 Search service that uses NLP parser to find matching courses
 """
 from typing import List, Dict, Any
+
 from django.db.models import Q
-from .models import University, Course, EntryRequirement, SubjectRequirement
-from .types import UniMatchResult
-from mysite.apps.nlp.grade_parser import GradeParser
+
 from mysite.apps.nlp.course_interests import parse_interests
+from mysite.apps.nlp.grade_parser import GradeParser
+from .models import Course
+from .types import UniMatchResult
 from .university_search import expand_query_with_synonyms
 
 
