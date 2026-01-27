@@ -1,11 +1,9 @@
+from django.contrib.auth.views import LogoutView
 from django.urls import path
-from django.contrib.auth import views as auth_views
 
 from . import views
-from .views import resend_activation_view, saved_matches_view, CustomLoginView
 from .forms import CustomLoginForm
-
-from django.contrib.auth.views import LogoutView
+from .views import resend_activation_view, saved_matches_view, CustomLoginView
 
 app_name = "accounts"
 
