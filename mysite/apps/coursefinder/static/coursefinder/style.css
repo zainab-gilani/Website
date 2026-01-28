@@ -21,6 +21,15 @@ h1 {
 }
 
 /* --- PROFILE DROPDOWN --- */
+.logo {
+    position: fixed;
+    top: 12px;
+    left: 20px;
+    width: 90px;
+    height: auto;
+    z-index: 2001;
+}
+
 .pfp-small {
     width: 80px;
     height: 80px;
@@ -87,21 +96,11 @@ h1 {
     color: #2D5289 !important;
 }
 
-.logo {
-    position: fixed;
-    top: 12px;
-    left: 20px;
-    width: 90px;
-    height: auto;
-    z-index: 2001;
-}
-
 .dropdown-content hr {
     border: none;
     border-top: 1px solid #e0e6ef;
     margin: 0;
 }
-
 
 .saved-btn {
     position: fixed;
@@ -136,6 +135,39 @@ h1 {
     color: white;
 }
 
+.resources-btn {
+    position: fixed;
+    top: 29px;
+    right: 260px;
+    width: 110px;
+    padding: 12px 0;
+    font-size: 1.1rem;
+    font-weight: bold;
+    background-color: #d8e2f0;
+    color: #2D5289;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    z-index: 1001;
+    text-align: center;
+    line-height: 1.12;
+}
+
+.resources-btn:hover {
+    background-color: #b6ccea;
+}
+
+.resources-btn.default {
+    background-color: #E0E7FF;
+    color: #333;
+}
+
+.resources-btn.active {
+    background-color: #2D5289;
+    color: white;
+}
+
 .guest-options {
     display: flex;
     justify-content: center;
@@ -164,7 +196,6 @@ a.button, .guest-options .button {
 a.button:hover {
     background-color: #b6ccea;
 }
-
 
 /* --- TABS & SLIDER --- */
 .tab-switcher {
@@ -224,7 +255,6 @@ a.button:hover {
     outline: none;
     box-shadow: none;
 }
-
 
 /* --- FORM --- */
 form {
@@ -312,166 +342,6 @@ form {
     top: 55px !important;
     left: 50%;
     transform: translateX(-50%);
-}
-
-
-/* --- ROTATING TEXT --- */
-.rotating-text {
-    position: absolute;
-    top: 150px;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    color: #667791;
-}
-
-.rotating-text span {
-    opacity: 1;
-    transition: opacity 0.5s ease-in-out;
-}
-
-
-/* --- TABLE --- */
-.table-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 30px;
-}
-
-.pretty-table {
-    border-collapse: separate;
-    border-spacing: 0;
-    background: #f7f9ff;
-    border-radius: 16px;
-    overflow: hidden;
-    font-family: "Tahoma", serif;
-    border: 1.5px solid #d0d7ea;
-    margin: 0 auto;
-    margin: 0 auto;
-    border-collapse: separate;
-    border-spacing: 0;
-    max-width: 900px;
-}
-
-.pretty-table th, .pretty-table td {
-    padding: 10px 18px;
-    text-align: center;
-    font-size: 1.06rem;
-    border: none;
-    border-bottom: 1px solid #e3eaf8;
-    color: #223c5c;
-    font-family: "Tahoma", serif;
-}
-
-.pretty-table th {
-    background: #dbe5f6;
-    color: #19355b;
-    font-weight: 800;
-    font-size: 1.12rem;
-    border-bottom: 2px solid #c1cbe3;
-}
-
-.pretty-table th:first-child,
-.pretty-table td:first-child {
-    width: 36px;
-    min-width: 36px;
-    max-width: 36px;
-    padding: 0;
-}
-
-.pretty-table tr:last-child td {
-    border-bottom: none;
-}
-
-.pretty-table td a {
-    color: #304b99;
-    font-weight: bold;
-    text-decoration: underline;
-    transition: color .13s;
-}
-
-.pretty-table td a:hover {
-    color: #19355b;
-}
-
-.pretty-table tr:nth-child td {
-    background: #f3f7ff;
-}
-
-/* --- BOLDING ONLY --- */
-
-.resources-table-container .pretty-table td:first-child {
-    font-weight: 700;
-    color: #2D5289;
-}
-
-#results-table .pretty-table td:nth-child(2),
-#search-results-table .pretty-table td:nth-child(2) {
-    font-weight: 700;
-    color: #2D5289;
-}
-
-.resources-btn {
-    position: fixed;
-    top: 29px;
-    right: 260px;
-    width: 110px;
-    padding: 12px 0;
-    font-size: 1.1rem;
-    font-weight: bold;
-    background-color: #d8e2f0;
-    color: #2D5289;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    text-decoration: none;
-    z-index: 1001;
-    text-align: center;
-    line-height: 1.12;
-}
-
-.resources-btn:hover {
-    background-color: #b6ccea;
-}
-
-.resources-btn.default {
-    background-color: #E0E7FF;
-    color: #333;
-}
-
-.resources-btn.active {
-    background-color: #2D5289;
-    color: white;
-}
-
-
-/* --- HEART BUTTON --- */
-.heart-btn {
-    padding: 0;
-    margin-left: 18px;
-    background: none;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.heart-icon {
-    width: 26px;
-    height: 26px;
-    opacity: 1;
-    transition: fill 0.18s, filter 0.15s;
-}
-
-.heart-icon path {
-    fill: transparent !important;
-    transition: fill 0.18s;
-}
-
-.heart-btn.active .heart-icon path {
-    fill: #e38088 !important;
-    filter: drop-shadow(0 1px 4px #e380882a) !important;
 }
 
 /* --- FILTER BUTTONS --- */
@@ -593,7 +463,6 @@ form {
     background-color: #294366;
 }
 
-
 /* --- CUSTOM CHECKBOXES --- */
 input[type="checkbox"] {
     appearance: none;
@@ -631,8 +500,130 @@ input[type="checkbox"]:hover {
     border-color: #294366;
 }
 
-/* --- HELPFUL RESOURCES --- */
+/* --- ROTATING TEXT --- */
+.rotating-text {
+    position: absolute;
+    top: 150px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: #667791;
+}
 
+.rotating-text span {
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* --- TABLE --- */
+.table-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.pretty-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #f7f9ff;
+    border-radius: 16px;
+    overflow: hidden;
+    font-family: "Tahoma", serif;
+    border: 1.5px solid #d0d7ea;
+    margin: 0 auto;
+    margin: 0 auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    max-width: 900px;
+}
+
+.pretty-table th, .pretty-table td {
+    padding: 10px 18px;
+    text-align: center;
+    font-size: 1.06rem;
+    border: none;
+    border-bottom: 1px solid #e3eaf8;
+    color: #223c5c;
+    font-family: "Tahoma", serif;
+}
+
+.pretty-table th {
+    background: #dbe5f6;
+    color: #19355b;
+    font-weight: 800;
+    font-size: 1.12rem;
+    border-bottom: 2px solid #c1cbe3;
+}
+
+.pretty-table th:first-child,
+.pretty-table td:first-child {
+    width: 36px;
+    min-width: 36px;
+    max-width: 36px;
+    padding: 0;
+}
+
+.pretty-table tr:last-child td {
+    border-bottom: none;
+}
+
+.pretty-table td a {
+    color: #304b99;
+    font-weight: bold;
+    text-decoration: underline;
+    transition: color .13s;
+}
+
+.pretty-table td a:hover {
+    color: #19355b;
+}
+
+.pretty-table tr:nth-child td {
+    background: #f3f7ff;
+}
+
+/* --- BOLDING ONLY --- */
+.resources-table-container .pretty-table td:first-child {
+    font-weight: 700;
+    color: #2D5289;
+}
+
+#results-table .pretty-table td:nth-child(2),
+#search-results-table .pretty-table td:nth-child(2) {
+    font-weight: 700;
+    color: #2D5289;
+}
+
+/* --- HEART BUTTON --- */
+.heart-btn {
+    padding: 0;
+    margin-left: 18px;
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.heart-icon {
+    width: 26px;
+    height: 26px;
+    opacity: 1;
+    transition: fill 0.18s, filter 0.15s;
+}
+
+.heart-icon path {
+    fill: transparent !important;
+    transition: fill 0.18s;
+}
+
+.heart-btn.active .heart-icon path {
+    fill: #e38088 !important;
+    filter: drop-shadow(0 1px 4px #e380882a) !important;
+}
+
+/* --- HELPFUL RESOURCES --- */
 .resources-table-container {
     display: flex;
     justify-content: center;
@@ -674,7 +665,6 @@ input[type="checkbox"]:hover {
     vertical-align: middle;
     line-height: 1.4;
 }
-
 
 /* --- RESPONSIVE --- */
 @media (max-width: 800px) {

@@ -202,7 +202,6 @@ button.login-button:hover,
     pointer-events: none;
 }
 
-
 .heart-btn {
     background: none;
     border: none;
@@ -231,13 +230,6 @@ button.login-button:hover,
     filter: drop-shadow(0 1px 4px #e380882a) !important;
 }
 
-.heart-btn:hover {
-    background: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-    filter: none !important;
-}
-
 .heart-btn:hover .heart-icon {
     opacity: 1 !important;
     filter: none !important;
@@ -255,7 +247,6 @@ button.login-button:hover,
     filter: none !important;
     transform: none !important;
 }
-
 
 /* NOTES AND EXTRAS */
 .password-note {
@@ -623,7 +614,6 @@ button.login-button:hover,
     font-weight: 700;
     color: #2D5289;
 }
-
 
 /* RESPONSIVE */
 @media (max-width: 900px) {
