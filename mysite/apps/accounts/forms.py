@@ -41,6 +41,10 @@ class CustomUserCreationForm(UserCreationForm):
 # endclass
 
 class CustomLoginForm(AuthenticationForm):
+    error_messages = {
+        'invalid_login': 'Invalid username or password.',
+        'inactive': 'This account is inactive.',
+    }
     username = forms.CharField(
         widget=forms.TextInput(attrs={
             'class': 'form-input',
