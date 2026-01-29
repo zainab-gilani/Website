@@ -13,14 +13,6 @@
         <form method="post" class="form">
             {% csrf_token %}
 
-            {# Non-field errors (like "username already exists" or "passwords didn't match") #}
-            {% if form.non_field_errors %}
-                <ul class="errorlist nonfield">
-                    {% for error in form.non_field_errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
             <div>
                 <label for="id_username" class="form-label">USERNAME:</label>
                 {{ form.username }}
@@ -29,6 +21,14 @@
                 <label for="id_password" class="form-label">PASSWORD:</label>
                 {{ form.password }}
             </div>
+            {# Non-field errors (like "username already exists" or "passwords didn't match") #}
+            {% if form.non_field_errors %}
+                <ul class="errorlist nonfield">
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
             <button type="submit" class="login-button">LOGIN</button>
         </form>
 
