@@ -49,6 +49,7 @@
               autocomplete="off"
               class="search-form">
             {% csrf_token %}
+            <input type="hidden" name="page" value="1">
             <div class="search-bar-wrapper">
                 <div class="search-input-row">
                     <input type="text" name="query" id="matches-search" placeholder="Say Something..."
@@ -147,11 +148,12 @@
         <!-- AJAX Results Table -->
         <div id="results-table">
             {% if parsed_input %}
-                <p style="text-align:center; margin-top:30px; font-size:1.3rem; font-weight:700; color:#2D5289FF;">
+                <p class="results-message"
+                   style="text-align:center; margin-top:30px; font-size:1.3rem; font-weight:700; color:#2D5289FF;">
                     {{ parsed_input }}
                 </p>
             {% endif %}
-            {% include "coursefinder/_results_table.html" %}
+            {% include "coursefinder/_results_table.html" with form_id="matches-search-form" results_id="results-table" %}
         </div>
     </div>
 
@@ -163,6 +165,7 @@
               autocomplete="off"
               class="search-form">
             {% csrf_token %}
+            <input type="hidden" name="page" value="1">
             <div class="search-bar-wrapper">
                 <div class="search-input-row">
                     <input type="text" name="query" id="search-search" placeholder="Search" autocomplete="off">
@@ -260,11 +263,12 @@
         <div id="search-results-table">
             {% if mode == 'search' %}
                 {% if parsed_input %}
-                    <p style="text-align:center; margin-top:30px; font-size:1.3rem; font-weight:700; color:#2D5289FF;">
+                    <p class="results-message"
+                       style="text-align:center; margin-top:30px; font-size:1.3rem; font-weight:700; color:#2D5289FF;">
                         {{ parsed_input }}
                     </p>
                 {% endif %}
-                {% include "coursefinder/_results_table.html" %}
+                {% include "coursefinder/_results_table.html" with form_id="search-search-form" results_id="search-results-table" %}
             {% endif %}
         </div>
     </div>
@@ -496,6 +500,8 @@
 
                     // Get the form data
                     var formData = new FormData(form);
+                    formData.set('page', '1');
+                    formData.delete('append');
 
                     // Create AJAX request
                     var xhr = new XMLHttpRequest();
@@ -518,6 +524,56 @@
             // Set up both forms using the same function
             setupFormAjax('matches-search-form', 'results-table');
             setupFormAjax('search-search-form', 'search-results-table');
+
+            document.addEventListener('click', function (e) {
+                var btn = e.target.closest('.load-more-btn');
+                if (!btn) return;
+                var container = btn.closest('.load-more-wrapper');
+                if (!container) return;
+                var formId = container.getAttribute('data-form-id');
+                var resultsId = container.getAttribute('data-results-id');
+                var form = document.getElementById(formId);
+                if (!form) return;
+
+                var formData = new FormData(form);
+                formData.set('page', btn.getAttribute('data-page'));
+                formData.set('append', '1');
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', form.action, true);
+                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        var resultsRoot = document.getElementById(resultsId);
+                        if (resultsRoot) {
+                            var tbody = resultsRoot.querySelector('tbody');
+                            if (tbody && response.rows_html) {
+                                tbody.insertAdjacentHTML('beforeend', response.rows_html);
+                            }
+                        }
+
+                        if (response.has_next && response.next_page) {
+                            btn.setAttribute('data-page', response.next_page);
+                        } else if (container) {
+                            container.remove();
+                        }
+
+                        if (response.message_text && resultsRoot) {
+                            var messageEl = resultsRoot.querySelector('.results-message');
+                            if (messageEl) {
+                                messageEl.textContent = response.message_text;
+                            }
+                        }
+
+                        // Set up heart buttons after loading new content
+                        setupHeartButtons();
+                    }
+                };
+
+                xhr.send(formData);
+            });
         });
 
         // Function to set up heart button functionality

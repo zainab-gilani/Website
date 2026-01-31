@@ -666,6 +666,34 @@ input[type="checkbox"]:hover {
     line-height: 1.4;
 }
 
+/* --- LOAD MORE --- */
+.load-more-wrapper {
+    margin: 18px auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 20px;
+}
+
+.load-more-btn {
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: none;
+    background-color: #d8e2f0;
+    cursor: pointer;
+    font-weight: 700;
+    color: #2D5289;
+    font-size: 1.05rem;
+    appearance: none;
+    -webkit-appearance: none;
+    box-shadow: none;
+    transition: background 0.15s;
+}
+
+.load-more-btn:hover {
+    background: #b6ccea;
+}
+
 /* --- RESPONSIVE --- */
 @media (max-width: 800px) {
     .pretty-table, .table-container {

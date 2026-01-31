@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.utils.html import escape
@@ -162,8 +163,11 @@ def coursefinder_view(request):
     """
     tab = request.GET.get('tab') or request.POST.get('tab') or "matches"
     results = []
+    page_obj = None
     parsed_input = ""
     query = ""
+    page_number = request.POST.get('page') or request.GET.get('page') or 1
+    page_size = 50
     #
     # print(f"DEBUG: Request method: {request.method}")
     # print(f"DEBUG: Tab: {tab}")
@@ -191,10 +195,8 @@ def coursefinder_view(request):
                 # run the search with nlp parsing
                 search_result = search_courses(query, filters)
                 results = search_result["matching_courses"]
+                total_results_count = len(results)
                 # print(f"DEBUG: Found {len(results)} results from search_courses")
-                # Mark which results are saved for logged-in users
-                results = mark_saved_matches(results, request.user)
-                # print(f"DEBUG: After marking saved matches: {len(results)} results")
 
                 # make a message showing what we understood from their input
                 grades_text = ""
@@ -212,27 +214,39 @@ def coursefinder_view(request):
                 # endif
 
                 # different messages depending on what we found
-                if grades_text and interests_text:
-                    if results:
-                        parsed_input = f"Found {len(results)} courses accepting: {grades_text} • Interests: {interests_text}"
-                    else:
-                        parsed_input = f"No courses found accepting: {grades_text} with interests in {interests_text}"
-                    # endif
-                elif grades_text:
-                    if results:
+                if total_results_count:
+                    paginator = Paginator(results, page_size)
+                    try:
+                        page_obj = paginator.page(page_number)
+                    except PageNotAnInteger:
+                        page_obj = paginator.page(1)
+                    except EmptyPage:
+                        page_obj = paginator.page(paginator.num_pages)
+                    # endtry
+
+                    results = mark_saved_matches(list(page_obj.object_list), request.user)
+                    shown_count = page_obj.end_index()
+
+                    if grades_text and interests_text:
+                        parsed_input = f"Showing {shown_count} of {total_results_count} courses accepting: {grades_text} • Interests: {interests_text}"
+                    elif grades_text:
                         ucas = search_result.get("ucas_points", 0)
-                        parsed_input = f"Found {len(results)} courses accepting: {grades_text} ({ucas} UCAS points)"
+                        parsed_input = f"Showing {shown_count} of {total_results_count} courses accepting: {grades_text} ({ucas} UCAS points)"
+                    elif interests_text:
+                        parsed_input = f"Showing {shown_count} of {total_results_count} courses in: {interests_text}"
                     else:
-                        parsed_input = f"No courses found for: {grades_text}"
-                    # endif
-                elif interests_text:
-                    if results:
-                        parsed_input = f"Found {len(results)} courses in: {interests_text}"
-                    else:
-                        parsed_input = f"No courses found for: {interests_text}"
+                        parsed_input = f"Showing {shown_count} of {total_results_count} courses"
                     # endif
                 else:
-                    parsed_input = f"Could not parse grades or interests from: {query}"
+                    if grades_text and interests_text:
+                        parsed_input = f"No courses found accepting: {grades_text} with interests in {interests_text}"
+                    elif grades_text:
+                        parsed_input = f"No courses found for: {grades_text}"
+                    elif interests_text:
+                        parsed_input = f"No courses found for: {interests_text}"
+                    else:
+                        parsed_input = f"Could not parse grades or interests from: {query}"
+                    # endif
                 # endif
             # endif
 
@@ -240,12 +254,21 @@ def coursefinder_view(request):
             # this tab is just basic search without nlp
             if query:
                 results = search_universities(query, filters)
+                total_results_count = len(results)
                 # print(f"DEBUG: Found {len(results)} results from search_universities")
-                # Mark which results are saved for logged in users
-                results = mark_saved_matches(results, request.user)
-                # print(f"DEBUG: After marking saved matches: {len(results)} results")
-                if results:
-                    parsed_input = f"Found {len(results)} results for '{query}'"
+                if total_results_count:
+                    paginator = Paginator(results, page_size)
+                    try:
+                        page_obj = paginator.page(page_number)
+                    except PageNotAnInteger:
+                        page_obj = paginator.page(1)
+                    except EmptyPage:
+                        page_obj = paginator.page(paginator.num_pages)
+                    # endtry
+
+                    results = mark_saved_matches(list(page_obj.object_list), request.user)
+                    shown_count = page_obj.end_index()
+                    parsed_input = f"Showing {shown_count} of {total_results_count} results for '{query}'"
                 else:
                     parsed_input = f"No universities or courses found for '{query}'"
                 # endif
@@ -254,6 +277,13 @@ def coursefinder_view(request):
     # endif
 
     # This context will now pass all filter options to the template
+    if tab == 'search':
+        form_id = 'search-search-form'
+        results_id = 'search-results-table'
+    else:
+        form_id = 'matches-search-form'
+        results_id = 'results-table'
+
     context = {
         "mode": tab,
         'results': results,
@@ -264,34 +294,53 @@ def coursefinder_view(request):
         'modes': MODE_OPTIONS,
         'locations': LOCATION_OPTIONS,
         'ucas_options': UCAS_OPTIONS,
+        'page_obj': page_obj,
+        'form_id': form_id,
+        'results_id': results_id,
     }
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        is_append = request.POST.get('append') == '1'
         # print(f"DEBUG: AJAX request - results count: {len(results)}")
         # ajax request so return just the html for the results
         # put the message and table together
-        if parsed_input:
-            safe_parsed_input = escape(parsed_input)
-            message_html = f'<p style="text-align:center; margin-top:30px; font-size:1.3rem; font-weight:700; color:#2D5289FF;">{safe_parsed_input}</p>'
+        if is_append:
+            rows_html = render_to_string(
+                'coursefinder/_results_rows.html',
+                context,
+                request=request
+            )
+            has_next = bool(page_obj and page_obj.has_next())
+            next_page = page_obj.next_page_number() if has_next else None
+            return JsonResponse({
+                'rows_html': rows_html,
+                'has_next': has_next,
+                'next_page': next_page,
+                'message_text': parsed_input
+            })
         else:
-            message_html = ''
-        # endif
+            if parsed_input:
+                safe_parsed_input = escape(parsed_input)
+                message_html = f'<p style="text-align:center; margin-top:30px; font-size:1.3rem; font-weight:700; color:#2D5289FF;">{safe_parsed_input}</p>'
+            else:
+                message_html = ''
+            # endif
 
-        # Pass the full context to the template
-        table_html = render_to_string(
-            'coursefinder/_results_table.html',
-            context,
-            request=request
-        )
-        # print(f"DEBUG: Rendered table_html length: {len(table_html)}")
+            # Pass the full context to the template
+            table_html = render_to_string(
+                'coursefinder/_results_table.html',
+                context,
+                request=request
+            )
+            # print(f"DEBUG: Rendered table_html length: {len(table_html)}")
 
-        # stick them together
-        full_html = message_html + table_html
+            # stick them together
+            full_html = message_html + table_html
 
-        return JsonResponse({
-            'table_html': full_html,
-            'parsed_input': parsed_input
-        })
+            return JsonResponse({
+                'table_html': full_html,
+                'parsed_input': parsed_input
+            })
     # endif
     #
     # print(f"DEBUG: Final results count: {len(results)}")

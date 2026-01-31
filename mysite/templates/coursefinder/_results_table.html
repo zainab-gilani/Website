@@ -15,43 +15,21 @@
             </tr>
             </thead>
             <tbody>
-            {% for match in results %}
-                <tr>
-                    <td>
-                        {% if user.is_authenticated %}
-                            <button
-                                    type="button"
-                                    class="heart-btn {% if match.is_saved %}active{% endif %}"
-                                    data-university="{{ match.university }}"
-                                    data-course="{{ match.course }}"
-                                    data-course_type="{{ match.course_type }}"
-                                    data-duration="{{ match.duration }}"
-                                    data-requirements="{{ match.requirements }}"
-                                    data-course_link="{{ match.course_link }}"
-                                    aria-label="Save Match"
-                            >
-                                <svg class="heart-icon" width="28" height="24" viewBox="0 0 207 169" fill="none"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M152.563 5.51172C180.171 6.09912 202.076 28.9555 201.488 56.5635C201.022 78.4876 190.138 95.1107 182.955 104.209C160.313 132.888 125.86 149.994 103 162.614C80.1203 149.983 45.475 132.795 23.0234 103.912C15.8452 94.6774 5 77.7449 5 55.5C5 27.8858 27.3858 5.5 55 5.5C78.0606 5.5 92 26 103 48C115 26 129.137 5.01333 152.563 5.51172Z"
-                                          stroke="#b83a42" stroke-width="10">
-                                    </path>
-                                </svg>
-                            </button>
-                        {% endif %}
-                    </td>
-                    <td>{{ match.university }}</td>
-                    <td>{{ match.course }}</td>
-                    <td>{{ match.course_type }}</td>
-                    <td>{{ match.duration }}</td>
-                    <td>{{ match.requirements }}</td>
-                    <td>
-                        <a href="{{ match.course_link }}" target="_blank">View</a>
-                    </td>
-                </tr>
-            {% endfor %}
+            {% include "coursefinder/_results_rows.html" %}
             </tbody>
         </table>
     </div>
 
+    {% if page_obj and page_obj.has_next %}
+        <div class="load-more-wrapper"
+             data-form-id="{{ form_id }}"
+             data-results-id="{{ results_id }}">
+            <button type="button"
+                    class="load-more-btn"
+                    data-page="{{ page_obj.next_page_number }}">
+                Load more
+            </button>
+        </div>
+    {% endif %}
 
 {% endif %}
