@@ -56,7 +56,6 @@ def search_courses(query: str, filters: Dict) -> Dict[str, Any]:
     # find matching courses
     # Pass filters dictionary to the next function
     courses = find_matching_courses(
-        grades=result["parsed_grades"],
         ucas_points=ucas_points,
         interests=result["interests"],
         filters=filters
@@ -105,11 +104,10 @@ def calculate_ucas_points(grades: Dict[str, str]) -> int:
 # enddef
 
 
-def find_matching_courses(grades: Dict, ucas_points: int, interests: List[str], filters: Dict) -> List:
+def find_matching_courses(ucas_points: int, interests: List[str], filters: Dict) -> List:
     """
     Finds courses that match the given criteria by comparing grades and interests with database entries.
 
-    :param grades: Dictionary of subject-grade pairs
     :param ucas_points: Total UCAS points calculated from grades
     :param interests: List of course/subject names the user is interested in
     :param filters: Dictionary containing filter options (course_type, duration, mode, location, etc.)
