@@ -161,10 +161,10 @@ def find_matching_courses(ucas_points: int, interests: List[str], filters: Dict)
     if filters.get('ucas_range'):
         try:
             min_points = int(filters['ucas_range'])
-            # only show courses that require at least this many points
+            # only show courses that require no more than this many points
             if min_points > 0:
                 qualifying_courses = qualifying_courses.filter(
-                    entryrequirement__min_ucas_points__gte=min_points
+                    entryrequirement__min_ucas_points__lte=min_points
                 )
             # endif
         except ValueError:
@@ -235,7 +235,8 @@ def find_matching_courses(ucas_points: int, interests: List[str], filters: Dict)
         ).distinct()
     # endif
 
-    courses_to_show = list(qualifying_courses[:20])
+    qualifying_courses = qualifying_courses.order_by("university__name", "name")
+    courses_to_show = list(qualifying_courses)
 
     # format the courses as UniMatchResult objects for the template
     for course in courses_to_show:
