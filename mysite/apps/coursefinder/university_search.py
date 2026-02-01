@@ -72,7 +72,7 @@ def search_universities(query: str, filters: dict = None) -> List:
         course_query |= term_query
     # endfor
 
-    courses = Course.objects.select_related('university').prefetch_related('entryrequirement').filter(course_query)
+    courses = Course.objects.select_related('university', 'entryrequirement').filter(course_query)
 
     # filter by course type if selected
     if filters.get('course_type'):
@@ -125,6 +125,10 @@ def search_universities(query: str, filters: dict = None) -> List:
         except ValueError:
             pass
         # endtry
+    # endif
+
+    if filters.get('only_grades') and filters.get('no_requirements'):
+        filters['no_requirements'] = False
     # endif
 
     # if user wants to see only courses with grade requirements

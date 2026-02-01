@@ -6,8 +6,8 @@ def saved_Data(scraped_unis):
         uni = University.objects.create(
             name=uni_data.name,
             location=uni_data.location,
-            link=uni_data.link,
-            link_all_courses=uni_data.link_all_courses
+            website=uni_data.link,
+            all_courses_url=uni_data.link_all_courses
         )
 
         for course_data in uni_data.courses:
@@ -18,7 +18,7 @@ def saved_Data(scraped_unis):
                 duration=course_data.duration,
                 mode=course_data.mode,
                 location=course_data.location,
-                start_date=course_data.start_data,
+                start_date=course_data.start_date,
                 link=course_data.link
             )
 

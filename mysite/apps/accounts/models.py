@@ -11,6 +11,15 @@ class SavedMatch(models.Model):
     requirements = models.CharField(max_length=300)
     course_link = models.URLField(max_length=500)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "university", "course", "course_link"],
+                name="unique_saved_match_per_user"
+            )
+        ]
+    #endclass
+
     def __str__(self):
         return f"{self.user.username} - {self.university} ({self.course})"
     # enddef

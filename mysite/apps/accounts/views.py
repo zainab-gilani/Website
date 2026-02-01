@@ -5,8 +5,8 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
+from django.contrib.auth import login
 from django.core.mail import EmailMultiAlternatives
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -16,6 +16,7 @@ from django.utils.encoding import force_str
 from django.utils.html import strip_tags
 from django.utils.http import urlsafe_base64_decode
 from django.utils.http import urlsafe_base64_encode
+from django.conf import settings
 
 from .forms import CustomUserCreationForm
 from .models import SavedMatch
@@ -43,7 +44,6 @@ def register_view(request):
             user.save()
 
             current_site = request.get_host()
-            mail_subject = 'Activate your account'
             message = render_to_string('accounts/acc_active_email.html', {
                 'user': user,
                 'domain': current_site,
@@ -58,7 +58,7 @@ def register_view(request):
             email = EmailMultiAlternatives(
                 mail_subject,
                 message_text,
-                'unimatch.nea@gmail.com',
+                settings.DEFAULT_FROM_EMAIL,
                 [to_email]
             )
             email.attach_alternative(message, "text/html")
@@ -105,6 +105,7 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
+        login(request, user)
         return redirect('coursefinder:coursefinder')
     else:
         return render(request, 'accounts/activation_invalid.html')
@@ -137,7 +138,7 @@ def resend_activation_view(request):
             email_msg = EmailMultiAlternatives(
                 mail_subject,
                 message_text,
-                'unimatch.nea@gmail.com',
+                settings.DEFAULT_FROM_EMAIL,
                 [email]
             )
             email_msg.attach_alternative(message, "text/html")
@@ -221,8 +222,10 @@ def profile_view(request):
                     update_session_auth_hash(request, user)
                 # endif
                 return redirect('accounts:profile')
-            else:
+            elif error:
                 messages.error(request, error)
+            else:
+                messages.info(request, "No changes to save.")
             # endif
         # endif
     # endif
