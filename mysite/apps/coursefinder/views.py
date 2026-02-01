@@ -87,6 +87,12 @@ def guest_coursefinder_view(request):
 # enddef
 
 def resources_view(request):
+    """
+    Renders the helpful resources page.
+
+    :param request: Django HTTP request object
+    :return: Rendered HTML response for resources page
+    """
     return render(request, 'coursefinder/resources.html')
 
 
