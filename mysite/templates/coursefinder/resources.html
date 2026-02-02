@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}Resources{% endblock %}
+
+
 {% block content %}
     <link rel="stylesheet" href="{% static 'coursefinder/style.css' %}?v=1763455540">
-    {% block title %}Resources{% endblock %}
 
     <!-- USER AUTH (PROFILE DROPDOWN ETC) -->
     {% if user.is_authenticated %}
